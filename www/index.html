@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<!-- saved from url=(0062)https://192.168.99.112/remote-control_device-control_live-demo -->
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">		
+    <title>Josefuv dul</title>		
+    <script src="js/jquery.js" ></script>    
+    <script src="js/bootstrap.js" type="text/javascript"></script>    
+    <script src="js/Visualization.js" type="text/javascript"></script>    
+    <link rel="stylesheet" href="css/bootstrap.css" type="text/css">     	
+  </head>  
+  <body>
+  <style type="text/css">
+  <!--
+   div.date {
+      font-size: 110px;
+      line-height: 110px;
+      height: 110px;
+      margin: 0px;
+      padding: 0px;
+      position: relative;
+      border-bottom: 2px solid rgba(255,255,255,0.2);
+      
+   }
+   div.date div {
+      position: absolute;
+      top: 0px;
+   }
+   
+   div.date div#dateday{
+      text-align: center;
+      width: 30%;
+      font-size: 30px;
+   }
+   div.date div#datedate{
+      text-align: center;
+      width: 30%;
+      font-size: 30px;
+      left: 70%;
+   }
+   
+   div#datetime {
+      text-align: center;
+      width: 40%;
+      left: 30%;
+   }
+   
+   div.temperature {
+      /*line-height: 1em;*/
+      font-size: 60px;
+      border: 1px solid black; ;
+      width: 150px;
+      line-height: 150px;
+      text-align: center;   
+   }
+   
+   #box { 
+      width: 800px; 
+      height: 480px; 
+      margin: 0px; padding: 0px;
+      background-color: #000;
+      background-image: linear-gradient(to bottom, #620, #000);
+      color: white;
+   }
+   
+   #inbox { 
+    padding: 10px;
+    font-size: 1.0em;
+    
+   }
+   /*
+   .temp {
+    font-size: 4.0em;
+    line-height: 1.0em;
+    padding: 0px 5px 0px 30px;
+   } */
+   .temp-under {
+      color: rgb(124, 159, 211);
+   }
+   .temp-above {
+      
+   }
+   .forecast {
+    float: left;
+   }
+   
+   
+   
+   .mybtn {
+      padding: 7px;
+      margin: 5px;
+      border: 1px solid rgb(255,255,255);
+      background-color: rgba(255,255,255,0.2);
+      background-image: linear-gradient(to bottom, #630, #000);
+      color: white;
+      border-radius: 4px;
+      text-align: center;
+      cursor: default;
+   }
+   
+   .forecast-detail .mybtn{
+      text-align: left;
+   }
+   
+   .mybtn-blue {
+      background-image: linear-gradient(to bottom, #026, #000);
+   }
+   .mybtn-green {
+      background-image: linear-gradient(to bottom, #062, #000);
+   }
+   .mybtn-yellow {
+      background-image: linear-gradient(to bottom, #660, #000);
+   }
+   .mybtn-violet {
+      background-image: linear-gradient(to bottom, #606, #000);
+   }
+   .mybtn-white {
+      background-image: linear-gradient(to bottom, #999, #000);
+   }
+   .inline {
+    display: inline;
+   }
+   .modal {
+      border: 1px solid white;
+        background-color: rgba(255,255,255,0.2);
+      background-image: linear-gradient(to bottom, #630, #000);
+   }
+   .close-inverse {
+      color: white;
+      opacity: 0.7;
+   }
+   .close-inverse:hover, .close-inverse:focus {
+      color: #fff;
+      opacity: 0.9;
+      filter: alpha(opacity=40);
+    }
+    
+    button.fcoverview {
+      margin: 5px -1px 2px;
+      background-image: linear-gradient(to bottom, #000, #000);
+    }
+    
+  //-->
+  </style>
+    <div id='box'>
+      <div id='inbox'>
+          <div class='date'>
+            <div id='datetime'>14:45</div>
+            <div id='datedate'>15. Července</div>
+            <div id='dateday'>Pondělí</div>
+          </div>
+         <h3>Teplota:</h3>
+            <button class='mybtn mybtn-yellow'>uvnitř: <span class='temp'>12&deg;</span></button>
+            <button class='mybtn mybtn-blue'>venku: <span class='temp temp-under'>-4&deg;</span></button>
+            
+         
+         <script type="text/javascript">
+          
+            var tbsService;
+            
+            var dayNamesShort = new Array("Ne", "Po", "Út", "St", "Čt", "Pá", "So");
+            var dayNamesLong = new Array("Neděle", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota");
+            var monthNames = new Array("Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec");
+            
+                                 
+            function daydiff(first, second) {
+                return (second-first)/(1000*60*60*24);
+            }
+            
+            function forecastData(rawData){
+                var dn = new Date();
+                var d = new Date(rawData.date);
+                
+                var obj = new Object();
+                
+                obj.date = dayNamesShort[d.getDay()] + " " + d.getDate().toString() + "." + d.getMonth().toString() + ".";
+                obj.hour = d.getHours();
+                obj.temperature = rawData.value;
+                obj.datediff = daydiff(dn, d);
+                //console.log(obj);
+                $.each(rawData.textValue.split(";"), function( findex, fvalue ) {
+                     var name = fvalue.split(":")[0];
+                     var val = fvalue.split(":")[1];
+                     
+                     if (name == "n"){
+                     
+                        obj.name = val; 
+                     }
+                     if (name == "p"){
+                        obj.percipation = val; 
+                     }
+                     if (name == "w"){
+                        obj.wind = val; 
+                     }
+                     if (name == "i"){
+                        obj.img = "img/weather/" + (obj.hour > 6 && obj.hour < 20 ? "day" : "night") + "/" + val + ".png"; 
+                     }
+                     
+                });
+                return obj;
+            }
+            
+            function renderSmallForecastWidget(fdata){
+                var str = "";
+                str += "<button class='mybtn fcoverview'>";
+                str += "<span class='time'>" + fdata.hour + ":00</span><br />";
+                str += "<span class='img'><img src='" + fdata.img + "'></span><br />";
+                str += "<span class='temp'>" + fdata.temperature + "&deg;C</span><br />";  
+                str += "</button>";
+                return str;
+            }
+            function renderBigForecastWidget(data){
+            
+            }
+            
+            function pad(num) {
+              return ("0"+num).slice(-2);
+            }
+            
+            function updateTime(){
+                 var dn = new Date();
+                 $("#datetime").html(pad(dn.getHours())+":"+pad(dn.getMinutes()));
+                 $("#dateday").html(dayNamesLong[dn.getDay()]);
+                 $("#datedate").html(dn.getDate().toString() + ". " + monthNames[dn.getMonth()]);
+            }
+            
+            function updateForecastJson(sensorType, sensorName){
+               //get DATA
+               var sidata = tbsService.GetSensorData(sensorType, sensorName);
+               sidata.done(function( data, forecastTextStatus, forecastJqXHR ) { 
+                    var days = new Object();
+                    var daysDiff = new Object();
+                    $.each(data.ReturnObject, function( findex, fvalue ) {
+                        var fdata = forecastData(fvalue);
+                        //if (fdata.hour == 7 || fdata.hour == 13 || fdata.hour == 19){
+                          if (!(fdata.date in days)){
+                              days[fdata.date] = new Object();
+                              daysDiff[fdata.date] = fdata.datediff;  
+                          }
+                          var hh = fdata.hour.toString();
+                          days[fdata.date][hh] = fdata;
+                        //}
+                    }); 
+                    
+                    var content = "";
+                    $.each( days, function( key, hours ) {
+                       if (daysDiff[key] < 0 || daysDiff[key] > 5) return;
+                       content += "<div class='mybtn mybtn-blue forecast'>";
+                       content += "<div><b>" + key + "</b></div>";
+                       var cnt = 0;   
+                       $.each(hours, function( findex2, fdata ) {
+                                if (fdata == undefined) return;
+                                if (++cnt != 3 && daysDiff[key] > 1) return;
+                                content += renderSmallForecastWidget(fdata); 
+                      });
+                      content += "</div>";
+                  });
+                    
+                   
+                    /*
+                        console.log(findex);
+                        if (hours == undefined) return;
+                        content += "<div class='mybtn mybtn-violet forecast'>";
+                        content += "<b>" + findex + "</b>"   
+                        /*$.each(hours, function( findex2, fdata ) {
+                                if (fdata == undefined) return;
+                                content += renderSmallForecastWidget(fdata); 
+                        });*/   /*
+                        content += "</div>";  
+                     });
+                          */
+                    
+                    $('#forecasts').html(content);
+               });
+            }
+            
+            function updateForecast(){
+                  var si = tbsService.GetSensors();
+                                              
+                  si.done(function( data, textStatus, jqXHR ) {
+                      console.log("done sensors");
+                      console.log(data);
+                      
+                      $.each(data.ReturnObject, function( index, value ) {
+                          if (value.sensorType == "ForecastTemperature"){
+                              updateForecastJson(value.sensorType, value.sensorName);
+                          }
+                      });
+                      
+              		    
+                  });
+            }
+            
+            $( document ).ready(function() {
+                	tbsService = new Query({url: "http://127.0.0.1:8111/"});
+                  
+                  window.setInterval(updateTime,1000);
+                  updateTime();
+                  updateForecast();
+                	
+                  
+                  $('button.fcoverview').click(function(){
+                      $('#mymodal').modal();
+                      //$('#box').modal("ahoj");
+                  });
+                  
+          
+          	});
+          
+         </script>
+         
+         <h3><a href='#' id='fc'>Předpověď:</a></h3>
+         <div id='forecasts'>
+           
+          
+            <div class='mybtn mybtn-violet forecast'>
+              <div><b>Po 13.7.</b></div>
+              <button class='fcoverview mybtn mybtn-blue' rel='10;15;silny;-2;'>08:00<br />-2&deg;C<br /> <img src="http://symbol.yr.no/grafikk/sym/b30/04d.png" /></button>
+              <button class='mybtn mybtn-blue'>12:00<br /><span class='temp-above'>2&deg;C<span><br /> <img src="http://symbol.yr.no/grafikk/sym/b30/04d.png" /></button>
+              <button class='mybtn mybtn-blue'>16:00<br /><span class='temp-under'>+2&deg;C<span><br /> <img src="http://symbol.yr.no/grafikk/sym/b30/04d.png" /></button>    
+            </div>
+            <div class='mybtn mybtn-violet forecast'>
+              <div><b>Ut 14.7.</b></div>
+              <button class='mybtn mybtn-blue'>08:00<br />-2&deg;C<br /> <img src="http://symbol.yr.no/grafikk/sym/b38/04d.png" /></button>
+              <button class='mybtn mybtn-blue'>12:00<br />-2&deg;C<br /> <img src="http://symbol.yr.no/grafikk/sym/b38/04d.png" /></button>
+              <button class='mybtn mybtn-blue'>16:00<br />-2&deg;C<br /> <img src="http://symbol.yr.no/grafikk/sym/b30/04d.png" /></button>
+            </div>
+            <div class='mybtn mybtn-white forecast'>
+              <div><b>St 15.7.</b></div>
+              <button class='mybtn mybtn-blue'>08:00<br />-2&deg;C<br /> <img src="http://symbol.yr.no/grafikk/sym/b30/04d.png" /></button>
+              <button class='mybtn mybtn-blue'>12:00<br />-2&deg;C<br /> <img src="http://symbol.yr.no/grafikk/sym/b30/04d.png" /></button>
+              <button class='mybtn mybtn-blue'>16:00<br />-2&deg;C<br /> <img src="http://symbol.yr.no/grafikk/sym/b30/04d.png" /></button>
+            </div>
+          
+          
+         </div>
+    
+            		 
+    </div>
+    
+    <div class="modal hide fade" id='mymodal'>
+      <div class="modal-header">
+        <button type="button" class="close close-inverse" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Předpověď</h3>
+      </div>
+      <div class="modal-body">
+         <div class='mybtn mybtn-violet forecast forecast-detail'>
+              <div><b>Po 13.7.</b></div>
+              <button class='mybtn mybtn-blue leftaligned' rel='10;15;silny;-2;'>
+                  čas: 08:00<br />
+                  teplota: -2&deg;C<br /> 
+                  obrázek: <img src="http://symbol.yr.no/grafikk/sym/b38/09.png" /><br />
+                  vítr: 6 m/s<br />
+                  srážky: 12 mm<br />
+              </button>
+              <button class='mybtn mybtn-blue'>12:00<br /><span class='temp-above'>2&deg;C<span><br /> <img src="http://symbol.yr.no/grafikk/sym/b30/04d.png" /></button>
+              <button class='mybtn mybtn-blue'>16:00<br /><span class='temp-under'>+2&deg;C<span><br /> <img src="http://symbol.yr.no/grafikk/sym/b30/04d.png" /></button>    
+            </div>
+      </div>
+    </div>
+    
+    
+  </body>
+</html>

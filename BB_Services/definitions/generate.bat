@@ -1,0 +1,4 @@
+REM ..\..\TBS_Services\TBS.Services.Generator.win\TBS_Services.Generator.exe --def=device-control.xml --name=DeviceControl --src=../src/ --include=../include/TSeries/Services/ --relative=TSeries/Services/ --doc=../doc/ --generate=doc
+
+REM ..\..\TBS_Services\TBS.Services.Generator.win\TBS_Services.Generator.exe --def=camera2.xml --name=Camera --src=../src/ --include=../include/TSeries/Services/ --relative=TSeries/Services/ --generate=dotNET
+..\..\TBS_Services\TBS.Services.Generator.win\TBS_Services.Generator.exe --def=camera.xml --name=Camera --src=../src/ --include=../include/TSeries/Services/ --relative=TSeries/Services/ --generate=dotNET

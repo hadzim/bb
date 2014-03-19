@@ -1,0 +1,135 @@
+/*
+ * PersistentLogWriter.cpp
+ *
+ *  Created on: Nov 25, 2012
+ *      Author: root
+ */
+
+#include "TBS/PersistentLog.h"
+#include <Poco/File.h>
+#include "Poco/LocalDateTime.h"
+#include <Poco/StringTokenizer.h>
+#include <Poco/NumberParser.h>
+#include <Poco/DateTimeFormatter.h>
+#include <Poco/String.h>
+
+#include "TBS/TBS.h"
+
+namespace TBS {
+	namespace TSeries {
+
+		Poco::NamedMutex PersistentLog::m("logMutex");
+
+
+		int PersistentLogWriter::accessCounter = 0;
+		Poco::UInt64 PersistentLogWriter::maxSize = 10000ll * 150ll;
+
+		std::string PersistentLog::getFileName(){
+			return Environment::getLogHistoryPath() +  "eventlog.log";
+		}
+
+		void PersistentLogWriter::checkSize(std::string fileName) {
+
+			Poco::File file(fileName);
+
+			if (file.exists() && file.getSize() > maxSize) {
+				std::cout << "too big " << file.getSize() << std::endl;
+
+#ifdef __WIN32__
+				file.moveTo(fileName+".0");
+#else
+
+				std::ifstream ins(fileName.c_str());
+				ins.exceptions();
+				ins.seekg((std::ifstream::pos_type)(PersistentLogWriter::maxSize / 2));
+				char c = '\n';
+				do {
+					ins.get(c);
+				} while (c != '\n');
+
+				std::ostringstream buf;
+				buf << ins.rdbuf();
+
+				ins.close();
+
+				f.exceptions();
+				f.open(fileName.c_str(), std::ios::trunc | std::ios::out);
+				f << buf.str();
+				//return buf.str();
+#endif
+			}
+		}
+
+		PersistentLogWriter::PersistentLogWriter(std::string fileName) {
+			PersistentLog::m.lock();
+
+			if (accessCounter++ % 100 == 0) {
+				this->checkSize(fileName);
+			}
+			if (!f.is_open()) {
+				f.exceptions();
+				f.open(fileName.c_str(), std::ios::app | std::ios::out);
+			}
+		}
+
+		void PersistentLogWriter::addMessage(const Poco::Message & msg) {
+
+			Poco::LocalDateTime t;
+			std::string lctime = Poco::DateTimeFormatter::format(t, "%Y-%m-%d %H:%M:%S.%i");
+			//std::string utctime = Poco::DateTimeFormatter::format(t.utc(), "%Y-%m-%d %H:%M:%S.%i");
+
+			f << lctime << " || " << (int) msg.getPriority() << " || " << msg.getSource() << " || " << msg.getText() << "\n";
+			std::cout << lctime << " || " << (int) msg.getPriority() << " || " << msg.getSource() << " || " << msg.getText() << "\n";
+		}
+
+		PersistentLogWriter::~PersistentLogWriter() {
+			f.close();
+			PersistentLog::m.unlock();
+		}
+
+		PersistentLogReader::PersistentLogReader(std::string fileName) {
+			Poco::NamedMutex::ScopedLock l(PersistentLog::m);
+			Poco::File f(fileName);
+			if (f.exists()) {
+				std::ifstream ifs(fileName.c_str());
+				std::string s;
+				while (std::getline(ifs, s)){
+					Poco::StringTokenizer tokenizer(Poco::trim(s), "||", Poco::StringTokenizer::TOK_IGNORE_EMPTY | Poco::StringTokenizer::TOK_TRIM);
+					if (tokenizer.count() < 4){
+						continue;
+					}
+
+
+
+					//std::cout << tokenizer[0] << " AND " << tokenizer[1] << " AND " << tokenizer[2] << " AND " <<  tokenizer[3] << std::endl;
+
+					LogEntry e;
+					e.localTime = tokenizer[0];
+
+					e.priority = Poco::NumberParser::parse(tokenizer[1]);
+
+					e.module = tokenizer[2];
+					if (int pos = e.module.find_first_of('.')){
+						e.module = e.module.substr(pos + 1);
+					}
+
+					e.message = tokenizer[3];
+
+					if (tokenizer.count() >= 5){
+						e.detail = tokenizer[4];
+					}
+
+					entries_.push_front(e);
+				}
+			}
+		}
+		PersistentLogReader::~PersistentLogReader() {
+
+		}
+
+		LogEntry::List & PersistentLogReader::entries() {
+			return entries_;
+		}
+
+	} /* namespace TSeries */
+} /* namespace TBS */

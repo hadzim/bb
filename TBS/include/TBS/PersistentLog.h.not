@@ -1,0 +1,71 @@
+/*
+ * PersistentLogWriter.h
+ *
+ *  Created on: Nov 25, 2012
+ *      Author: root
+ */
+
+#ifndef PersistentLogWriter_H_
+#define PersistentLogWriter_H_
+
+#include <Poco/Message.h>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <Poco/NamedMutex.h>
+#include <list>
+#include <string>
+
+namespace TBS {
+	namespace TSeries {
+
+		class PersistentLog {
+			public:
+				static std::string getFileName();
+			private:
+				static Poco::NamedMutex m;
+
+				friend class PersistentLogReader;
+				friend class PersistentLogWriter;
+		};
+
+		class PersistentLogWriter {
+			public:
+
+				PersistentLogWriter(std::string fileName);
+				~PersistentLogWriter();
+
+				void addMessage(const Poco::Message & m);
+
+			private:
+
+				void checkSize(std::string fileName);
+
+				std::ofstream f;
+				static int accessCounter;
+				static Poco::UInt64 maxSize;
+		};
+
+		struct LogEntry {
+				typedef std::list <LogEntry> List;
+				std::string message;
+				std::string detail;
+				std::string module;
+				std::string localTime;
+				int priority;
+		};
+
+		class PersistentLogReader {
+			public:
+
+				PersistentLogReader(std::string fileName);
+				~PersistentLogReader();
+
+				LogEntry::List & entries();
+			private:
+				LogEntry::List entries_;
+		};
+
+	} /* namespace TSeries */
+} /* namespace TBS */
+#endif /* PersistentLogWriter_H_ */

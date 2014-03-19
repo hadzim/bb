@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<node name="TBS.BB.Services.Sensor">
+  
+  <interface name="TBS.BB.Services.Sensor.DataCollector">
+    
+    <method name="SendSensorData">
+      <arg type="s" name="sensorType" direction="in"/>
+      <arg type="s" name="sensorName" direction="in"/>
+      <arg type="s" name="sensorUnit" direction="in"/>
+      <arg type="s" name="sensorDate" direction="in"/>
+      <arg type="i" name="sensorStatus" direction="in"/>
+      <arg type="d" name="sensorValue" direction="in"/>
+      <arg type="s" name="sensorTextValue" direction="in"/>
+    </method>
+   
+  </interface>
+  
+  <interface name="TBS.BB.Services.Sensor.DataDistributor">
+    
+    <signal name="SensorDataReceived">
+      <arg type="s" name="sensorType"/>
+      <arg type="s" name="sensorName"/>
+      <arg type="s" name="sensorUnit"/>
+      <arg type="s" name="sensorDate"/>
+      <arg type="i" name="sensorStatus"/>
+      <arg type="d" name="sensorValue"/>
+      <arg type="s" name="sensorTextValue"/>
+    </signal>
+   
+  </interface>
+  
+  
+  
+</node>

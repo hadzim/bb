@@ -1,0 +1,35 @@
+
+import tbs ;
+
+project TBS_Services
+	:
+		requirements
+		<include>include
+		<link>static:<cxxflags>-fPIC
+		<device>win:<define>_NO_DBUS
+		<library>$(TBS)/TBS//TBS
+		<library>$(TBS)//PocoLibrarySet
+		<library>$(TBS)//PocoNetSSL
+		<device>tpro:<library>$(TBS)//dbus-1
+ 		<device>lin:<library>$(TBS)//dbus-1
+		<device>linpc:<library>$(TBS)//dbus-1
+		<device>lindevice:<library>$(TBS)//dbus-1
+	:
+		usage-requirements
+		<include>include
+	;
+
+path-constant proj-dir : . ;
+tbs.obj-build common-sources : $(proj-dir) : [ tbs.glob-tree $(proj-dir)/src : *.cpp ] ;
+
+
+lib TBS@Services
+	:
+		common-sources
+	:
+		<tag>@tbs.dot-from-at
+	;
+
+tbs.link-test TBS@Services ;
+tbs.installation : TBS@Services/<link>shared : lib ;
+
