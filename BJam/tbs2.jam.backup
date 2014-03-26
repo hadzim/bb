@@ -1,0 +1,36 @@
+
+import regex ;
+import path ;
+
+rule filter-sources ( files * )
+{
+	local sources ;
+	for local file in $(files)
+	{
+		if [ regex.match "(^src/.*)" : $(file) ]
+		{
+			sources += $(file) ;
+		}
+	}
+	return $(sources) ;
+}
+
+rule source-list ( proj : roots + : patterns + : exclude * )
+{
+	local abs-roots ;
+	
+	for local root in $(roots)
+	{
+		abs-roots += [ path.join $(proj) $(root) ] ;
+	}
+
+	local abs-sources = [ path.glob-tree $(abs-roots) : $(patterns) : $(exclude) ] ;
+
+	local sources ;
+	for local source in $(abs-sources)
+	{
+		sources += [ path.relative $(source) $(proj) ] ;
+	}
+	return $(sources) ;
+}
+

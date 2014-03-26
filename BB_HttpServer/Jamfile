@@ -1,0 +1,27 @@
+
+import tbs ;
+
+project BB_HttpServer
+	:
+		requirements
+		<include>src
+		<library>$(TBS)/BB//BB
+		<library>$(TBS)/BB_Services//BB@Services
+	;
+
+path-constant proj-dir : . ;
+
+tbs.obj-build common-sources : $(proj-dir)
+	:
+		[ tbs.glob-tree $(proj-dir) : *.cpp ]
+	:
+	;
+
+exe BB@HttpServer
+	:
+		common-sources	
+	:
+		<tag>@tbs.dot-from-at
+	;
+
+tbs.installation : BB@HttpServer : . ;

@@ -1,0 +1,10 @@
+
+rule prebuild
+{
+	local command = "python2 $(TBS)/prebuild.py " ;
+	SHELL [ string.join $(command) : " " ] : no-output ;
+	ECHO "tbs.prebuild" ;
+}
+
+#prebuild ;
+

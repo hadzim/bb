@@ -1,0 +1,18 @@
+
+TBS_INSTALL_DIR = /home/dron/git/bb/install ;
+
+# project-config.jam.template
+# author: Adam Trhon, adam.trhon@tbs-biometrics.com
+#
+# This file contains tbs-devices project settings
+#
+# usage:
+# copy this file to git root (next to Jamroot) without the 'template' suffix 
+# tweak settings
+
+# Directory for package binaries
+# tpro and lin subdirectories are used to separate platforms 
+# the directory does not have to exist, BJam creates it if needed
+# TBS_INSTALL_DIR = /home/adam/Programming/TBS/built ;
+
+

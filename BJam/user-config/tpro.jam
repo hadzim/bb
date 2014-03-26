@@ -1,0 +1,33 @@
+
+project user-config ;
+
+constant TPRO_PATH : "/usr/local/tbs-toolchain-gcc-4.6-i686/sysroots/i686-angstromsdk-linux/usr/bin/armv7a-angstrom-linux-gnueabi" ;
+constant TPRO_SYSROOT : "/usr/local/tbs-toolchain-gcc-4.6-i686/sysroots/armv7a-angstrom-linux-gnueabi" ;
+
+using gcc
+	:
+		tpro
+	:
+		$(TPRO_PATH)/arm-angstrom-linux-gnueabi-g++
+	:
+		<archiver>$(TPRO_PATH)/arm-angstrom-linux-gnueabi-ar
+		<compileflags>"-march=armv7-a -fno-tree-vectorize -mthumb-interwork -mfloat-abi=softfp -mfpu=neon -mtune=cortex-a8 --sysroot=$(TPRO_SYSROOT)"
+		<linkflags>--sysroot=$(TPRO_SYSROOT)
+	;
+
+import qt4 ;
+
+# Parameters:
+# - 'prefix'    parameter tells where Qt is installed.
+# - 'full_bin'  optional full path to Qt binaries (qmake,moc,uic,rcc)
+# - 'full_inc'  optional full path to Qt top-level include directory
+# - 'full_lib'  optional full path to Qt library directory
+# - 'version'   optional version of Qt, else autodetected via 'qmake -v'
+# - 'condition' optional requirements
+using qt4
+    : /usr/local/tbs-toolchain-gcc-4.6-i686/sysroots/armv7a-angstrom-linux-gnueabi/usr
+    : /usr/local/tbs-toolchain-gcc-4.6-i686/sysroots/i686-angstromsdk-linux/usr/bin
+    : /usr/local/tbs-toolchain-gcc-4.6-i686/sysroots/armv7a-angstrom-linux-gnueabi/usr/include/qtopia
+    : /usr/local/tbs-toolchain-gcc-4.6-i686/sysroots/armv7a-angstrom-linux-gnueabi/usr/lib
+    ;
+

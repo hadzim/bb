@@ -1,0 +1,10 @@
+
+#______________________________________________________________________________
+#
+# Link test project 
+# Used to test that every function in shared library is defined
+#_________
+#
+
+obj main : main.cpp ;
+

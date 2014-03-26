@@ -3,3 +3,8 @@
 *.mk
 *.exe
 *.dll
+*.so
+.metadata
+BoostBuild
+*/bin/*
+install/*

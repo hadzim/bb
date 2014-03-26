@@ -1,0 +1,23 @@
+
+rule make_version_header ( project )
+{
+	local command = "$(TBS)/version.sh " ;
+	command += [ path.join $(project) baseversion ] ;
+	command += [ path.join $(project) src gen_version.h ] ;
+	
+	#ECHO [ string.join $(command) : " " ] ;
+	SHELL [ string.join $(command) : " " ] : no-output ;
+}
+
+rule make_git_version_header
+{
+	local command = "$(TBS)/gitversion.sh " ;
+	command += [ path.join $(TBS) TSeries_Utils include TSeries git_version.h ] ;
+	
+	SHELL [ string.join $(command) : " " ] : no-output ;
+}
+
+make_git_version_header ;
+make_version_header $(TBS)/TSeries ;
+make_version_header $(TBS)/TSeries_Utils ;
+make_version_header $(TBS)/TSDevices_Services/RemoteControl ;

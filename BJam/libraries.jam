@@ -1,0 +1,86 @@
+
+#______________________________________________________________________________
+#
+# System libraries definition
+# Maybe some of these can be written another way
+#_________
+
+tbs.libs-decl : boost_unit_test_framework ;
+tbs.libs-decl : ncurses ;
+tbs.libs-decl : usb-1.0 ;
+tbs.libs-decl : systemd-daemon ;
+tbs.libs-decl : pthread ;
+tbs.libs-decl : crypto ;
+tbs.libs-decl : ssl ;
+tbs.libs-decl : asound ;
+tbs.libs-decl : rt ;
+tbs.libs-decl : pam ;
+tbs.libs-decl : dbus-1 ;
+tbs.libs-decl : dbus-c++-1 ;
+tbs.libs-decl : sqlite3 ;
+
+if [ modules.peek : OS ] = "NT" {
+
+tbs.libs-decl ssl-set
+	:
+		ws2_32
+		kernel32
+		user32
+		gdi32
+    m
+    msvcr100    
+	;
+
+}
+
+tbs.libs-decl : eay32 ;
+
+tbs.libs-decl PocoLibrarySet
+	:
+		PocoFoundation
+		PocoData
+		PocoNet
+		PocoCrypto
+		PocoUtil
+		PocoXML
+		PocoZip
+	;
+
+tbs.libs-decl : PocoDataSQLite ;
+tbs.libs-decl : PocoDataSQLiteCipher ;
+tbs.libs-decl : PocoNetSSL ;
+
+
+if [ modules.peek : OS ] = "NT" 
+{
+
+tbs.libs-decl opencv-library-set #TODO: find why the two libraries don't work
+	:
+		opencv_core246
+		opencv_imgproc246
+		opencv_highgui246
+		opencv_ml246
+		opencv_features2d246
+		opencv_objdetect246
+	;
+  
+} else {
+
+tbs.libs-decl opencv-library-set #TODO: find why the two libraries don't work
+	:
+		opencv_core
+		opencv_imgproc
+		opencv_highgui
+		opencv_ml
+		opencv_features2d
+		opencv_objdetect
+	;
+
+}
+
+tbs.libs-decl vlc-library-set
+	:
+		vlc
+		vlccore
+		libx264
+	;

@@ -1,0 +1,45 @@
+
+import path ;
+import regex ;
+import string ;
+import testing ;
+import feature : feature ;
+
+import tbs ;
+
+project TBS-Devices 
+	:
+		requirements
+		<cxxflags>"-std=c++0x -U__STRICT_ANSI__"
+	;
+
+path-constant TBS : . ;
+path-constant TSERIES-LIBS : TSeries_Libs ;
+path-constant TSERIES-PLUGINS : TSeries_Plugins ;
+
+path-constant ROOT-DIR : . ; 
+
+explicit face ;
+
+
+alias win
+	:
+		TBS
+		TBS_Services
+	;
+
+alias all
+	:
+		TBS
+		TBS_Services
+		BB_Services
+		BB
+		BB_Collector
+		BB_Forecast
+		BB_HttpServer
+	;
+
+
+include $(TBS)/BJam/libraries.jam ;
+include $(TBS)/BJam/device.jam ;
+

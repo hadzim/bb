@@ -1,15 +1,13 @@
 
 import tbs ;
 
-project BB_Services 
+project BB 
 	:
 		requirements
 		<include>include
 		<include>src
-		<library>$(TBS)/TBS_Services//TBS@Services
-		<library>$(TBS)//dbus-1
+		<library>$(TBS)/BB_Services//BB@Services
 		<use>$(TBS)//PocoLibrarySet
-		<library>$(TBS)//PocoNetSSL
 		<library>$(TBS)/TBS//TBS
 		<link>shared
 	:
@@ -20,7 +18,7 @@ project BB_Services
 
 path-constant proj-dir : . ;
 tbs.obj-build common-sources : $(proj-dir) : [ tbs.glob-tree $(proj-dir)/src : *.cpp ] ; 
-lib BB@Services : common-sources : <tag>@tbs.dot-from-at ;
+lib BB : common-sources : <tag>@tbs.dot-from-at ;
 
-tbs.link-test BB@Services ;
-tbs.installation : BB@Services : lib ;
+tbs.link-test BB ;
+tbs.installation : BB : lib ;

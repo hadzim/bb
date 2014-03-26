@@ -1,0 +1,13 @@
+
+# in this toolchain everything depends on host system
+# do not use it unless you have a good reason (use lintlch instead)
+
+project user-config ;
+
+using qt4 
+	: /usr/lib/qt4
+	: /usr/lib/qt4/bin
+	: /usr/include/qt4
+	: /usr/lib
+	;
+

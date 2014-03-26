@@ -1,0 +1,60 @@
+# user-config.template.jam
+# author: Adam Trhon, adam.trhon@tbs-biometrics.com
+#
+# This file defines toolchains used in the boost build system.
+# Beside this all the developer-specific settings should go here.
+#
+# Read this header and place the file into your home folder as user-config.jam.
+# Use 
+#	'bjam toolset=gcc-m32' for forcing 32-bit code
+#	'bjam toolset=gcc-arm' for series 11 devices (not working very well yet as I don't have Poco compiled)
+#	'bjam toolset=gcc-tpro' for series 12 devices
+#	'bjam toolset=gcc' (or just 'bjam') to use default system toolset
+#	'bjam toolset=gcc-A toolset=gcc-B' for building both A and B architectures
+#
+# IMPORTANT - check and modify (if needed) the setup variables before use 
+#
+# Note: For TPRO I extracted the settings from the TPro toolchain environment file. If anything
+# goes wrong please let me know.
+#
+
+project user-config ;
+
+# setup variables
+constant ARM_TOOLCHAIN_DIR : /home/plambe/project/tbs-bgp210/tmp/cross/iwmmxt/bin ;
+constant TPRO_ENV_FILE : /usr/local/tbs-toolchain-gcc-4.6-i686/environment-setup-armv7a-angstrom-linux-gnueabi ;
+constant TPRO_PATH : /usr/local/tbs-toolchain-gcc-4.6-i686/sysroots/i686-angstromsdk-linux/usr/bin/armv7a-angstrom-linux-gnueabi ;
+
+# toolsets
+
+using gcc ;
+
+#using gcc 
+#	: 
+#		arm 
+#	: 
+#		$(ARM_TOOLCHAIN_DIR)/arm-linux-gnueabi-gcc 
+#	:
+#		<archiver>$(ARM_TOOLCHAIN_DIR)/arm-linux-gnueabi-ar
+#	;
+
+#using gcc
+#	:
+#		m32
+#	:
+#	:
+#		<compileflags>-m32 
+#		<linkflags>-m32
+#	;
+
+using gcc
+	:
+		tpro
+	:
+		$(TPRO_PATH)/arm-angstrom-linux-gnueabi-g++
+	:
+		<archiver>$(TPRO_PATH)/arm-angstrom-linux-gnueabi-ar
+		<compileflags>"-march=armv7-a -fno-tree-vectorize -mthumb-interwork -mfloat-abi=softfp -mfpu=neon -mtune=cortex-a8 --sysroot=/usr/local/tbs-toolchain-gcc-4.6-i686/sysroots/armv7a-angstrom-linux-gnueabi"
+		<linkflags>--sysroot=/usr/local/tbs-toolchain-gcc-4.6-i686/sysroots/armv7a-angstrom-linux-gnueabi
+	;
+
