@@ -32,8 +32,8 @@
 								<option id="gnu.cpp.compiler.mingw.exe.debug.option.debugging.level.336683442" name="Debug Level" superClass="gnu.cpp.compiler.mingw.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.413152439" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/TBS/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/TBS_Services/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BB_Services/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/TBS.Services/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BB.Services/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/include}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1596624612" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -52,6 +52,8 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.debug.1029363377" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.debug">
 								<option id="gnu.cpp.link.option.libs.1112547161" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="TBS"/>
+									<listOptionValue builtIn="false" value="BB.Services"/>
+									<listOptionValue builtIn="false" value="TBS.Services"/>
 									<listOptionValue builtIn="false" value="PocoNet"/>
 									<listOptionValue builtIn="false" value="PocoXML"/>
 									<listOptionValue builtIn="false" value="PocoFoundation"/>
@@ -59,6 +61,8 @@
 								</option>
 								<option id="gnu.cpp.link.option.paths.377416207" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/TBS/TBS.win.dll}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BB.Services/BB.Services.dll.win}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/TBS.Services/TBS.Services.dll.win}&quot;"/>
 								</option>
 								<option defaultValue="true" id="gnu.cpp.link.option.shared.651234751" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1279016712" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
