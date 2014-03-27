@@ -6,7 +6,7 @@ project BB_Collector
 		requirements
 		<include>src
 		<library>$(TBS)/BB//BB
-		<library>$(TBS)/BB_Services//BB@Services
+		<library>$(TBS)/BB.Services//BB@Services
 	;
 
 path-constant proj-dir : . ;

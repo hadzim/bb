@@ -6,7 +6,7 @@ project BB_Services
 		requirements
 		<include>include
 		<include>src
-		<library>$(TBS)/TBS_Services//TBS@Services
+		<library>$(TBS)/TBS.Services//TBS@Services
 		<library>$(TBS)//dbus-1
 		<use>$(TBS)//PocoLibrarySet
 		<library>$(TBS)//PocoNetSSL
