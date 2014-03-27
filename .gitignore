@@ -4,8 +4,10 @@
 *.exe
 *.dll
 *.so
+*.a
 .metadata
 BoostBuild
 */bin/*
 install/*
 BeagleBone*
+*/bu/*
