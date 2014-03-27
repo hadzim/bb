@@ -1,2 +1,0 @@
-..\..\TBS_Services\TBS.Services.Generator.win\TBS_Services.Generator.exe --def=sensor.xml --name=Sensor --src=../src/ --include=../include/BB/Services/ --relative=BB/Services/ --generate=dbus
-..\..\TBS_Services\TBS.Services.Generator.win\TBS_Services.Generator.exe --def=visualization.xml --name=Visualization --src=../src/ --include=../include/BB/Services/ --relative=BB/Services/ --javascript=../js/ --generate=jsonp
