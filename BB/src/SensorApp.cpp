@@ -5,6 +5,7 @@
  *      Author: root
  */
 
+#include <BB/ServiceNotification.h>
 #include "BB/SensorApp.h"
 #include <iostream>
 #include <Poco/Delegate.h>
@@ -51,7 +52,11 @@ namespace BB {
 			i->timer->start(TBS::TimerCallback<SensorApp>(*this, &SensorApp::onTimer));
 		}
 
-		waitForTerminationRequest();
+		BB::ServiceNotification::serviceReady();
+
+		this->waitForTerminationRequest();
+
+		BB::ServiceNotification::serviceDisabled();
 
 		sensors.clear();
 

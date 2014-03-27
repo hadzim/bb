@@ -15,6 +15,7 @@
 #include "BB/Services/Sensor.h"
 #include "BB/Services/SensorSvc_DBus.h"
 #include "BB/Sensor/SensorDataHelpers.h"
+#include "BB/ServiceNotification.h"
 
 #include <iostream>
 
@@ -159,13 +160,18 @@ int HttpServer::main(const std::vector<std::string>& args) {
 		QueryProvider::Ptr queryProvider = new QueryProvider();
 		TBS::Services::IServer::Ptr sc = jsonServer->createQuery(queryProvider);
 		jsonServer->start();
+
+		BB::ServiceNotification::serviceReady();
+
 		this->waitForTerminationRequest();
+
+		BB::ServiceNotification::serviceDisabled();
+
 		jsonServer->stop();
 	}
 
 	std::cout << "main HttpServer.stop" << std::endl;
 
-	waitForTerminationRequest();
 
 	return EXIT_OK;
 }
