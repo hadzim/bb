@@ -25,6 +25,7 @@
 
 #include "ForecastParser.h"
 #include <sstream>
+#include "BB/Configuration.h"
 
 namespace BB {
 
@@ -99,6 +100,7 @@ namespace BB {
 
 		SensorData s(
 				SensorData::ForecastTemperature,
+				Configuration::getSensorName(SensorData::ForecastTemperature, name),
 				name,
 				SensorData::UnitTemperature,
 				data.date,

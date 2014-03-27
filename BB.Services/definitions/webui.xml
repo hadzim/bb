@@ -1,12 +1,14 @@
 <?xml version="1.0" ?>
-<node name="TBS.BB.Visualization" comment="Visualization API">
+<node name="TBS.BB.WebUI" comment="Web user interface API">
   <struct name='SensorInfo'>
       <arg type="s" name="sensorType"/>
       <arg type="s" name="sensorName"/>
+      <arg type="s" name="sensorRawName"/>
   </struct>
   <struct name='SensorData'>
       <arg type="s" name="sensorType"/>
       <arg type="s" name="sensorName"/>
+      <arg type="s" name="sensorRawName"/>
       <arg type="s" name="unit"/>
       <arg type="s" name="date"/>
       <arg type="i" name="status"/>
@@ -14,7 +16,7 @@
       <arg type="s" name="textValue"/>
   </struct>
 
-  <interface name="TBS.BB.Visualization.Query">
+  <interface name="TBS.BB.WebUI.Query">
   	
   	<method name="GetSensors">
       <arg type="a[SensorInfo]" name="sensors" direction="out"/>
@@ -27,7 +29,15 @@
     <method name="GetSensorsData">
       <arg type="s" name="sensorType" direction="in" />
       <arg type="a[SensorData]" name="allSensorData" direction="out"/>
-    </method>
-     
+    </method> 
   </interface>
+  <interface name="TBS.BB.WebUI.Configuration">
+  
+  	 <method name="SetSensorProperty">
+      <arg type="s" name="sensorType" direction="in"/>
+      <arg type="s" name="sensorRawName" direction="in"/>
+      <arg type="s" name="sensorProperty" direction="in"/>
+      <arg type="s" name="sensorValue" direction="in"/>
+    </method>
+    </interface>
 </node>

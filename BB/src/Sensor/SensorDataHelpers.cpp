@@ -13,6 +13,7 @@ TBS::BB::Services::Sensor::IDataDistributor::SensorDataReceivedArg SensorDataHel
 	TBS::BB::Services::Sensor::IDataDistributor::SensorDataReceivedArg a;
 	a.sensorDate = SensorData::date2string(s.getDate());
 	a.sensorName = s.getName();
+	a.sensorRawName = s.getRawName();
 	a.sensorStatus = (int) s.getSensorStatus();
 	a.sensorType = s.getType();
 	a.sensorUnit = s.getUnit();
@@ -23,7 +24,7 @@ TBS::BB::Services::Sensor::IDataDistributor::SensorDataReceivedArg SensorDataHel
 
 SensorData SensorDataHelpers::eventArg2SensorData(
 		const TBS::BB::Services::Sensor::IDataDistributor::SensorDataReceivedArg & a) {
-	return SensorData(a.sensorType, a.sensorName, a.sensorUnit,
+	return SensorData(a.sensorType, a.sensorName, a.sensorRawName, a.sensorUnit,
 			SensorData::string2date(a.sensorDate),
 			(SensorData::Status) a.sensorStatus, a.sensorValue, a.sensorTextValue);
 }
@@ -31,7 +32,7 @@ SensorData SensorDataHelpers::eventArg2SensorData(
 void SensorDataHelpers::sendData(
 		TBS::BB::Services::Sensor::IDataCollector & collector,
 		const SensorData & s) {
-			collector.SendSensorData(s.getType(), s.getName(), s.getUnit(),
+			collector.SendSensorData(s.getType(), s.getName(), s.getRawName(), s.getUnit(),
 			BB::SensorData::date2string(s.getDate()), s.getSensorStatus(),
 			s.getValue(), s.getTextValue());
 }

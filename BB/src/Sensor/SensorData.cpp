@@ -17,11 +17,12 @@ const std::string SensorData::UnitTemperature = "C";
 SensorData::SensorData(
 				const std::string & type,
 				const std::string & name,
+				const std::string & rawname,
 				const std::string & unit,
 				const Poco::DateTime & date,
 				const Status & status,
 				const double & value,
-				const std::string & textValue) : type(type), name(name), unit(unit), date(date), status(status), value(value), textValue(textValue){
+				const std::string & textValue) : type(type), name(name), rawname(rawname), unit(unit), date(date), status(status), value(value), textValue(textValue){
 
 		}
 
@@ -30,6 +31,9 @@ SensorData::SensorData(
 		}
 		std::string SensorData::getName() const {
 			return name;
+		}
+		std::string SensorData::getRawName() const {
+			return rawname;
 		}
 		std::string SensorData::getUnit() const {
 			return unit;

@@ -6,6 +6,7 @@
     <method name="SendSensorData">
       <arg type="s" name="sensorType" direction="in"/>
       <arg type="s" name="sensorName" direction="in"/>
+      <arg type="s" name="sensorRawName" direction="in"/>
       <arg type="s" name="sensorUnit" direction="in"/>
       <arg type="s" name="sensorDate" direction="in"/>
       <arg type="i" name="sensorStatus" direction="in"/>
@@ -20,6 +21,7 @@
     <signal name="SensorDataReceived">
       <arg type="s" name="sensorType"/>
       <arg type="s" name="sensorName"/>
+      <arg type="s" name="sensorRawName"/>
       <arg type="s" name="sensorUnit"/>
       <arg type="s" name="sensorDate"/>
       <arg type="i" name="sensorStatus"/>

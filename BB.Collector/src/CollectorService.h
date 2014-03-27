@@ -37,13 +37,14 @@ public:
 	}
 
 	virtual void SendSensorData(const std::string & sensorType,
-				const std::string & sensorName, const std::string & sensorUnit,
+				const std::string & sensorName, const std::string & sensorRawName, const std::string & sensorUnit,
 				const std::string & sensorDate, const int32_t & sensorStatus,
 				const double & sensorValue, const std::string & sensorTextValue){
 
 		BB::SensorData d(
 				sensorType,
 				sensorName,
+				sensorRawName,
 				sensorUnit,
 				BB::SensorData::string2date(sensorDate),
 				(BB::SensorData::Status)sensorStatus,
@@ -63,14 +64,6 @@ class CollectorService: public Poco::Util::ServerApplication {
 
 public:
 
-	class Cfg: public Configuration {
-	public:
-		Cfg();
-		std::string getNickname(std::string originalName);
-	private:
-		Poco::AutoPtr<Poco::Util::ConfigurationView> nicknames;
-	};
-
 	typedef Poco::SharedPtr<CollectorService> Ptr;
 	CollectorService();
 	virtual ~CollectorService() {
@@ -81,8 +74,6 @@ protected:
 
 	int main(const std::vector<std::string>& args);
 
-private:
-	Cfg cfg;
 
 };
 

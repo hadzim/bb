@@ -10,13 +10,15 @@
 #include <Poco/Delegate.h>
 #include "Poco/Thread.h"
 
-#include "BB/Services/Visualization.h"
-#include "BB/Services/VisualizationSvc_Jsonp.h"
+#include "BB/Services/WebUI.h"
+#include "BB/Services/WebUISvc_Jsonp.h"
 #include "BB/Services/Sensor.h"
 #include "BB/Services/SensorSvc_DBus.h"
 #include "BB/Sensor/SensorDataHelpers.h"
-
+#include "BB/Configuration.h"
 #include <iostream>
+
+using TBS::BB::WebUI::Json::Client;
 
 namespace BB {
 
@@ -24,7 +26,7 @@ std::string sensorKey(const std::string & type, const std::string & name) {
 	return type + "::" + name;
 }
 
-std::string sensorKey(const TBS::BB::Visualization::SensorInfo & i) {
+std::string sensorKey(const TBS::BB::WebUI::SensorInfo & i) {
 	return i.sensorType + "::" + i.sensorName;
 }
 
@@ -36,7 +38,13 @@ std::string sensorDateKey(const BB::SensorData & d) {
 	return sensorKey(d) + "::" + BB::SensorData::date2string(d.getDate());
 }
 
-class QueryProvider: public TBS::BB::Visualization::IQuery {
+class ConfigurationProvider: public TBS::BB::WebUI::IConfiguration {
+    void SetSensorProperty(const std::string & sensorType, const std::string & sensorRawName, const std::string & sensorProperty, const std::string & sensorValue){
+    	BB::Configuration::setSensorProperty(sensorType, sensorRawName, sensorProperty, sensorValue);
+    }
+};
+
+class QueryProvider: public TBS::BB::WebUI::IQuery {
 private:
 	TBS::BB::Services::Sensor::DBus::Client::Ptr observer;
 	Poco::Mutex m;
@@ -59,6 +67,7 @@ public:
 
 		std::cout << "accept " << sd << std::endl;
 
+		sensors[sensorKey(sd)].sensorRawName = sd.getRawName();
 		sensors[sensorKey(sd)].sensorName = sd.getName();
 		sensors[sensorKey(sd)].sensorType = sd.getType();
 
@@ -74,9 +83,9 @@ public:
 
 	}
 
-	virtual std::vector<TBS::BB::Visualization::SensorInfo> GetSensors() {
+	virtual std::vector<TBS::BB::WebUI::SensorInfo> GetSensors() {
 		Poco::Mutex::ScopedLock l(m);
-		std::vector<TBS::BB::Visualization::SensorInfo> all;
+		std::vector<TBS::BB::WebUI::SensorInfo> all;
 
 		for (Sensors::iterator i = sensors.begin(); i != sensors.end(); i++) {
 			all.push_back(i->second);
@@ -85,10 +94,11 @@ public:
 		return all;
 	}
 
-	static TBS::BB::Visualization::SensorData convertSD(const BB::SensorData & data){
-			TBS::BB::Visualization::SensorData sd;
+	static TBS::BB::WebUI::SensorData convertSD(const BB::SensorData & data){
+			TBS::BB::WebUI::SensorData sd;
 			sd.date = data.getDateAsString();
 			sd.sensorName = data.getName();
+			sd.sensorRawName = data.getRawName();
 			sd.sensorType = data.getType();
 			sd.status = (int) data.getSensorStatus();
 			sd.unit = data.getUnit();
@@ -97,11 +107,11 @@ public:
 			return sd;
 		}
 
-	virtual std::vector<TBS::BB::Visualization::SensorData> GetSensorData(
+	virtual std::vector<TBS::BB::WebUI::SensorData> GetSensorData(
 			const std::string & sensorType, const std::string & sensorName) {
 
 		Poco::Mutex::ScopedLock l(m);
-		std::vector<TBS::BB::Visualization::SensorData> all;
+		std::vector<TBS::BB::WebUI::SensorData> all;
 
 		SensorDataMap & m = storage[sensorKey(sensorType, sensorName)];
 		for (SensorDataMap::iterator i = m.begin(); i != m.end(); i++) {
@@ -113,11 +123,11 @@ public:
 
 
 
-	virtual std::vector<TBS::BB::Visualization::SensorData> GetSensorsData(
+	virtual std::vector<TBS::BB::WebUI::SensorData> GetSensorsData(
 				const std::string & sensorType) {
 
 		Poco::Mutex::ScopedLock l(m);
-		std::vector<TBS::BB::Visualization::SensorData> all;
+		std::vector<TBS::BB::WebUI::SensorData> all;
 
 		for (Storage::iterator sit = storage.begin(); sit != storage.end(); sit++){
 
@@ -133,7 +143,7 @@ public:
 private:
 	typedef std::map<std::string, BB::SensorData> SensorDataMap;
 	typedef std::map<std::string, SensorDataMap> Storage;
-	typedef std::map<std::string, TBS::BB::Visualization::SensorInfo> Sensors;
+	typedef std::map<std::string, TBS::BB::WebUI::SensorInfo> Sensors;
 	Sensors sensors;
 	Storage storage;
 };
@@ -152,12 +162,14 @@ int HttpServer::main(const std::vector<std::string>& args) {
 
 	TBS::Services::JsonServerChannel ch(8111);
 
-	TBS::BB::Visualization::Json::Server::Ptr jsonServer =
-			new TBS::BB::Visualization::Json::Server(ch);
+	TBS::BB::WebUI::Json::Server::Ptr jsonServer =
+			new TBS::BB::WebUI::Json::Server(ch);
 	{
 
 		QueryProvider::Ptr queryProvider = new QueryProvider();
-		TBS::Services::IServer::Ptr sc = jsonServer->createQuery(queryProvider);
+		ConfigurationProvider::Ptr cfgProvider = new ConfigurationProvider();
+		TBS::Services::IServer::Ptr sq = jsonServer->createQuery(queryProvider);
+		TBS::Services::IServer::Ptr sc = jsonServer->createConfiguration(cfgProvider);
 		jsonServer->start();
 		this->waitForTerminationRequest();
 		jsonServer->stop();

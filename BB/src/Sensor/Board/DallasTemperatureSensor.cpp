@@ -14,6 +14,7 @@
 #include <fstream>
 #include <sstream>
 #include <stdio.h>
+#include "BB/Configuration.h"
 
 namespace BB {
 
@@ -53,17 +54,22 @@ namespace BB {
 				throw Poco::Exception("Cannot parse temperature");
 			}
 			double val = temp * 1.0 / 1000.0;
-/*
-			TBS::TSeries::IPC::SensorDataStoreRequest r;
-			r.setSensorName(sensorID);
-			r.setSensorStatus(TBS::TSeries::IPC::SensorDataStoreRequest::Sensor_Ok);
-			r.setSensorType("Temp");
-			r.setSensorUnit("C");
-			r.setSensorValue(val);
-*/
+
+
+			SensorData s(
+					SensorData::Temperature,
+					Configuration::getSensorName(SensorData::Temperature, sensorID),
+					sensorID,
+					SensorData::UnitTemperature,
+					Poco::DateTime(),
+					SensorData::Sensor_Ok,
+					val,
+					""
+			);
+
 			std::cout << "sensor: " << sensorID  << " " << val << std::endl;
 
-			//requests.push_back(r);
+			requests.push_back(s);
 		}
 
 		return requests;

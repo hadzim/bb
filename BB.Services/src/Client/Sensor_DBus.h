@@ -40,12 +40,13 @@ namespace TBS {
 				
 				
  //methods 
-				virtual void SendSensorData(const std::string & sensorType, const std::string & sensorName, const std::string & sensorUnit, const std::string & sensorDate, const int32_t & sensorStatus, const double & sensorValue, const std::string & sensorTextValue){		try {
+				virtual void SendSensorData(const std::string & sensorType, const std::string & sensorName, const std::string & sensorRawName, const std::string & sensorUnit, const std::string & sensorDate, const int32_t & sensorStatus, const double & sensorValue, const std::string & sensorTextValue){		try {
 		::DBus::CallMessage call;
 		::DBus::MessageIter wi = call.writer();
 
 		wi << sensorType;
 		wi << sensorName;
+		wi << sensorRawName;
 		wi << sensorUnit;
 		wi << sensorDate;
 		wi << sensorStatus;
@@ -104,6 +105,8 @@ namespace TBS {
 		ri >> _sensorType;
 		std::string _sensorName;
 		ri >> _sensorName;
+		std::string _sensorRawName;
+		ri >> _sensorRawName;
 		std::string _sensorUnit;
 		ri >> _sensorUnit;
 		std::string _sensorDate;
@@ -117,6 +120,7 @@ namespace TBS {
 		SensorDataReceivedArg sig_arg;
 		sig_arg.sensorType = _sensorType;
 		sig_arg.sensorName = _sensorName;
+		sig_arg.sensorRawName = _sensorRawName;
 		sig_arg.sensorUnit = _sensorUnit;
 		sig_arg.sensorDate = _sensorDate;
 		sig_arg.sensorStatus = _sensorStatus;
