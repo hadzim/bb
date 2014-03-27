@@ -31,12 +31,12 @@ alias win
 alias all
 	:
 		TBS
-		TBS_Services
-		BB_Services
+		TBS.Services
+		BB.Services
 		BB
-		BB_Collector
-		BB_Forecast
-		BB_HttpServer
+		BB.Collector
+		BB.Forecast
+		BB.HttpServer
 	;
 
 

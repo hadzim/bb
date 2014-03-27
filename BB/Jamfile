@@ -6,7 +6,7 @@ project BB
 		requirements
 		<include>include
 		<include>src
-		<library>$(TBS)/BB_Services//BB@Services
+		<library>$(TBS)/BB.Services//BB@Services
 		<use>$(TBS)//PocoLibrarySet
 		<library>$(TBS)/TBS//TBS
 		<link>shared
