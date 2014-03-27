@@ -1,0 +1,173 @@
+  .icon {
+      font-size: 5.5em;
+      color: rgba(255,255,255,0.6);
+      text-shadow: 1px -1px 8px #fff;
+      font-weight: bold;
+  }
+  h3.icon {
+      position: absolute;
+      margin-top: 13px;
+      margin-left: 0px;
+      z-index: 0;
+   }
+   
+   div.iconable {
+      position: relative;
+       padding-left: 100px;
+       z-index: 5;
+       padding-top: 15px;
+       border-top: 2px solid #444;
+   }
+   
+   div#date {
+    margin-top: -10px;
+      
+   }
+   div#date div {
+      /*position: absolute;
+      top: 0px;*/
+      float: left;
+      font-weight: bold;
+   }
+   
+   div#date div#dateday{
+      font-size: 2.2em;
+      width: 50%;
+   }
+   div#date div#datedate{
+      font-size: 2.2em;
+      width: 50%;
+   }
+   
+   div#date div#datetime {
+      line-height: 1em;
+      font-size: 6.5em;
+      width: 43%;
+      color: rgba(255,255,255,0.7);
+      text-shadow: 1px -1px 4px #fff;
+      
+   }
+   
+   #box { 
+      width: 780px; 
+      height: 460px; 
+      margin: 0px; padding: 0px;
+      background-color: #000;
+      color: white;
+      position: relative;
+   }
+   .btn {
+      color: black;
+   }
+   .btn-primary {
+      color: white;
+   }
+   
+   #inbox { 
+    padding: 10px;
+    font-size: 1.0em;
+   }
+   
+   
+   
+   
+   #box hr {
+   border: 0px;
+    border-bottom: 2px solid rgba(255,255,255,0.3);
+    line-height: 2px;
+    margin: 10px 0px;
+    padding: 0px;  
+   }
+   
+   #forecasts {
+      /*margin-left: 30px;*/
+   }
+   
+   #forecastsnav {
+      /*position: absolute;
+      width: 100px;*/
+   }
+   
+   .forecast {
+    float: left;
+    margin: 5px 7px 5px 0px;
+   }
+   .forecast {
+      padding-left: 3px;
+      padding-right: 3px;
+   }
+   .forecast .btn {
+    margin: 1px;
+    padding-left: 4px;
+    padding-right: 4px;
+   }
+   
+   
+   
+   .inline {
+    display: inline;
+   }
+   .modal-content {
+      background-color: black;
+      color: white;
+      border-color: white;
+   }
+   /*
+   .modal {
+      border: 1px solid white;
+      background-color: rgba(0,0,0,0.9) !important;
+   } */
+   .close-inverse {
+      color: white;
+      opacity: 0.7;
+   }
+   .close-inverse:hover, .close-inverse:focus {
+      color: #fff;
+      opacity: 0.9;
+      filter: alpha(opacity=40);
+    }
+    
+    button.fcoverview {
+      margin: 5px -1px 2px;
+    }
+    .temperatureGraph {
+        position: absolute;
+        right: 20px;
+        margin-top: -50px;
+    }
+    div#temperature {
+        height: 90px;
+    }
+    div#temperature .btn {
+      float: left;
+      margin: 5px 10px 0px 0px;
+    }
+    .bigtemp {
+      min-width: 210px;
+      font-size: 2.0em;
+      background-color: transparent;
+      color: white;
+      border: 0px;
+    }
+    .normaltemp {
+      min-width: 110px;
+    }
+    .bigtemp .temp {
+      font-size: 2.5em;
+      line-height: 1.0em;
+      padding: 0px 0px 0px 0.2em;
+      font-weight: bold;
+   } 
+   .temp-under {
+      color: rgb(124, 159, 211);
+   }
+   
+   .temp-above {
+      
+   }
+   #temperatureChart {
+      margin-left: 100px;
+      margin-top: 10px;
+   }
+   
+    
