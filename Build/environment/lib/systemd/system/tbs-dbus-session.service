@@ -1,0 +1,10 @@
+[Unit]
+Description=TBS D-Bus Session Message Bus
+Requires=dbus.service
+
+[Service]
+EnvironmentFile=/home/tbs/data/scripts/tbs_dbus_session.env
+ExecStart=/usr/bin/dbus-daemon --session --nofork --address=${DBUS_SESSION_BUS_ADDRESS}
+
+[Install]
+WantedBy=multi-user.target

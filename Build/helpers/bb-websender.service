@@ -1,0 +1,10 @@
+[Unit]
+Description=BB Web Sender Service
+After=syslog.target network.target
+
+[Service]
+Type=simple
+ExecStart=/home/root/bin/BeagleBone.WebSender
+
+[Install]
+WantedBy=multi-user.target

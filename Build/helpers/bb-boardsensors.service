@@ -1,0 +1,10 @@
+[Unit]
+Description=BB Measurement Board Sensors
+After=syslog.target network.target
+
+[Service]
+Type=simple
+ExecStart=/home/root/bin/BeagleBone.BoardSensors
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,10 @@
+[Unit]
+Description=BB Measurement Server
+After=syslog.target network.target
+
+[Service]
+Type=simple
+ExecStart=/home/root/bin/BeagleBone.Server
+
+[Install]
+WantedBy=multi-user.target
