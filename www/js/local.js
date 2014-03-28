@@ -13,7 +13,7 @@
   
   $( document ).ready(function() {
       	//tbsService = new Query({url: "http://127.0.0.1:8111/"});
-        tbsService = new Query({url: "http://192.168.137.6:8111/"});
+        tbsService = new Query({url: Settings.url});
         
         window.setInterval(updateTime,1000);
         updateTime();

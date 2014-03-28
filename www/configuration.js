@@ -1,3 +1,3 @@
-var Settings {
-	host: "192.168.7.2:8111"
+var Settings = {
+	url: "http://192.168.137.57:8111/"
 }
