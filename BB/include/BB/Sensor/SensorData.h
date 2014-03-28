@@ -39,6 +39,7 @@ class SensorData {
 		SensorData(
 				const std::string & type,
 				const std::string & name,
+				const std::string & rawName,
 				const std::string & unit,
 				const Poco::DateTime & date,
 				const Status & status,
@@ -47,6 +48,7 @@ class SensorData {
 
 		std::string getType() const;
 		std::string getName() const;
+		std::string getRawName() const;
 		std::string getUnit() const;
 		double getValue() const;
 		Status getSensorStatus() const;
@@ -62,6 +64,7 @@ private:
 
 	std::string type;
 	std::string name;
+	std::string rawname;
 	std::string unit;
 
 	Poco::DateTime date;

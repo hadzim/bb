@@ -39,13 +39,14 @@ namespace TBS {
 		  * [method] SendSensorData: 
 		  * [in] std::string sensorType: 
 		  * [in] std::string sensorName: 
+		  * [in] std::string sensorRawName: 
 		  * [in] std::string sensorUnit: 
 		  * [in] std::string sensorDate: 
 		  * [in] int32_t sensorStatus: 
 		  * [in] double sensorValue: 
 		  * [in] std::string sensorTextValue: 
 		  */ 
-		        virtual void SendSensorData(const std::string & sensorType, const std::string & sensorName, const std::string & sensorUnit, const std::string & sensorDate, const int32_t & sensorStatus, const double & sensorValue, const std::string & sensorTextValue) = 0;
+		        virtual void SendSensorData(const std::string & sensorType, const std::string & sensorName, const std::string & sensorRawName, const std::string & sensorUnit, const std::string & sensorDate, const int32_t & sensorStatus, const double & sensorValue, const std::string & sensorTextValue) = 0;
 
 				
  //signals 
@@ -82,6 +83,7 @@ namespace TBS {
 						struct SensorDataReceivedArg { 
 std::string sensorType;
 std::string sensorName;
+std::string sensorRawName;
 std::string sensorUnit;
 std::string sensorDate;
 int32_t sensorStatus;

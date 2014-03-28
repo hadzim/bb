@@ -16,14 +16,6 @@
 
 namespace BB {
 
-CollectorService::Cfg::Cfg() {
-	this->nicknames = this->getView("nicknames");
-}
-
-std::string CollectorService::Cfg::getNickname(std::string originalName) {
-	return this->getString(nicknames, originalName, originalName);
-}
-
 CollectorService::CollectorService() {
 }
 

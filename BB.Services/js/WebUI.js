@@ -4,7 +4,7 @@
 
 function Query(params){
   var settings = {
-      url: params.url + "TBS.BB.Visualization.Query",
+      url: params.url + "TBS.BB.WebUI.Query",
   };
   
   
@@ -40,6 +40,33 @@ sensorName: _sensorName
     			data: {
     				method: "GetSensorsData",
 sensorType: _sensorType
+				}
+			});
+		};
+
+}
+
+function Configuration(params){
+  var settings = {
+      url: params.url + "TBS.BB.WebUI.Configuration",
+  };
+  
+  
+ //methods 
+          this.SetSensorProperty = function(_sensorType, 
+_sensorRawName, 
+_sensorProperty, 
+_sensorValue){
+			return $.ajax({
+    			url: settings.url,
+    			jsonp: "callback",
+    			dataType: "jsonp",
+    			data: {
+    				method: "SetSensorProperty",
+sensorType: _sensorType, 
+sensorRawName: _sensorRawName, 
+sensorProperty: _sensorProperty, 
+sensorValue: _sensorValue
 				}
 			});
 		};

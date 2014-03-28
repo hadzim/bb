@@ -52,6 +52,8 @@ namespace TBS {
 ri >> _sensorType;
 		std::string _sensorName;
 ri >> _sensorName;
+		std::string _sensorRawName;
+ri >> _sensorRawName;
 		std::string _sensorUnit;
 ri >> _sensorUnit;
 		std::string _sensorDate;
@@ -62,7 +64,7 @@ ri >> _sensorStatus;
 ri >> _sensorValue;
 		std::string _sensorTextValue;
 ri >> _sensorTextValue;
-impl->SendSensorData(_sensorType, _sensorName, _sensorUnit, _sensorDate, _sensorStatus, _sensorValue, _sensorTextValue);
+impl->SendSensorData(_sensorType, _sensorName, _sensorRawName, _sensorUnit, _sensorDate, _sensorStatus, _sensorValue, _sensorTextValue);
 		::DBus::ReturnMessage reply(call);
 		return reply;
 		} catch (Poco::Exception &ex){
@@ -107,11 +109,12 @@ namespace TBS {
 				//	<introspection>
 				//}
 				
-					void SensorDataReceived(const std::string & sensorType, const std::string & sensorName, const std::string & sensorUnit, const std::string & sensorDate, const int32_t & sensorStatus, const double & sensorValue, const std::string & sensorTextValue){
+					void SensorDataReceived(const std::string & sensorType, const std::string & sensorName, const std::string & sensorRawName, const std::string & sensorUnit, const std::string & sensorDate, const int32_t & sensorStatus, const double & sensorValue, const std::string & sensorTextValue){
 		::DBus::SignalMessage sig("SensorDataReceived");
 		::DBus::MessageIter wi = sig.writer();
 		wi << sensorType;
 		wi << sensorName;
+		wi << sensorRawName;
 		wi << sensorUnit;
 		wi << sensorDate;
 		wi << sensorStatus;
@@ -123,7 +126,7 @@ namespace TBS {
 			private:
 				
 						void handlerSensorDataReceived(TBS::BB::Services::Sensor::IDataDistributor::SensorDataReceivedArg & arg){
-			this->SensorDataReceived(arg.sensorType, arg.sensorName, arg.sensorUnit, arg.sensorDate, arg.sensorStatus, arg.sensorValue, arg.sensorTextValue);
+			this->SensorDataReceived(arg.sensorType, arg.sensorName, arg.sensorRawName, arg.sensorUnit, arg.sensorDate, arg.sensorStatus, arg.sensorValue, arg.sensorTextValue);
 		}
 
 				TBS::BB::Services::Sensor::IDataDistributor::Ptr impl;
