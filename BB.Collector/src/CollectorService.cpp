@@ -12,6 +12,8 @@
 #include <Poco/Util/XMLConfiguration.h>
 #include "BB/Services/SensorSvc_DBus.h"
 
+#include "BB/ServiceNotification.h"
+
 namespace BB {
 
 CollectorService::CollectorService() {
@@ -29,7 +31,12 @@ int CollectorService::main(const std::vector<std::string>& args) {
 			SensorCollector::Ptr collector = new SensorCollector(distributor);
 			TBS::Services::IServer::Ptr sc = dbusServer->createDataCollector(collector);
 			TBS::Services::IServer::Ptr sd = dbusServer->createDataDistributor(distributor);
+
+			BB::ServiceNotification::serviceReady();
+
 			this->waitForTerminationRequest();
+
+			BB::ServiceNotification::serviceDisabled();
 			//Poco::Thread::sleep(4000);
 		}
 

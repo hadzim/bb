@@ -1,3 +1,4 @@
+#ifdef __WIN32__
 #ifndef _NO_DBUS
 /*
  *
@@ -503,4 +504,5 @@ void DefaultMainLoop::dispatch() {
  _mutex_w.unlock();
  */
 
+#endif
 #endif
