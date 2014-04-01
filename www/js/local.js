@@ -17,21 +17,29 @@
         
         window.setInterval(updateTime,1000);
         updateTime();
-        updateDefaultForecast();
-      	
+        
+        AmCharts.ready(function () {
+            updateDefaultForecast();        
+        });
+        
+        
         updateTemperatures();
         
         $("button[rel='fcb']").click(function(){
-              $("button[rel='fcb']").removeClass("btn-primary");
-              $(this).addClass("btn-primary");
+          console.log("clicked");
+              $("button[rel='fcb']").removeClass("bg-blue");
+              $(this).addClass("bg-blue");
               //updateForecast($('#forecasts'), $(this).attr("data-place"));
               activeForecast = $(this).attr("data-place");
               updateDefaultForecast();
         });
         
-        $("#temperature").on("click", "button", function(e){
-              
+        $("#temperature").on("click", "div", function(e){
               showTemperatureDetail($(this).attr("data-place"));
+        });
+        
+        $("#forecastTemperature").on("click", "div[rel='fdetail']", function(e){
+              showForecastDetail($(this).attr("data-place"));
         });
         
         
