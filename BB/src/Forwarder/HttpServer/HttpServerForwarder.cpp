@@ -130,8 +130,8 @@ namespace BB {
 
 		this->query = queryProvider;
 
-		TBS::Services::IServer::Ptr sq = jsonServer->createQuery(queryProvider);
-		TBS::Services::IServer::Ptr sc = jsonServer->createConfiguration(cfgProvider);
+		sq = jsonServer->createQuery(queryProvider);
+		sc = jsonServer->createConfiguration(cfgProvider);
 
 		jsonServer->start();
 

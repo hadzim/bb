@@ -21,22 +21,22 @@ namespace BB {
 			return filtered;
 		}
 
-		std::cout << "TimeCmp: " << SensorData::date2string(this->nextAcceptable) << " vs " << SensorData::date2string(data.getDate()) << std::endl;
+		//std::cout << "TimeCmp: " << SensorData::date2string(this->nextAcceptable) << " vs " << SensorData::date2string(data.getDate()) << std::endl;
 
 		if (data.getDate() < this->nextAcceptable) {
-			std::cout << "single: bad date" << std::endl;
+			//std::cout << "single: bad date" << std::endl;
 			return filtered;
 		}
 
 		filtered.set(data);
 
-		std::cout << "Next accept before: " << SensorData::date2string(this->nextAcceptable) << std::endl;
+		//std::cout << "Next accept before: " << SensorData::date2string(this->nextAcceptable) << std::endl;
 
 		do {
 			this->nextAcceptable = this->nextAcceptable + this->timespan;
 		} while (data.getDate() >= this->nextAcceptable);
 
-		std::cout << "Next accept after : " << SensorData::date2string(this->nextAcceptable) << std::endl;
+		//std::cout << "Next accept after : " << SensorData::date2string(this->nextAcceptable) << std::endl;
 
 		return filtered;
 	}
@@ -51,7 +51,7 @@ namespace BB {
 		TBS::Nullable<SensorData> filtered;
 
 		if (data.getType() != this->sensorType) {
-			std::cout << "multi: wrong type " << data.getType() << " vs " << this->sensorType << std::endl;
+			//std::cout << "multi: wrong type " << data.getType() << " vs " << this->sensorType << std::endl;
 			return filtered;
 		}
 

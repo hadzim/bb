@@ -13,6 +13,9 @@
 #include "json/reader.h"
 #include <fstream>
 
+#include <Poco/NumberFormatter.h>
+#include <Poco/NumberParser.h>
+
 namespace BB {
 	typedef std::map<std::string, std::string> Properties;
 	typedef Properties SensorProperties;
@@ -161,15 +164,34 @@ namespace BB {
 			const std::string & propertyName, const std::string & value) {
 		ConfigurationImpl cimpl;
 		cimpl.setProperty(sensorType, rawName, propertyName, value);
+
 	}
 
-	std::string getGlobalProperty(const std::string name, const std::string & propertyName) {
+	std::string Configuration::getGlobalProperty(const std::string name, const std::string & propertyName) {
 		ConfigurationImpl cimpl;
 		return cimpl.getGlobalProperty(name, propertyName);
 	}
-	void setGlobalProperty(const std::string name, const std::string & propertyName, const std::string & value) {
+	void Configuration::setGlobalProperty(const std::string name, const std::string & propertyName, const std::string & value) {
 		ConfigurationImpl cimpl;
 		cimpl.setGlobalProperty(name, propertyName, value);
+	}
+
+	std::string Configuration::initCfg(const std::string sectionName, const std::string & propertyName, const std::string & defaultValue){
+		try {
+			return BB::Configuration::getGlobalProperty(sectionName, propertyName);
+		} catch (...){
+			BB::Configuration::setGlobalProperty(sectionName, propertyName, defaultValue);
+		}
+		return defaultValue;
+	}
+	int Configuration::initCfg(const std::string sectionName, const std::string & propertyName, const int & defaultValue){
+		std::string val = Poco::NumberFormatter::format(defaultValue);
+		try {
+			return Poco::NumberParser::parse(BB::Configuration::getGlobalProperty(sectionName, propertyName));
+		} catch (...){
+			BB::Configuration::setGlobalProperty(sectionName, propertyName, Poco::NumberFormatter::format(defaultValue));
+		}
+		return defaultValue;
 	}
 
 /*

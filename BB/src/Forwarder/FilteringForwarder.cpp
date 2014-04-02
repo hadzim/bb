@@ -35,10 +35,10 @@ void FilteringForwarder::forward(const SensorData & d){
 		}
 	}
 	if (result.isSet()){
-		std::cout << "filter data OK" << std::endl;
+		//std::cout << "filter data OK" << std::endl;
 		wrappedForwarder->forward(result.ref());
 	} else {
-		std::cout << "filter data REJECTED" << std::endl;
+		//std::cout << "filter data REJECTED" << std::endl;
 	}
 }
 

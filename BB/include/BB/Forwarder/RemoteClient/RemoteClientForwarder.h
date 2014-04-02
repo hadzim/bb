@@ -26,7 +26,7 @@ namespace BB {
 */
 		public:
 			typedef Poco::SharedPtr<RemoteClientForwarder> Ptr;
-			RemoteClientForwarder(std::string host, std::string requestUrl, std::string projetID);
+			RemoteClientForwarder(std::string ip, int port, std::string requestUrl, std::string projetID);
 			virtual ~RemoteClientForwarder();
 
 			void forward(const SensorData & data);
@@ -36,7 +36,8 @@ namespace BB {
 		private:
 			Cache cache;
 
-			std::string host;
+			std::string ip;
+			int port;
 			std::string requestUrl;
 			std::string projectID;
 

@@ -54,8 +54,7 @@ namespace BB {
 		Poco::Mutex::ScopedLock l(m);
 		BB::SensorData sd = BB::SensorDataHelpers::eventArg2SensorData(arg);
 
-		std::cout << "fwd data: " << sd << std::endl;
-
+		//std::cout << "fwd data: " << sd << std::endl;
 		this->forwarder->forward(sd);
 	}
 

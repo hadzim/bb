@@ -15,11 +15,12 @@
 #include "Poco/Net/HTTPRequest.h"
 #include "BB/Sensor/SensorDataRW.h"
 #include "TBS/Log.h"
+#include <fstream>
 
 namespace BB {
 
-	RemoteClientForwarder::RemoteClientForwarder(std::string host, std::string requestUrl, std::string projectID)
-			: cache("cache.RemoteClientForwarder"), host(host), requestUrl(requestUrl), projectID(projectID) {
+	RemoteClientForwarder::RemoteClientForwarder(std::string ip, int port, std::string requestUrl, std::string projectID)
+			: cache("cache.RemoteClientForwarder"), ip(ip), port(port), requestUrl(requestUrl), projectID(projectID) {
 		//std::cout << "fwd created" << std::endl;
 	}
 
@@ -28,7 +29,7 @@ namespace BB {
 	}
 
 	void RemoteClientForwarder::sendToRemoteServer(const SensorData & m){
-		Poco::Net::HTTPClientSession s(host);
+		Poco::Net::HTTPClientSession s(ip, port);
 		Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_GET, requestUrl);
 		Poco::Net::HTMLForm form;
 		form.add("presenter", "Insert");
@@ -39,7 +40,12 @@ namespace BB {
 
 		Poco::Net::HTTPResponse response;
 		std::istream& rs = s.receiveResponse(response);
-		Poco::StreamCopier::copyStream(rs, std::cout);
+
+		std::ofstream of("err.txt");
+
+
+
+		Poco::StreamCopier::copyStream(rs, of);
 
 	}
 

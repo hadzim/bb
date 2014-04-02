@@ -11,6 +11,7 @@
 #include "Poco/SAX/ContentHandler.h"
 #include "Poco/DateTime.h"
 #include <Poco/BasicEvent.h>
+#include <Poco/DateTimeFormatter.h>
 
 namespace BB {
 

@@ -47,12 +47,13 @@ namespace BB {
 			int tz = 0;
 			data.dateStr =  attributes.getValue("", "from");
 			std::cout << data.dateStr << std::endl;
-			Poco::DateTimeParser::parse(data.dateStr, data.date, tz);
+			Poco::DateTime dt;
+			Poco::DateTimeParser::parse(data.dateStr, dt, tz);
 			data.date = Poco::DateTime(
-					data.date.year(),
-					data.date.month(),
-					data.date.day(),
-					hmap[data.date.hour()]
+					dt.year(),
+					dt.month(),
+					dt.day(),
+					hmap[dt.hour()]
 			);
 		}
 		if (localName == "temperature"){

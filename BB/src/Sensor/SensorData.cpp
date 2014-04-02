@@ -61,6 +61,10 @@ SensorData::SensorData(
 			int tz;
 			 return Poco::DateTimeParser::parse(Poco::DateTimeFormat::ISO8601_FORMAT, date, tz);
 		}
+		Poco::DateTime SensorData::localNow(){
+			Poco::LocalDateTime ldt;
+			return Poco::DateTime(ldt.year(), ldt.month(), ldt.day(), ldt.hour(), ldt.minute(), ldt.second());
+		}
 
 }
 

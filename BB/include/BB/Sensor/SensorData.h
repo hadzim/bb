@@ -60,6 +60,7 @@ class SensorData {
 		static std::string date2string(const Poco::DateTime & date);
 		static Poco::DateTime string2date(const std::string & date);
 
+		static Poco::DateTime localNow();
 private:
 
 	std::string type;

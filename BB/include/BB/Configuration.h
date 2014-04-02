@@ -26,7 +26,8 @@ namespace BB {
 		static std::string getGlobalProperty(const std::string sectionName, const std::string & propertyName);
 		static void setGlobalProperty(const std::string sectionName, const std::string & propertyName, const std::string & value);
 
-
+		static std::string initCfg(const std::string sectionName, const std::string & propertyName, const std::string & defaultValue);
+		static int initCfg(const std::string sectionName, const std::string & propertyName, const int & defaultValue);
 
 
 		/*

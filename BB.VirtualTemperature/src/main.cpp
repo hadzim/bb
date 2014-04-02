@@ -11,6 +11,7 @@
 #include "BB/Configuration.h"
 
 #include <Poco/Random.h>
+#include <Poco/DateTimeFormatter.h>
 
 namespace BB {
 
@@ -25,12 +26,17 @@ public:
 		{
 			int val = rand.next(max);
 
+			Poco::DateTime dt;
+			Poco::LocalDateTime ldt;
+
+			std::cout << "dt: " << dt.hour() << " local: " << ldt.hour() << std::endl;
+
 			SensorData data(
 					SensorData::Temperature,
 					Configuration::getSensorName(SensorData::Temperature, name),
 					name,
 					SensorData::UnitTemperature,
-					Poco::DateTime(),
+					SensorData::localNow(),
 					SensorData::Sensor_Ok,
 					val + from,
 					""

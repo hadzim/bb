@@ -15,6 +15,9 @@
 
 #include "BB/Forwarder/Filter.h"
 
+
+#include "BB/Configuration.h"
+
 namespace BB {
 
 	class EmptyFwd : public IForwarder {
@@ -23,15 +26,18 @@ namespace BB {
 			}
 	};
 
+
 	class Factory : public IForwarderFactory {
 		virtual IForwarder::Ptr createForwarder(){
 
+			std::string url 		= Configuration::initCfg("RemoteClient", "url", 		"127.0.0.1");
+			int			port		= Configuration::initCfg("RemoteClient", "port", 		80);
+			std::string query 		= Configuration::initCfg("RemoteClient", "query", 		"/mereni2/www/");
+			std::string projectID 	= Configuration::initCfg("RemoteClient", "projectID", 	"1");
+
+
 			//create remote client
-			IForwarder::Ptr remoteClient = new RemoteClientForwarder(
-					"127.0.0.1:81",
-					"/mereni2/www/",
-					"1"
-			);
+			IForwarder::Ptr remoteClient = new RemoteClientForwarder(url,port,query,projectID);
 
 			//forward on background
 			BgForwarder::Ptr bg = new BgForwarder("rc-bg", remoteClient);
