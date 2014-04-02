@@ -1,7 +1,7 @@
   
   function forecastData(rawData){
       var dn = new Date();
-      var d = new Date(rawData.date);
+      var d = parseDate(rawData.date);
       
       var obj = new Object();
       
@@ -46,7 +46,7 @@
        content += "<h2>";
        content += (data.temperature > 0 ? "<span class='temp temp-above'>" : "<span class='temp temp-under'>");
        content += (data.temperature == undefined) ? "?" : data.temperature | 0;
-       content += "</span>&deg;";
+       content += "&deg;</span>";
        content += "</h2>";
        content += "</div>";
       return content;     
@@ -107,6 +107,7 @@
   var activeForecast = "JosefuvDul";
   
   function updateForecast(item, name){
+        try {
         var si = tbsService.GetSensors();
                                     
         si.done(function( data, textStatus, jqXHR ) {
@@ -119,8 +120,16 @@
                 }
             });
             
-    		    
+    		    $("#noForecast").hide();
         });
+        si.fail(function( jqXHR, textStatus, errorThrown ) {
+          console.log("failed");
+          $("#noForecast").show(); 
+      });
+      
+      } catch (e){
+          $("#noForecast").show();
+      }
   }
   
   function showForecastDetail(sensorName){

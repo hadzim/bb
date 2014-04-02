@@ -1,4 +1,6 @@
-  
+  var temperatureRefresh = 1000;
+  var forecastRefresh = 1000;
+    
   function updateTime(){
        var dn = new Date();
        $("#datetime").html(readableTime(dn));
@@ -9,22 +11,20 @@
           temperatureRefresh = 0;
           updateTemperatures();
        }
+       
+       if (forecastRefresh++ > 60 * 5){
+          forecastRefresh = 0;
+          updateDefaultForecast();
+       }
   }
   
   $( document ).ready(function() {
       	//tbsService = new Query({url: "http://127.0.0.1:8111/"});
         tbsService = new Query({url: Settings.url});
         
-        window.setInterval(updateTime,1000);
         updateTime();
-        
-        AmCharts.ready(function () {
-            updateDefaultForecast();        
-        });
-        
-        
-        updateTemperatures();
-        
+        window.setInterval(updateTime,1000);
+       
         $("button[rel='fcb']").click(function(){
           console.log("clicked");
               $("button[rel='fcb']").removeClass("bg-blue");

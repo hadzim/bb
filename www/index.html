@@ -33,8 +33,6 @@
 
     <title>JD Metro</title>
 <body class="metro" style="">
-
-   
     <div class="tile-area-dark">
         <div class="tile-group six">
             <!-- FOTO -->
@@ -74,6 +72,9 @@
                 <div class="brand">
                     <div class="label">Teplota</div>
                 </div>
+                <div id='noTemperature'>
+                    Není k dispozici
+                </div>
             </div>
 
             <!-- TASKS -->
@@ -99,21 +100,14 @@
              <!-- FORECAST -->
             <a class="tile quadro bg-steel">
                 <div class="tile-content">
-                    <div class="text-left" style='position: absolute; width: 7.1em; right: 10px; top: 20px'>
-                        <button class="bg-dark fg-white text-center" style='margin-bottom: 2px; width: 7em;' rel='fcb' data-place="JosefuvDul">Josefův Důl</button>
-                        <button class="bg-dark fg-white  text-center" style='margin-bottom: 2px; width: 7em;' rel='fcb' data-place="Jizerka">Jizerka</button>
-                        <button class="bg-dark fg-white  text-center" style='margin-bottom: 2px; width: 7em;' rel='fcb' data-place="Smedava">Smědava</button>    
+                    <div class="text-left places">
+                        <button class="bg-dark fg-white text-center" rel='fcb' data-place="JosefuvDul">Josefův Důl</button>
+                        <button class="bg-dark fg-white  text-center" rel='fcb' data-place="Jizerka">Jizerka</button>
+                        <button class="bg-dark fg-white  text-center" rel='fcb' data-place="Smedava">Smědava</button>    
                     </div>
                     
                     <div class="text-left padding15" id='forecastTemperature'> 
-                      <div rel="temper" data-place="Outside" class="temperature temperature-big bg-dark">
-                        <!-- 
-                        <img src='http://symbol.yr.no/grafikk/sym/b38/01d.png' style='position: absolute; width: 24px; height: 24px; margin-left: 64px; margin-top: -8px;' >
-                         -->
-                        <p>Dnes</p>
-                        <h2><span class="temp temp-under">22°</span></h2></div>
-                      <div rel="temper" data-place="Outside" class="temperature temperature-big bg-dark"><p>Noc</p><h2><span class="temp temp-under">-5°</span></h2></div>
-                      <div rel="temper" data-place="Outside" class="temperature temperature-big bg-dark"><p>Zítra</p><h2><span class="temp temp-under">23°</span></h2></div>
+                      
                     </div>
                     <div style='margin-left: -5px; margin-top: -8px'>
                         <div id="forecastsa" style="width: 390px; height: 255px;"></div>
@@ -121,13 +115,81 @@
                     
                     <div class="brand">
                     <div class="label">Předpověď</div>
-                </div>
+                    
+                    </div>
+                    
+                    <div id='noForecast'>
+                        Není k dispozici
+                    </div>
+                    
                 </div>
             </a>
             
         </div> <!-- End group -->
-
-      </div>  
+         <div class='aditional fg-white'>
+           <div class="tile bg-dark half">
+                <div class="tile-content icon" >
+                    
+                </div>
+           </div>
+           <div class="tile bg-dark half">
+                <div class="tile-content icon" >
+                    
+                </div>
+           </div>
+           <div class="tile bg-dark half">
+                <div class="tile-content icon" >
+                    
+                </div>
+           </div>
+           <div class="tile bg-dark half">
+                <div class="tile-content icon" >
+                    
+                </div>
+           </div>
+           <div class="tile bg-dark half">
+                <div class="tile-content icon" >
+                    
+                </div>
+           </div>
+           <div class="tile bg-dark half">
+                <div class="tile-content icon" >
+                    
+                </div>
+           </div>
+           <div class="tile bg-dark half">
+                <div class="tile-content icon" >
+                    
+                </div>
+           </div>
+           <div class="tile bg-dark half">
+                <div class="tile-content icon" >
+                    
+                </div>
+           </div>
+           <div class="tile bg-dark half">
+                <div class="tile-content icon" >
+                    
+                </div>
+           </div>
+           <div class="tile bg-dark half">
+                <div class="tile-content icon" >
+                    
+                </div>
+           </div>
+           <div class="tile bg-dark half">
+                <div class="tile-content icon" >
+                    
+                </div>
+           </div>
+           <div class="tile bg-dark half">
+                <div class="tile-content icon" >
+                    
+                </div>
+           </div>
+      </div>
+      </div>
+      
 </div>
         <!--
          

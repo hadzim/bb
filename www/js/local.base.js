@@ -10,7 +10,12 @@ function daydiff(first, second) {
     return (second-first)/(1000*60*60*24);
 }
   
-  
+function parseDate(input) {
+  var allparts = input.substring(0, input.length - 1).split('T');
+  var dateParts = allparts[0].split('-');
+  var timeParts = allparts[1].split(':');
+  return new Date(dateParts[0], dateParts[1]-1, dateParts[2], timeParts[0], timeParts[1], timeParts[2]);
+}  
   
   
   function pad(num) {

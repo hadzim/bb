@@ -1,12 +1,12 @@
 var temperatureSensors = {
     "Outside": {
       name: "Venku",
-      css: "temperature-big bg-blue", //btn-info
+      css: "temperature-big bg-dark", //btn-info
       temp: undefined
     },
     "Inside": {
       name: "Uvnitř",
-      css: "temperature-big bg-orange", //btn-warning
+      css: "temperature-big bg-dark", //btn-warning
       temp: undefined
     }/*,
     "Hall": {
@@ -29,7 +29,7 @@ function renderTemperature(key){
      content += "<h2>";
      content += (temperatureSensors[key].temp > 0 ? "<span class='temp temp-above'>" : "<span class='temp temp-under'>");
      content += (temperatureSensors[key].temp == undefined) ? "?" : temperatureSensors[key].temp | 0;
-     content += "</span>&deg;";
+     content += "&deg;</span>";
      content += "</h2>";
      content += "</div>";
     return content;     
@@ -56,10 +56,14 @@ function updateTemperatures(){
         }); 
         
         renderTemperatures();
+        $("#noTemperature").hide();
+      });
+      si.fail(function( jqXHR, textStatus, errorThrown ) {
+         $("#noTemperature").show(); 
       });
    
 }
-  var temperatureRefresh = 0;
+
   
   function showTemperatureDetail(place){
     
@@ -88,7 +92,7 @@ function updateTemperatures(){
           $.each(data.ReturnObject, function( findex, fvalue ) {
               var temp = {
                   temperature: fvalue.value,
-                  date: new Date(fvalue.date),
+                  date: parseDate(fvalue.date),
                   baseline: 0
               }
               tempData.push(temp);   
