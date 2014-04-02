@@ -70,9 +70,9 @@ public:
 
   virtual void leave();
 
-  //virtual Pipe *add_pipe(void(*handler)(const void *data, void *buffer, unsigned int nbyte), const void *data);
+  virtual Pipe *add_pipe(void(*handler)(const void *data, void *buffer, unsigned int nbyte), const void *data);
 
-  //virtual void del_pipe(Pipe *pipe);
+  virtual void del_pipe(Pipe *pipe);
 
   virtual void do_iteration();
 

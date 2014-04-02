@@ -27,7 +27,7 @@
 
 #include "api.h"
 #include "connection.h"
-//#include "eventloop.h"
+#include "eventloop.h"
 
 #include "Poco/Mutex.h"
 

@@ -8,7 +8,7 @@
 #ifndef _NO_DBUS
 
 #include "dbus-c++/connection.h"
-#include "dbus-c++/dispatcher.h"
+#include "dbus-c++/eventloop.h"
 #include "dbus-c++/eventloop-integration.h"
 #include "TBS/Services/DBus/ConnectionWrapper.h"
 

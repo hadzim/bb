@@ -282,8 +282,6 @@ Dispatcher *Connection::setup(Dispatcher *dispatcher)
     0
   );
 
-  std::cout << "on set functions" << std::endl;
-
   return prev;
 }
 

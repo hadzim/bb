@@ -22,7 +22,6 @@
  *
  */
 #include <unistd.h>
-#include "winenum.h"
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -31,6 +30,7 @@
 /* Project */
 #include <dbus-c++/eventloop-integration.h>
 #include <dbus-c++/debug.h>
+#include <dbus-c++/pipe.h>
 
 /* DBus */
 #include <dbus/dbus.h>
@@ -38,7 +38,7 @@
 /* STD */
 #include <string.h>
 #include <cassert>
-
+#include <sys/poll.h>
 #include <fcntl.h>
 
 using namespace DBus;
@@ -60,7 +60,6 @@ void BusTimeout::toggle()
 BusWatch::BusWatch(Watch::Internal *wi, BusDispatcher *bd)
   : Watch(wi), DefaultWatch(Watch::descriptor(), 0, bd)
 {
-  std::cout << "bus watch" << std::endl;
   int flags = POLLHUP | POLLERR;
 
   if (Watch::flags() & DBUS_WATCH_READABLE)
@@ -84,12 +83,11 @@ BusDispatcher::BusDispatcher() :
 {
   // pipe to create a new fd used to unlock a dispatcher at any
   // moment (used by leave function)
-  /*
-	int ret = pipe(_pipe);
+  int ret = pipe(_pipe);
   if (ret == -1) throw Error("PipeError:errno", toString(errno).c_str());
 
   _fdunlock[0] = _pipe[0];
-  _fdunlock[1] = _pipe[1];*/
+  _fdunlock[1] = _pipe[1];
 }
 
 void BusDispatcher::enter()
@@ -101,11 +99,13 @@ void BusDispatcher::enter()
   while (_running)
   {
     do_iteration();
-/*
+    /*
+    std::cout << "pipe iter" << std::endl;
     for (std::list <Pipe *>::iterator p_it = pipe_list.begin();
          p_it != pipe_list.end();
          ++p_it)
     {
+    	std::cout << "pipe iter in" << std::endl;
       Pipe *read_pipe = *p_it;
       char buffer[1024]; // TODO: should be max pipe size
       unsigned int nbytes = 0;
@@ -124,8 +124,14 @@ void BusDispatcher::enter()
 void BusDispatcher::leave()
 {
   _running = false;
+
+  int ret = write(_fdunlock[1], "exit", strlen("exit"));
+  if (ret == -1) throw Error("WriteError:errno", toString(errno).c_str());
+
+  close(_fdunlock[1]);
+  close(_fdunlock[0]);
 }
-/*
+
 Pipe *BusDispatcher::add_pipe(void(*handler)(const void *data, void *buffer, unsigned int nbyte), const void *data)
 {
   Pipe *new_pipe = new Pipe(handler, data);
@@ -138,7 +144,7 @@ void BusDispatcher::del_pipe(Pipe *pipe)
 {
   pipe_list.remove(pipe);
   delete pipe;
-}*/
+}
 
 void BusDispatcher::do_iteration()
 {

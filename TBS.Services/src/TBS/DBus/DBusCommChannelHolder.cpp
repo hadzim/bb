@@ -1,6 +1,7 @@
 #ifndef _NO_DBUS
 
 #include "TBS/Services/DBus/DBusCommChannelHolder.h"
+#include "TBS/Log.h"
 #include <iostream>
 /*
  * DBusCommChannelHolder.cpp
@@ -44,9 +45,9 @@ namespace TBS {
 
 		void DBusCommChannelHolder::run() {
 			try {
+				TBS::threadDebug();
 				std::cout << "dbus thread started BG" << std::endl;
 				dispatcher_.enter();
-				std::cout << "dbus thread finished BG" << std::endl;
 			} catch (::DBus::Error & e){
 				std::cout << "dbus thread started exception: " << e.message() << std::endl;
 			}  catch (Poco::Exception & e){

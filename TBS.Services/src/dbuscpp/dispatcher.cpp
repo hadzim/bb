@@ -95,7 +95,6 @@ bool Watch::handle(int flags) {
  */
 
 dbus_bool_t Dispatcher::Private::on_add_watch(DBusWatch *watch, void *data) {
-	std::cout << "onaddwatch" << std::endl;
 	Dispatcher *d = static_cast<Dispatcher *>(data);
 
 	Watch::Internal *w = reinterpret_cast<Watch::Internal *>(watch);

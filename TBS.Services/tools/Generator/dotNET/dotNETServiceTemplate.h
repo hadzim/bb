@@ -37,6 +37,7 @@
 				typedef Poco::SharedPtr <Client> Ptr;\n\
 				\n\
 				Client(const TBS::Services::DotNetClientParams & params);\n\
+				~Client();\n\
 				\n\
 				\n //methods \n\
 				<clients>\n\
@@ -66,6 +67,7 @@
 	   Client::Client(const TBS::Services::DotNetClientParams & params) : \n\
 	       params(params){\n\
 	   }\n\
+	   Client::~Client(){}\n\
 	   <clientMethods>\n\
 	   \n\
 <namespaceEnd>\n\

@@ -46,6 +46,7 @@ namespace TBS {\n\
 				Client(TBS::Services::ICommChannelHolder::Ptr ch);\n\
 				//with default dbus dispatcher\n\
 				Client();\n\
+				~Client();\n\
 				\n\
 				<clients>\n\
 				\n\
@@ -63,6 +64,7 @@ namespace TBS {\n\
 				Server(TBS::Services::ICommChannelHolder::Ptr ch);\n\
 				//uses default dbus dispatcher\n\
 				Server();\n\
+				~Server();\n\
 				\n\
 			public:\n\
 				<servers>\n\
@@ -94,6 +96,8 @@ namespace TBS {\n\
 	   Client::Client() : \n\
 		   ch(TBS::Services::DBusCommChannelProvider::getDefaultCommChannel()), comChannelHolder(new TBS::Services::CommunicationChannelHolder(ch)) {\n\
 	   }\n\
+	   Client::~Client(){ \n\
+	   }\n\
 	   <clientMethods>\n\
 	   \n\
 	   \n\
@@ -105,6 +109,8 @@ namespace TBS {\n\
 	   	   ch(TBS::Services::DBusCommChannelProvider::getDefaultCommChannel()){\n\
 		   \n\
 	    } \n\
+	    Server::~Server(){ \n\
+	    }\n\
 	    \n\
 	   <serverMethods>\n\
 <namespaceEnd>\n\
