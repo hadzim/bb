@@ -15,75 +15,103 @@
 
 #include "BB/Services/SensorSvc_DBus.h"
 
-
 namespace BB {
 
-	SensorApp::SensorApp(ISensorFactory::Ptr factory) : factory(factory){
+class SensorExecutor {
+public:
+	typedef Poco::SharedPtr<SensorExecutor> Ptr;
+	typedef std::vector<Ptr> PtrList;
 
+	SensorExecutor(ISensor::Ptr s);
+	~SensorExecutor();
+
+	Poco::BasicEvent<ISensor::Ptr> RequestsReady;
+private:
+	void onTimer(TBS::SimpleTimer::TimerArg & t);
+private:
+	TBS::SimpleTimer timer;
+	ISensor::Ptr sensor;
+};
+
+SensorExecutor::SensorExecutor(ISensor::Ptr s) :
+		sensor(s) {
+	timer.Timer += Poco::delegate(this, &SensorExecutor::onTimer);
+	timer.start(sensor->getPeriodInMs() / 20, sensor->getPeriodInMs());
+}
+SensorExecutor::~SensorExecutor() {
+	timer.stop();
+	timer.Timer -= Poco::delegate(this, &SensorExecutor::onTimer);
+}
+
+void SensorExecutor::onTimer(TBS::SimpleTimer::TimerArg & t) {
+	this->RequestsReady(this, sensor);
+}
+
+SensorApp::SensorApp(ISensorFactory::Ptr factory) :
+		factory(factory) {
+
+}
+
+SensorApp::~SensorApp() {
+
+}
+/*
+void SensorApp::addSensor(ISensor::Ptr sensor) {
+	SensorData data;
+	data.sensor = sensor;
+	data.timer = new TBS::SimpleTimer();
+	data.timer->Timer += Poco::delegate(this, &SensorApp::addSensor)
+	sensors.push_back(data);
+}*/
+
+int SensorApp::main(const std::vector<std::string>& args) {
+
+	Poco::Thread::sleep(500);
+
+	this->client =  new TBS::BB::Services::Sensor::DBus::Client();
+
+	std::cout << "main SensorApp.start" << std::endl;
+
+	SensorExecutor::PtrList sensors;
+
+	ISensorFactory::Sensors creating = factory->createSensors();
+	for (ISensorFactory::Sensors::iterator i = creating.begin();
+			i != creating.end(); i++) {
+		SensorExecutor::Ptr s = new SensorExecutor(*i);
+		sensors.push_back(s);
+	}
+	//events in
+	for (SensorExecutor::PtrList::iterator s = sensors.begin();
+			s != sensors.end(); s++) {
+		(*s)->RequestsReady += Poco::delegate(this, &SensorApp::onRequest);
 	}
 
-	SensorApp::~SensorApp() {
+	BB::ServiceNotification::serviceReady();
 
+	this->waitForTerminationRequest();
+
+	BB::ServiceNotification::serviceDisabled();
+
+	//events out
+	for (SensorExecutor::PtrList::iterator s = sensors.begin();
+			s != sensors.end(); s++) {
+		(*s)->RequestsReady -= Poco::delegate(this, &SensorApp::onRequest);
 	}
 
-	void SensorApp::addSensor(ISensor::Ptr sensor){
-		SensorData data;
-		data.sensor = sensor;
-		data.timer = new TBS::SafeTimer(sensor->getName(), sensor->getPeriodInMs() / 10, sensor->getPeriodInMs());
-		sensors.push_back(data);
+	sensors.clear();
+
+	std::cout << "main SensorApp.stop" << std::endl;
+
+	return EXIT_OK;
+}
+
+void SensorApp::onRequest(ISensor::Ptr & t) {
+	ISensor::Ptr sp = t;
+	std::cout << "timer ticked for sensor " << sp->getName() << std::endl;
+
+	ISensor::Requests reqs = sp->getRequests();
+	for (ISensor::Requests::iterator r = reqs.begin(); r != reqs.end(); r++) {
+		BB::SensorDataHelpers::sendData(client->DataCollector(), *r);
 	}
-
-	int SensorApp::main(const std::vector<std::string>& args) {
-
-		Poco::Thread::sleep(500);
-
-
-		//this->config().setString("pokus", "hodnota");
-
-		std::cout << "main SensorApp.start" << std::endl;
-
-		ISensorFactory::Sensors creating = factory->createSensors();
-		for (ISensorFactory::Sensors::iterator i = creating.begin(); i != creating.end(); i++){
-			this->addSensor(*i);
-		}
-
-		//start periodic timers
-		for (SensorData::List::iterator i = sensors.begin(); i != sensors.end(); i++){
-			i->timer->start(TBS::TimerCallback<SensorApp>(*this, &SensorApp::onTimer));
-		}
-
-		BB::ServiceNotification::serviceReady();
-
-		this->waitForTerminationRequest();
-
-		BB::ServiceNotification::serviceDisabled();
-
-		sensors.clear();
-
-		std::cout << "main SensorApp.stop" << std::endl;
-
-		return EXIT_OK;
-	}
-
-	void SensorApp::onTimer(TBS::SafeTimer& t){
-		std::cout << "timer ticked" << std::endl;
-		for (SensorData::List::iterator i = sensors.begin(); i != sensors.end(); i++){
-			std::cout << "timer ticked for sensor " << i->sensor->getName() << std::endl;
-			if (i->timer.get() == &t){
-
-
-				TBS::BB::Services::Sensor::DBus::Client::Ptr client = new TBS::BB::Services::Sensor::DBus::Client();
-
-				ISensor::Requests reqs = i->sensor->getRequests();
-				for (ISensor::Requests::iterator r = reqs.begin(); r != reqs.end(); r++){
-					BB::SensorDataHelpers::sendData(client->DataCollector(), *r);
-				}
-
-			}
-		}
-		//BeagleBone::led::get(LED)->on();
-		Poco::Thread::sleep(200);
-		//BeagleBone::led::get(LED)->off();
-
-	}
+}
 } /* namespace BB */

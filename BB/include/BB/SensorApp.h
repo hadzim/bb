@@ -9,9 +9,11 @@
 #define SensorApp_H_
 #include "Poco/Util/ServerApplication.h"
 #include "Poco/Timer.h"
-#include "TBS/SafeTimer.h"
+#include "TBS/SimpleTimer.h"
 #include "BB/Sensor/ISensor.h"
 #include <vector>
+
+#include "BB/Services/SensorSvc_DBus.h"
 
 namespace BB {
 
@@ -26,6 +28,7 @@ public:
 	virtual Sensors createSensors() = 0;
 };
 
+
 class SensorApp: public Poco::Util::ServerApplication {
 
 public:
@@ -37,17 +40,19 @@ protected:
 
 	int main(const std::vector<std::string>& args);
 private:
-	void addSensor(ISensor::Ptr sensor);
-	void onTimer(TBS::SafeTimer& t);
+	void onRequest(ISensor::Ptr & t);
 private:
+	TBS::BB::Services::Sensor::DBus::Client::Ptr client;
+	/*
 	static const int LED = 3;
 
 	struct SensorData {
 		typedef std::vector<SensorData> List;
 		ISensor::Ptr sensor;
-		TBS::SafeTimer::Ptr timer;
+		TBS::SimpleTimer::Ptr timer;
 	};
 	SensorData::List sensors;
+	*/
 	ISensorFactory::Ptr factory;
 	//Poco::Timer dummy;
 };
