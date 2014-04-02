@@ -69,11 +69,11 @@ public:
   virtual void enter();
 
   virtual void leave();
-
+#ifndef __WIN32__
   virtual Pipe *add_pipe(void(*handler)(const void *data, void *buffer, unsigned int nbyte), const void *data);
 
   virtual void del_pipe(Pipe *pipe);
-
+#endif
   virtual void do_iteration();
 
   virtual Timeout *add_timeout(Timeout::Internal *);
@@ -91,7 +91,9 @@ public:
 private:
   bool _running;
   int _pipe[2];
+#ifndef __WIN32__
   std::list <Pipe *> pipe_list;
+#endif
 };
 
 } /* namespace DBus */

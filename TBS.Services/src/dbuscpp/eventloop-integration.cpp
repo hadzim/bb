@@ -38,7 +38,11 @@
 /* STD */
 #include <string.h>
 #include <cassert>
+#ifdef __WIN32__
+#include "winenum.h"
+#else
 #include <sys/poll.h>
+#endif
 #include <fcntl.h>
 
 using namespace DBus;
@@ -83,11 +87,13 @@ BusDispatcher::BusDispatcher() :
 {
   // pipe to create a new fd used to unlock a dispatcher at any
   // moment (used by leave function)
+#ifndef __WIN32__
   int ret = pipe(_pipe);
   if (ret == -1) throw Error("PipeError:errno", toString(errno).c_str());
 
   _fdunlock[0] = _pipe[0];
   _fdunlock[1] = _pipe[1];
+#endif
 }
 
 void BusDispatcher::enter()
@@ -124,14 +130,16 @@ void BusDispatcher::enter()
 void BusDispatcher::leave()
 {
   _running = false;
-
+#ifndef __WIN32__
   int ret = write(_fdunlock[1], "exit", strlen("exit"));
   if (ret == -1) throw Error("WriteError:errno", toString(errno).c_str());
 
   close(_fdunlock[1]);
   close(_fdunlock[0]);
+#endif
 }
 
+#ifndef __WIN32__
 Pipe *BusDispatcher::add_pipe(void(*handler)(const void *data, void *buffer, unsigned int nbyte), const void *data)
 {
   Pipe *new_pipe = new Pipe(handler, data);
@@ -145,6 +153,7 @@ void BusDispatcher::del_pipe(Pipe *pipe)
   pipe_list.remove(pipe);
   delete pipe;
 }
+#endif
 
 void BusDispatcher::do_iteration()
 {

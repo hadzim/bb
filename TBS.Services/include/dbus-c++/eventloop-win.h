@@ -21,7 +21,6 @@
  *
  */
 
-
 #ifndef __DBUSXX_EVENTLOOP_H
 #define __DBUSXX_EVENTLOOP_H
 
@@ -31,198 +30,175 @@
 #include "util.h"
 #include "Poco/Mutex.h"
 
-namespace DBus
-{
+namespace DBus {
 
-/*
- * these Default *classes implement a very simple event loop which
- * is used here as the default main loop, if you want to hook
- * a different one use the Bus *classes in eventloop-integration.h
- * or the Glib::Bus *classes as a reference
- */
+	/*
+	 * these Default *classes implement a very simple event loop which
+	 * is used here as the default main loop, if you want to hook
+	 * a different one use the Bus *classes in eventloop-integration.h
+	 * or the Glib::Bus *classes as a reference
+	 */
 
-class DefaultMainLoop;
+	class DefaultMainLoop;
 
-class DXXAPI DefaultTimeout
-{
-public:
+	class DXXAPI DefaultTimeout {
+		public:
 
-  DefaultTimeout(int interval, bool repeat, DefaultMainLoop *);
+			DefaultTimeout(int interval, bool repeat, DefaultMainLoop *);
 
-  virtual ~DefaultTimeout();
+			virtual ~DefaultTimeout();
 
-  bool enabled()
-  {
-    return _enabled;
-  }
-  void enabled(bool e)
-  {
-    _enabled = e;
-  }
+			bool enabled() {
+				return _enabled;
+			}
+			void enabled(bool e) {
+				_enabled = e;
+			}
 
-  int interval()
-  {
-    return _interval;
-  }
-  void interval(int i)
-  {
-    _interval = i;
-  }
+			int interval() {
+				return _interval;
+			}
+			void interval(int i) {
+				_interval = i;
+			}
 
-  bool repeat()
-  {
-    return _repeat;
-  }
-  void repeat(bool r)
-  {
-    _repeat = r;
-  }
+			bool repeat() {
+				return _repeat;
+			}
+			void repeat(bool r) {
+				_repeat = r;
+			}
 
-  void *data()
-  {
-    return _data;
-  }
-  void data(void *d)
-  {
-    _data = d;
-  }
+			void *data() {
+				return _data;
+			}
+			void data(void *d) {
+				_data = d;
+			}
 
-  Slot<void, DefaultTimeout &> expired;
+			Slot<void, DefaultTimeout &> expired;
 
-private:
+		private:
 
-  bool _enabled;
+			bool _enabled;
 
-  int _interval;
-  bool _repeat;
+			int _interval;
+			bool _repeat;
 
-  double _expiration;
+			double _expiration;
 
-  void *_data;
+			void *_data;
 
-  DefaultMainLoop *_disp;
+			DefaultMainLoop *_disp;
 
-  friend class DefaultMainLoop;
-};
+			friend class DefaultMainLoop;
+	};
 
-typedef std::list< DefaultTimeout *> DefaultTimeouts;
+	typedef std::list<DefaultTimeout *> DefaultTimeouts;
 
-class DXXAPI DefaultWatch
-{
-public:
+	class DXXAPI DefaultWatch {
+		public:
 
-  DefaultWatch(int fd, int flags, DefaultMainLoop *);
+			DefaultWatch(int fd, int flags, DefaultMainLoop *);
 
-  virtual ~DefaultWatch();
+			virtual ~DefaultWatch();
 
-  bool enabled()
-  {
-    return _enabled;
-  }
-  void enabled(bool e)
-  {
-    _enabled = e;
-  }
+			bool enabled() {
+				return _enabled;
+			}
+			void enabled(bool e) {
+				_enabled = e;
+			}
 
-  int descriptor()
-  {
-    return _fd;
-  }
+			int descriptor() {
+				return _fd;
+			}
 
-  int flags()
-  {
-    return _flags;
-  }
-  void flags(int f)
-  {
-    _flags = f;
-  }
+			int flags() {
+				return _flags;
+			}
+			void flags(int f) {
+				_flags = f;
+			}
 
-  int state()
-  {
-    return _state;
-  }
+			int state() {
+				return _state;
+			}
 
-  void *data()
-  {
-    return _data;
-  }
-  void data(void *d)
-  {
-    _data = d;
-  }
+			void *data() {
+				return _data;
+			}
+			void data(void *d) {
+				_data = d;
+			}
 
-  Slot<void, DefaultWatch &> ready;
+			Slot<void, DefaultWatch &> ready;
 
-private:
+		private:
 
-  bool _enabled;
+			bool _enabled;
 
-  int _fd;
-  int _flags;
-  int _state;
+			int _fd;
+			int _flags;
+			int _state;
 
-  void *_data;
+			void *_data;
 
-  DefaultMainLoop *_disp;
+			DefaultMainLoop *_disp;
 
-  friend class DefaultMainLoop;
-};
+			friend class DefaultMainLoop;
+	};
 
-typedef std::list< DefaultWatch *> DefaultWatches;
+	typedef std::list<DefaultWatch *> DefaultWatches;
 
-class DXXAPI DefaultMutex
-{
-public:
+	class DXXAPI DefaultMutex {
+		public:
 
-  /*!
-   * Constructor for non recursive Mutex
-   */
-  DefaultMutex();
+			/*!
+			 * Constructor for non recursive Mutex
+			 */
+			DefaultMutex();
 
-  /*!
-   * Constructor
-   * \param recursive Set if Mutex should be recursive or not.
-   */
-  DefaultMutex(bool recursive);
+			/*!
+			 * Constructor
+			 * \param recursive Set if Mutex should be recursive or not.
+			 */
+			DefaultMutex(bool recursive);
 
-  ~DefaultMutex();
+			~DefaultMutex();
 
-  void lock();
+			void lock();
 
-  void unlock();
+			void unlock();
 
-private:
+		private:
 
-  Poco::Mutex m;
-};
+			Poco::Mutex m;
+	};
 
-class DXXAPI DefaultMainLoop
-{
-public:
+	class DXXAPI DefaultMainLoop {
+		public:
 
-  DefaultMainLoop();
+			DefaultMainLoop();
 
-  virtual ~DefaultMainLoop();
+			virtual ~DefaultMainLoop();
 
-  virtual void dispatch();
+			virtual void dispatch();
 
-  //int _fdunlock[2];
-private:
-  Poco::Mutex mutexT;
-  Poco::Mutex mutexW;
-  DefaultMutex _mutex_t;
-  DefaultTimeouts _timeouts;
+			//int _fdunlock[2];
+		private:
+			Poco::Mutex mutexT;
+			Poco::Mutex mutexW;
+			DefaultMutex _mutex_t;
+			DefaultTimeouts _timeouts;
 
-  DefaultMutex _mutex_w;
-  DefaultWatches _watches;
+			DefaultMutex _mutex_w;
+			DefaultWatches _watches;
 
-  friend class DefaultTimeout;
-  friend class DefaultWatch;
-};
+			friend class DefaultTimeout;
+			friend class DefaultWatch;
+	};
 
-
-#endif
 } /* namespace DBus */
 
 #endif//__DBUSXX_EVENTLOOP_H
