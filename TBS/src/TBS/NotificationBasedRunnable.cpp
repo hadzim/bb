@@ -23,20 +23,20 @@ namespace TBS {
 	void NotificationQueue::enqueueNotification(Poco::Notification::Ptr pNotification) {
 		poco_check_ptr(pNotification);
 
-		//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification before lock" << LOG_STREAM_END;
+		//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification before lock" << LE;
 		Poco::FastMutex::ScopedLock lock(_mutex);
-		//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification after lock" << LOG_STREAM_END;
+		//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification after lock" << LE;
 		if (_waitQueue.empty()) {
-			//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification noone waiting" << LOG_STREAM_END;
+			//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification noone waiting" << LE;
 			_nfQueue.push_back(pNotification);
 		} else {
-			//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification some thread waiting" << LOG_STREAM_END;
+			//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification some thread waiting" << LE;
 			WaitInfo* pWI = _waitQueue.front();
 			_waitQueue.pop_front();
 			pWI->pNf = pNotification;
-			//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification signal set" << LOG_STREAM_END;
+			//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification signal set" << LE;
 			pWI->nfAvailable.set();
-			//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification signal set done" << LOG_STREAM_END;
+			//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification signal set done" << LE;
 		}
 	}
 
@@ -54,7 +54,7 @@ namespace TBS {
 	}
 
 	Poco::Notification* NotificationQueue::dequeueNotification() {
-		//LOG_STREAM_TRACE << "NotificationQueue::dequeueNotification" << LOG_STREAM_END;
+		//LOG_STREAM_TRACE << "NotificationQueue::dequeueNotification" << LE;
 		Poco::FastMutex::ScopedLock lock(_mutex);
 		return dequeueOne().duplicate();
 	}
@@ -63,26 +63,26 @@ namespace TBS {
 		Poco::Notification::Ptr pNf;
 		WaitInfo* pWI = 0;
 		{
-			//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification check if something, before lock" << LOG_STREAM_END;
+			//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification check if something, before lock" << LE;
 			Poco::FastMutex::ScopedLock lock(_mutex);
-			//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification check if something, locked" << LOG_STREAM_END;
+			//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification check if something, locked" << LE;
 			pNf = dequeueOne();
 			if (pNf) {
-				//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification already there" << LOG_STREAM_END;
+				//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification already there" << LE;
 				return pNf.duplicate();
 			}
 			pWI = new WaitInfo;
 			_waitQueue.push_back(pWI);
 		}
-		//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification wait" << LOG_STREAM_END;
+		//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification wait" << LE;
 		pWI->nfAvailable.wait();
-		//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification signaled" << LOG_STREAM_END;
+		//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification signaled" << LE;
 		pNf = pWI->pNf;
-		//LOG_STREAM_DEBUG << "NotificationQueue::enqueueNotification signaled; pNf value:" << (int) pNf.get() << LOG_STREAM_END;
+		//LOG_STREAM_DEBUG << "NotificationQueue::enqueueNotification signaled; pNf value:" << (int) pNf.get() << LE;
 		delete pWI;
-		//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification signaled; after delete pWI" << LOG_STREAM_END;
+		//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification signaled; after delete pWI" << LE;
 		Poco::Notification* nf = pNf.duplicate();
-		//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification signaled; after duplicate; ptr: " << nf << "; refCount: " << pNf->referenceCount() << LOG_STREAM_END;
+		//LOG_STREAM_TRACE << "NotificationQueue::enqueueNotification signaled; after duplicate; ptr: " << nf << "; refCount: " << pNf->referenceCount() << LE;
 		return nf;
 	}
 
@@ -142,7 +142,7 @@ namespace TBS {
 	}
 
 	Poco::Notification::Ptr NotificationQueue::dequeueOne() {
-		LOG_STREAM_TRACE << "NotificationQueue::dequeueOne" << LOG_STREAM_END;
+		LOG_STREAM_TRACE << "NotificationQueue::dequeueOne" << LE;
 		Poco::Notification::Ptr pNf;
 		if (!_nfQueue.empty()) {
 			pNf = _nfQueue.front();
@@ -175,23 +175,23 @@ namespace TBS {
 	}
 
 	void NotificationBasedRunnable::stop() {
-		LOG_STREAM_TRACE << thread.name() << "(#): NotificationBasedRunnable::stop, before lock" << LOG_STREAM_END;
+		LOG_STREAM_TRACE << thread.name() << "(#): NotificationBasedRunnable::stop, before lock" << LE;
 		Poco::Mutex::ScopedLock l(m);
 		LOG_STREAM_TRACE
-		<< thread.name() << "(#): NotificationBasedRunnable::stop, after lock" << LOG_STREAM_END;
+		<< thread.name() << "(#): NotificationBasedRunnable::stop, after lock" << LE;
 		this->stopped = true;
 		if (this->thread.isRunning()) {
 			LOG_STREAM_DEBUG
-			<< "Destruct thread " << thread.name() << LOG_STREAM_END;
+			<< "Destruct thread " << thread.name() << LE;
 			this->queue.enqueueUrgentNotification(QuitNotification::Ptr(new QuitNotification()));
 			LOG_STREAM_DEBUG
-			<< "Destruct thread " << thread.name() << " wait" << LOG_STREAM_END;
+			<< "Destruct thread " << thread.name() << " wait" << LE;
 			thread.join();
 			LOG_STREAM_DEBUG
-			<< "Destruct thread " << thread.name() << " done" << LOG_STREAM_END;
+			<< "Destruct thread " << thread.name() << " done" << LE;
 		} else {
 			LOG_STREAM_DEBUG
-			<< "Destruct thread - was not running" << LOG_STREAM_END;
+			<< "Destruct thread - was not running" << LE;
 		}
 	}
 	int NotificationBasedRunnable::queueSize() {
@@ -199,10 +199,10 @@ namespace TBS {
 	}
 	NotificationBasedRunnable::~NotificationBasedRunnable() {
 		LOG_STREAM_TRACE
-		<< thread.name() << "(#): NotificationBasedRunnable::~NotificationBasedRunnable begin" << LOG_STREAM_END;
+		<< thread.name() << "(#): NotificationBasedRunnable::~NotificationBasedRunnable begin" << LE;
 		this->stop();
 		LOG_STREAM_TRACE
-		<< thread.name() << "(#): NotificationBasedRunnable::~NotificationBasedRunnable end" << LOG_STREAM_END;
+		<< thread.name() << "(#): NotificationBasedRunnable::~NotificationBasedRunnable end" << LE;
 	}
 
 	bool NotificationBasedRunnable::isBgThread() {
@@ -211,31 +211,31 @@ namespace TBS {
 
 	void NotificationBasedRunnable::enqueueNotification(Poco::Notification::Ptr notification) {
 		LOG_STREAM_TRACE
-		<< thread.name() << "(>): NotificationBasedRunnable::enqueueNotification, before lock" << LOG_STREAM_END;
+		<< thread.name() << "(>): NotificationBasedRunnable::enqueueNotification, before lock" << LE;
 		{
 			Poco::Mutex::ScopedLock l(m);
 			LOG_STREAM_TRACE
-			<< thread.name() << "(>): NotificationBasedRunnable::enqueueNotification, after lock" << LOG_STREAM_END;
+			<< thread.name() << "(>): NotificationBasedRunnable::enqueueNotification, after lock" << LE;
 
 			if (stopped) {
 				LOG_STREAM_WARNING
-				<< thread.name() << "(>): NotificationBasedRunnable::enqueueNotification, stopped" << LOG_STREAM_END;
+				<< thread.name() << "(>): NotificationBasedRunnable::enqueueNotification, stopped" << LE;
 				return;
 			}
 
 			if (!this->thread.isRunning()) {
 				LOG_STREAM_TRACE
-				<< thread.name() << "(>): NotificationBasedRunnable::enqueueNotification, lazy start" << LOG_STREAM_END;
+				<< thread.name() << "(>): NotificationBasedRunnable::enqueueNotification, lazy start" << LE;
 				this->thread.start(*this);
 			}
 		}
 		LOG_STREAM_DEBUG
 		<< thread.name() << "(>): NotificationBasedRunnable::enqueueNotification, before enqueue; queue size: " << this->queue.size()
-		<< LOG_STREAM_END;
+		<< LE;
 		this->queue.enqueueNotification(notification);
 		LOG_STREAM_TRACE
 		<< thread.name() << "(>): NotificationBasedRunnable::enqueueNotification, after enqueue; queue size: " << this->queue.size()
-		<< LOG_STREAM_END;
+		<< LE;
 	}
 
 	void NotificationBasedRunnable::run() {
@@ -245,20 +245,20 @@ namespace TBS {
 		threadDebug();
 
 		LOG_STREAM_DEBUG
-		<< thread.name() << ": bg thread started" << LOG_STREAM_END;
+		<< thread.name() << ": bg thread started" << LE;
 		try {
 			Poco::Notification::Ptr pNf(queue.waitDequeueNotification());
 
 			while (pNf) {
 
 				Poco::Timestamp t;
-				LOG_NAMED_STREAM_INFO(LOG_THREAD) << thread.name() << "(>): Accept notification '" << pNf->name() << "' queue size is " << queue.size() << LOG_STREAM_END
+				LOG_NAMED_STREAM_INFO(LOG_THREAD) << thread.name() << "(>): Accept notification '" << pNf->name() << "' queue size is " << queue.size() << LE
 
 				//quit notification
 				QuitNotification::Ptr pQuitNf = pNf.cast<QuitNotification>();
 				if (pQuitNf) {
 					LOG_NAMED_STREAM_INFO(LOG_THREAD)
-					<< thread.name() << "(>): Quit" << LOG_STREAM_END;
+					<< thread.name() << "(>): Quit" << LE;
 					break;
 				}
 
@@ -267,38 +267,38 @@ namespace TBS {
 				THREAD_DUMP("ntf: " + pNf->name());
 
 				LOG_NAMED_STREAM_INFO(LOG_THREAD)
-				<< thread.name() << "(>): Process notification '" << pNf->name() << "' finished in " << t.elapsed() / 1000 << "ms" << LOG_STREAM_END
+				<< thread.name() << "(>): Process notification '" << pNf->name() << "' finished in " << t.elapsed() / 1000 << "ms" << LE
 				pNf = queue.waitDequeueNotification();
 
 				//LOG_NAMED_STREAM_INFO(LOG_THREAD)
-				//		<< thread.name() << "(>): After waitDequeueNotification, ptr: " << (int) pNf.get() << LOG_STREAM_END
+				//		<< thread.name() << "(>): After waitDequeueNotification, ptr: " << (int) pNf.get() << LE
 				if (!pNf.isNull()) {
 					//LOG_NAMED_STREAM_INFO(LOG_THREAD)
-					//		<< thread.name() << "(>): After waitDequeueNotification, name: '" << pNf->name() << LOG_STREAM_END
+					//		<< thread.name() << "(>): After waitDequeueNotification, name: '" << pNf->name() << LE
 				}
 			}
 			THREAD_DUMP("finished ok");
 			LOG_NAMED_STREAM_INFO(LOG_THREAD)
-			<< thread.name() << "(>): Out from while cycle; ptr: " << (long int) pNf.get() << LOG_STREAM_END
+			<< thread.name() << "(>): Out from while cycle; ptr: " << (long int) pNf.get() << LE
 		} catch (Poco::Exception & e) {
 			THREAD_DUMP("finished poco exc");
 			LOG_NAMED_STREAM_FATAL(LOG_THREAD)
-			<< thread.name() << ": Worker thread finished with exception " << e.displayText() << LOG_STREAM_END;
+			<< thread.name() << ": Worker thread finished with exception " << e.displayText() << LE;
 		} catch (std::runtime_error & e) {
 			THREAD_DUMP("finished re exc");
 			LOG_NAMED_STREAM_FATAL(LOG_THREAD)
-			<< thread.name() << ": Worker thread finished with std runtime exception " << e.what() << LOG_STREAM_END;
+			<< thread.name() << ": Worker thread finished with std runtime exception " << e.what() << LE;
 		} catch (std::exception & e) {
 			THREAD_DUMP("finished e exc");
 			LOG_NAMED_STREAM_FATAL(LOG_THREAD)
-			<< thread.name() << ": Worker thread finished with std exception " << e.what() << LOG_STREAM_END;
+			<< thread.name() << ": Worker thread finished with std exception " << e.what() << LE;
 		} catch (...) {
 			THREAD_DUMP("finished ... exc");
 			LOG_NAMED_STREAM_FATAL(LOG_THREAD)
-			<< thread.name() << ": Worker thread finished with unknown exception" << LOG_STREAM_END;
+			<< thread.name() << ": Worker thread finished with unknown exception" << LE;
 		}
 		LOG_STREAM_DEBUG
-		<< thread.name() << ": bg thread finished" << LOG_STREAM_END;
+		<< thread.name() << ": bg thread finished" << LE;
 	}
 
 } /* namespace TBS */

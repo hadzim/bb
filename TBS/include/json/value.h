@@ -876,7 +876,7 @@ public: // overridden from ValueArrayAllocator
    /** \brief base class for Value iterators.
     *
     */
-   class JSON_API ValueIteratorBase
+   class ValueIteratorBase
    {
    public:
       typedef unsigned int size_t;

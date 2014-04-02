@@ -76,7 +76,7 @@ namespace BB {
 
 	}
 	int DallasTemperatureSensor::getPeriodInMs(){
-		return 1000*60*5;
+		return 1000*60 * 2; // * 1000 * 60 * 5
 	}
 	std::string DallasTemperatureSensor::getName(){
 		return "BoardTemperature";

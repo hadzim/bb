@@ -45,7 +45,7 @@ namespace TBS {
 					/// Starts the activity by acquiring a
 					/// thread for it from the default thread pool.
 					{
-						LOG_STREAM_DEBUG << "Start activity " << this->name << LOG_STREAM_END
+						LOG_STREAM_DEBUG << "Start activity " << this->name << LE
 						Poco::FastMutex::ScopedLock lock(_mutex);
 						if (!_running) {
 							_done.reset();
@@ -60,7 +60,7 @@ namespace TBS {
 							}
 
 						}
-						LOG_STREAM_DEBUG << "Started activity " << this->name << LOG_STREAM_END
+						LOG_STREAM_DEBUG << "Started activity " << this->name << LE
 					}
 
 					void stop() {
@@ -76,12 +76,12 @@ namespace TBS {
 						}
 						try {
 							wait(5000);
-							LOG_STREAM_DEBUG << "Deleted activity " << this->name << LOG_STREAM_END
+							LOG_STREAM_DEBUG << "Deleted activity " << this->name << LE
 							if (joinReallyNeeded){
 								bgThread.join();
 							}
 						} catch (Poco::Exception & e){
-							LOG_STREAM_ERROR << "ERROR NamedActivity "<< this->name << ":" << e.displayText() << LOG_STREAM_END
+							LOG_STREAM_ERROR << "ERROR NamedActivity "<< this->name << ":" << e.displayText() << LE
 							throw;
 						}
 					}
@@ -97,7 +97,7 @@ namespace TBS {
 							try {
 								_done.wait(milliseconds);
 							} catch (Poco::Exception & e) {
-								LOG_STREAM_INFO << "NamedActivity exception: " << e.what() << LOG_STREAM_END
+								LOG_STREAM_INFO << "NamedActivity exception: " << e.what() << LE
 								throw;
 							}
 						}
@@ -114,7 +114,7 @@ namespace TBS {
 				protected:
 					virtual void run() {
 						threadDebug();
-						LOG_STREAM_DEBUG << "Activity bg started " << this->name  << "[" << Poco::Thread::currentTid() << "] [" << Poco::Thread::current()->id() << "]" /*<< syscall(SYS_gettid)*/ << LOG_STREAM_END
+						LOG_STREAM_DEBUG << "Activity bg started " << this->name  << "[" << Poco::Thread::currentTid() << "] [" << Poco::Thread::current()->id() << "]" /*<< syscall(SYS_gettid)*/ << LE
 
 						try {
 							_runnable.run();
@@ -125,8 +125,8 @@ namespace TBS {
 						}
 						_running = false;
 						_done.set();
-						LOG_STREAM_DEBUG << "Activity bg finished " << this->name << "[" << Poco::Thread::currentTid() << "] [" << Poco::Thread::current()->id() << "]" << LOG_STREAM_END
-						//LOG_STREAM_INFO << this->name << " -> LWP " << syscall(SYS_gettid) << " end" << LOG_STREAM_END
+						LOG_STREAM_DEBUG << "Activity bg finished " << this->name << "[" << Poco::Thread::currentTid() << "] [" << Poco::Thread::current()->id() << "]" << LE
+						//LOG_STREAM_INFO << this->name << " -> LWP " << syscall(SYS_gettid) << " end" << LE
 					}
 
 				private:

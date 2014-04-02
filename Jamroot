@@ -37,6 +37,10 @@ alias all
 		BB.Collector
 		BB.Forecast
 		BB.HttpServer
+		BB.RemoteClient
+		BB.Temperature
+		BB.Dump
+		BB.Test
 	;
 
 

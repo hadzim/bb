@@ -1,7 +1,7 @@
 
 import tbs ;
 
-project BB_RemoteClient
+project BB_Temperature
 	:
 		requirements
 		<include>src
@@ -17,11 +17,11 @@ tbs.obj-build common-sources : $(proj-dir)
 	:
 	;
 
-exe BB@RemoteClient
+exe BB@Temperature
 	:
 		common-sources	
 	:
 		<tag>@tbs.dot-from-at
 	;
 
-tbs.installation : BB@RemoteClient : . ;
+tbs.installation : BB@Temperature : . ;

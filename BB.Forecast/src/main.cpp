@@ -31,8 +31,8 @@ namespace BB {
 
 			s.push_back(
 					new Forecast(
-							"Kristianov",
-							"http://www.yr.no/place/Czech_Republic/Liberec/Kristi%C3%A1nov~3072707/"
+							"Jizerka",
+							"http://www.yr.no/place/Czech_Republic/Liberec/Jizerka/"
 					)
 			);
 

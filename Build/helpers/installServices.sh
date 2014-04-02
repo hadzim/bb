@@ -23,6 +23,7 @@ ssh root@$1 systemctl enable tbs-dbus-session.service
 ssh root@$1 systemctl enable bb-collector.service
 ssh root@$1 systemctl enable bb-httpsender.service
 ssh root@$1 systemctl enable bb-forecast.service
+ssh root@$1 systemctl enable bb-temperature.service
 
 
 #cd /etc/systemd/system/

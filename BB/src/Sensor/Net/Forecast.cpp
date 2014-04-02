@@ -117,7 +117,7 @@ namespace BB {
 	}
 	int Forecast::getPeriodInMs(){
 		//each 4 hours
-		return 1000*60*10; //60*4;
+		return 1000*60*10;//1000*60*60*2; //60*4;
 	}
 
 

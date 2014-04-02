@@ -44,6 +44,15 @@
 
 #endif
 
+namespace TBS {
+
+	std::string logBasename(const std::string& fullname){
+		size_t last_delim = fullname.rfind('/');
+		if (last_delim == std::string::npos) return fullname;
+		else return fullname.substr(last_delim+1);
+	}
+
+}
 
 
 /*
@@ -108,9 +117,9 @@ namespace TBS {
 
 			Poco::Thread * thread = Poco::Thread::current();
 			if (!thread){
-				LOG_NAMED_STREAM_NOTICE("THRDBG") << "Thread " << "MAIN" << " has Thread ID " << Poco::Thread::currentTid() << " and PID " << tid << LOG_STREAM_END
+				LOG_NAMED_STREAM_NOTICE("THRDBG") << "Thread " << "MAIN" << " has Thread ID " << Poco::Thread::currentTid() << " and PID " << tid << LE
 			} else {
-				LOG_NAMED_STREAM_NOTICE("THRDBG") << "Thread " << thread->name() << " has Thread ID " << Poco::Thread::current()->tid() << " and PID " << tid << LOG_STREAM_END
+				LOG_NAMED_STREAM_NOTICE("THRDBG") << "Thread " << thread->name() << " has Thread ID " << Poco::Thread::current()->tid() << " and PID " << tid << LE
 			}
 
 		}
@@ -137,7 +146,7 @@ namespace TBS {
 					}
 				}
 
-				void separeLog(std::string logName, std::string fileName){
+				void separeLog(std::string logName, std::string fileName, int level){
 
 						Poco::AutoPtr<Poco::SimpleFileChannel> identChannel(new Poco::SimpleFileChannel);
 
@@ -149,9 +158,9 @@ namespace TBS {
 						Poco::AutoPtr<Poco::FormattingChannel> identFC(new Poco::FormattingChannel(identPF, identChannel));
 
 						Poco::Logger::get(logName).setChannel(identFC);
-						Poco::Logger::get(logName).setLevel(Poco::Message::PRIO_TRACE);
+						Poco::Logger::get(logName).setLevel((Poco::Message::Priority)level);
 
-						LOG_NAMED_STREAM_NOTICE(logName) << "log init" << LOG_STREAM_END
+						LOG_NAMED_STREAM_NOTICE(logName) << "log init" << LE
 
 				}
 

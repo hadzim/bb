@@ -14,11 +14,14 @@ function copy_services {
 function copy_libs {
 	scp ./lib/lib* root@$1:/home/tbs/lib/
 }
-
+function copy_www { 
+	ssh root@$1 rm -r /home/tbs/www
+	scp -r ./www root@$1:/home/tbs/
+}
 
 
 copy_libs $IP_ADDRESS
 copy_services $IP_ADDRESS
-
+copy_www $IP_ADDRESS
 
 

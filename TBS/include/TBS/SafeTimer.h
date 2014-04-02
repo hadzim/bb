@@ -44,7 +44,6 @@
 #include "Poco/Event.h"
 #include "Poco/Mutex.h"
 #include "Poco/Timestamp.h"
-#include <Poco/SharedPtr.h>
 
 namespace TBS {
 
@@ -52,8 +51,6 @@ namespace TBS {
 
 		class TBS_API SafeTimer: protected Poco::Runnable {
 			public:
-				typedef Poco::SharedPtr<SafeTimer> Ptr;
-
 				SafeTimer(std::string name, long startInterval = 0, long periodicInterval = 0);
 				/// Creates a new timer object. StartInterval and periodicInterval
 				/// are given in milliseconds. If a periodicInterval of zero is

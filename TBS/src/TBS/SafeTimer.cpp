@@ -132,7 +132,7 @@ namespace TBS {
 			//THREAD_DUMP("timer start");
 
 			threadDebug();
-			LOG_STREAM_TRACE << "timer bg thread start"  << LOG_STREAM_END
+			LOG_STREAM_TRACE << "timer bg thread start"  << LE
 			//Poco::Timestamp now;
 			_running = true;
 			long interval(0);
@@ -140,23 +140,23 @@ namespace TBS {
 				Poco::FastMutex::ScopedLock lock(_mutex);
 				interval = _startInterval;
 			}
-			LOG_STREAM_TRACE << "first sleep " << interval  << LOG_STREAM_END
+			LOG_STREAM_TRACE << "first sleep " << interval  << LE
 			do {
 
 				if (!_wakeUp.tryWait(interval)) {
 					try {
-						LOG_STREAM_TRACE << "timer tick after " << interval << "ms"  << LOG_STREAM_END
+						LOG_STREAM_TRACE << "timer tick after " << interval << "ms"  << LE
 						//THREAD_DUMP("timer tick");
 						_pCallback->invoke(*this);
 						//THREAD_DUMP("timer tick end");
 					} catch (Poco::Exception& exc) {
-						LOG_STREAM_TRACE << "timer tick exc " << exc.displayText() << LOG_STREAM_END
+						LOG_STREAM_TRACE << "timer tick exc " << exc.displayText() << LE
 						Poco::ErrorHandler::handle(exc);
 					} catch (std::exception& exc) {
-						LOG_STREAM_TRACE << "timer tick exc " << exc.what() << LOG_STREAM_END
+						LOG_STREAM_TRACE << "timer tick exc " << exc.what() << LE
 						Poco::ErrorHandler::handle(exc);
 					} catch (...) {
-						LOG_STREAM_TRACE << "timer tick error " << LOG_STREAM_END
+						LOG_STREAM_TRACE << "timer tick error " << LE
 						Poco::ErrorHandler::handle();
 					}
 				}
@@ -164,11 +164,11 @@ namespace TBS {
 					Poco::FastMutex::ScopedLock lock(_mutex);
 					interval = _periodicInterval;
 				}
-				LOG_STREAM_TRACE << "timer tick new interval assigned to " << interval << "ms"  << LOG_STREAM_END
+				LOG_STREAM_TRACE << "timer tick new interval assigned to " << interval << "ms"  << LE
 			} while (interval > 0);
-			LOG_STREAM_TRACE << "timer stpped " << LOG_STREAM_END
+			LOG_STREAM_TRACE << "timer stpped " << LE
 			_done.set();
-			LOG_STREAM_TRACE << "timer bg thread end"  << LOG_STREAM_END
+			LOG_STREAM_TRACE << "timer bg thread end"  << LE
 			_running = false;
 					//THREAD_DUMP("timer stopped");
 		}

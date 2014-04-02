@@ -16,24 +16,24 @@ namespace TBS {
 	}
 
 	void ActiveEventObject::activate() {
-		//LOG_STREAM_DEBUG << "active lock" << LOG_STREAM_END
+		//LOG_STREAM_DEBUG << "active lock" << LE
 		{
 
 			Activation act = Activating;
 
 			Poco::Mutex::ScopedLock(this->mutex);
 			if (!this->active) {
-					LOG_STREAM_DEBUG<< "before active event " << (this->BeforeActivate.empty() ? "none" : "some") << LOG_STREAM_END
+					LOG_STREAM_DEBUG<< "before active event " << (this->BeforeActivate.empty() ? "none" : "some") << LE
 					this->OuterActivation(this, act);
 					this->BeforeActivate(this, this->active);
 
 					this->active = true;
-					LOG_STREAM_DEBUG << "after active event " << (this->AfterActivate.empty() ? "none" : "some") << LOG_STREAM_END
+					LOG_STREAM_DEBUG << "after active event " << (this->AfterActivate.empty() ? "none" : "some") << LE
 					this->AfterActivate(this, this->active);
 					this->InnerActivation(this, act);
 				}
 			}
-			//LOG_STREAM_DEBUG << "after active lock" << LOG_STREAM_END
+			//LOG_STREAM_DEBUG << "after active lock" << LE
 		}
 	void ActiveEventObject::passivate() {
 		Activation act = Passivating;

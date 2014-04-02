@@ -38,7 +38,7 @@ namespace BB {
 		Poco::Thread::sleep(500);
 
 
-		this->config().setString("pokus", "hodnota");
+		//this->config().setString("pokus", "hodnota");
 
 		std::cout << "main SensorApp.start" << std::endl;
 

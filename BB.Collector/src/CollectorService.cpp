@@ -23,6 +23,7 @@ int CollectorService::main(const std::vector<std::string>& args) {
 	try {
 		std::cout << "Collector starts" << std::endl;
 
+
 		TBS::BB::Services::Sensor::DBus::Server::Ptr dbusServer =
 				new TBS::BB::Services::Sensor::DBus::Server();
 		{

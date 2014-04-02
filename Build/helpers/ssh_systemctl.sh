@@ -63,6 +63,7 @@ function systemctl_service {
 systemctl_service $IP_ADDRESS bb-collector.service
 systemctl_service $IP_ADDRESS bb-httpserver.service
 systemctl_service $IP_ADDRESS bb-forecast.service
+systemctl_service $IP_ADDRESS bb-temperature.service
 exit 0
 
 

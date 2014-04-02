@@ -101,11 +101,11 @@ public:
 			if (i->second){
 				delete (i->second);
 				i->second = NULL;
-				//LOG_STREAM_INFO << i->first << LOG_STREAM_END
+				//LOG_STREAM_INFO << i->first << LE
 			}
 		}
 		container.clear();
-		//LOG_STREAM_INFO << "done" << LOG_STREAM_END
+		//LOG_STREAM_INFO << "done" << LE
 	}
 
 
