@@ -10,20 +10,24 @@
 
 #include "BB/Services/Sensor.h"
 #include "BB/Sensor/SensorData.h"
-
+#include "BB/Services/WebUI.h"
 namespace BB {
-class SensorDataHelpers {
+namespace SensorDataHelpers {
 
-public:
-	static TBS::BB::Services::Sensor::IDataDistributor::SensorDataReceivedArg sensorData2EventArg(
+
+	TBS::BB::Services::Sensor::IDataDistributor::SensorDataReceivedArg sensorData2EventArg(
 			const SensorData & s);
 
-	static SensorData eventArg2SensorData (
+	SensorData eventArg2SensorData (
 			const TBS::BB::Services::Sensor::IDataDistributor::SensorDataReceivedArg & a);
 
-	static void sendData( TBS::BB::Services::Sensor::IDataCollector & collector, const SensorData & s);
+	void sendData( TBS::BB::Services::Sensor::IDataCollector & collector, const SensorData & s);
 
-};
+	std::string sensorID(const std::string & sensorType, const std::string & sensorName);
+	std::string sensorID(const SensorData & s);
+	std::string sensorID(const TBS::BB::WebUI::SensorInfo & i);
+
+}
 }
 
 #endif /* SENSORDATA_H_ */

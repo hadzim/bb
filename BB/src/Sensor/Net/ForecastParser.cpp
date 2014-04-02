@@ -10,6 +10,16 @@
 #include <Poco/DateTimeParser.h>
 #include <Poco/SAX/Attributes.h>
 #include "Poco/NumberParser.h"
+#include <map>
+
+std::map <int, int> hourMap(){
+	std::map <int, int> m;
+	m[0] = m[1] = m[2] = m[3] = m[4] = 2;
+	m[5] = m[6] = m[7] = m[8] = m[9] = m[10] = 8;
+	m[11] = m[12] = m[13] = m[14] = m[15] = m[16] = 14;
+	m[17] = m[18] = m[19] = m[20] = m[21] = m[22]  = m[23] = m[24] = 20;
+	return m;
+}
 
 namespace BB {
 
@@ -31,11 +41,19 @@ namespace BB {
 	void ForecastParser::startElement(const Poco::XML::XMLString& namespaceURI, const Poco::XML::XMLString& localName, const Poco::XML::XMLString& qname,
 			const Poco::XML::Attributes& attributes) {
 
+		static std::map <int, int> hmap = hourMap();
+
 		if (localName == "time"){
 			int tz = 0;
 			data.dateStr =  attributes.getValue("", "from");
 			std::cout << data.dateStr << std::endl;
 			Poco::DateTimeParser::parse(data.dateStr, data.date, tz);
+			data.date = Poco::DateTime(
+					data.date.year(),
+					data.date.month(),
+					data.date.day(),
+					hmap[data.date.hour()]
+			);
 		}
 		if (localName == "temperature"){
 			data.temperature = Poco::NumberParser::parse(attributes.getValue("", "value"));
@@ -54,9 +72,7 @@ namespace BB {
 	void ForecastParser::endElement(const Poco::XML::XMLString& uri, const Poco::XML::XMLString& localName, const Poco::XML::XMLString& qname) {
 		//send event
 		if (localName == "time"){
-
 			std::cout << "notify " << data.dateStr << " " << data.temperature << std::endl;
-
 			Forecast.notify(this, data);
 		}
 	}

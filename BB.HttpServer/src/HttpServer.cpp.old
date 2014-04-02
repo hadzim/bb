@@ -23,20 +23,8 @@ using TBS::BB::WebUI::Json::Client;
 
 namespace BB {
 
-std::string sensorKey(const std::string & type, const std::string & name) {
-	return type + "::" + name;
-}
-
-std::string sensorKey(const TBS::BB::WebUI::SensorInfo & i) {
-	return i.sensorType + "::" + i.sensorName;
-}
-
-std::string sensorKey(const BB::SensorData & d) {
-	return d.getType() + "::" + d.getName();
-}
-
 std::string sensorDateKey(const BB::SensorData & d) {
-	return sensorKey(d) + "::" + BB::SensorData::date2string(d.getDate());
+	return SensorDataHelpers::sensorID(d) + "::" + BB::SensorData::date2string(d.getDate());
 }
 
 class ConfigurationProvider: public TBS::BB::WebUI::IConfiguration {
@@ -68,11 +56,13 @@ public:
 
 		std::cout << "accept " << sd << std::endl;
 
-		sensors[sensorKey(sd)].sensorRawName = sd.getRawName();
-		sensors[sensorKey(sd)].sensorName = sd.getName();
-		sensors[sensorKey(sd)].sensorType = sd.getType();
+		std::string key = SensorDataHelpers::sensorID(sd);
 
-		SensorDataMap & m = storage[sensorKey(sd)];
+		sensors[key].sensorRawName = sd.getRawName();
+		sensors[key].sensorName = sd.getName();
+		sensors[key].sensorType = sd.getType();
+
+		SensorDataMap & m = storage[key];
 
 		m.erase(sensorDateKey(sd));
 
@@ -114,7 +104,7 @@ public:
 		Poco::Mutex::ScopedLock l(m);
 		std::vector<TBS::BB::WebUI::SensorData> all;
 
-		SensorDataMap & m = storage[sensorKey(sensorType, sensorName)];
+		SensorDataMap & m = storage[SensorDataHelpers::sensorID(sensorType, sensorName)];
 		for (SensorDataMap::iterator i = m.begin(); i != m.end(); i++) {
 
 			all.push_back(convertSD(i->second));

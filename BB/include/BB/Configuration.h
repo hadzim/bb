@@ -23,6 +23,11 @@ namespace BB {
 
 		static std::string getSensorName(const std::string sensorType, const std::string & rawName);
 
+		static std::string getGlobalProperty(const std::string sectionName, const std::string & propertyName);
+		static void setGlobalProperty(const std::string sectionName, const std::string & propertyName, const std::string & value);
+
+
+
 
 		/*
 		public:
