@@ -25,3 +25,13 @@ function parseDate(input) {
   function readableTime(dn){
       return pad(dn.getHours())+":"+pad(dn.getMinutes());
   }
+  
+  function setIconStatus(item, isOk){
+      //var errStyle = "fg-red";
+      //var okStyle = "fg-lightGreen";
+      var errStyle = "statusError";
+      var okStyle = "statusOk";
+      //$("#" + item).removeClass("fg-black");
+      $("#" + item).addClass(isOk ? okStyle : errStyle);
+      $("#" + item).removeClass(isOk ? errStyle : okStyle);
+  }
