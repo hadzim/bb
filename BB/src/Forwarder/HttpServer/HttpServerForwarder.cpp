@@ -39,7 +39,7 @@ namespace BB {
 			Poco::Mutex mtx;
 
 			IFilter::PtrList filters;
-			int oneSensorLimit;
+			std::size_t oneSensorLimit;
 
 			typedef std::map<std::string, BB::SensorData> SensorDataMap;
 			typedef std::map<std::string, SensorDataMap> Storage;
@@ -62,10 +62,10 @@ namespace BB {
 			//+ keep current
 
 			void forward(const BB::SensorData & sd) {
-
+				try {
 				Poco::Mutex::ScopedLock l(mtx);
 
-				std::cout << "accept " << sd << std::endl;
+				//std::cout << "accept " << sd << std::endl;
 
 				std::string key = SensorDataHelpers::sensorID(sd);
 
@@ -73,7 +73,7 @@ namespace BB {
 				sensors[key].sensorName = sd.getName();
 				sensors[key].sensorType = sd.getType();
 
-				current.insert(std::make_pair(key, sd));
+
 
 				SensorDataMap & m = storage[key];
 
@@ -81,17 +81,28 @@ namespace BB {
 				for (IFilter::PtrList::iterator i = filters.begin(); i != filters.end(); i++){
 					TBS::Nullable <SensorData> fdata = (*i)->filter(sd);
 					if (fdata.isSet()){
+						std::cout << "filter pass" << std::endl;
 						data = fdata;
 					}
 				}
 
 				if (data.isSet()){
+					std::cout << "insert permanent: " << data.ref() << std::endl;
+					current.erase(key);
 					m.erase(sensorDateKey(data.ref()));
 					m.insert(std::pair<std::string, BB::SensorData>(sensorDateKey(data.ref()), data.ref()));
+				} else {
+					//insert as current
+					std::cout << "insert current only: " << sd << std::endl;
+					current.erase(key);
+					current.insert(std::make_pair(key, sd));
 				}
 
 				while (m.size() > oneSensorLimit) {
 					m.erase(m.begin());
+				}
+				} catch (Poco::Exception & e){
+					std::cerr << "EXC: " << e.displayText() << std::endl;
 				}
 			}
 

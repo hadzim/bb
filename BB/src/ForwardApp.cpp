@@ -24,28 +24,32 @@ namespace BB {
 
 	int ForwarderApp::main(const std::vector<std::string>& args) {
 
+		try {
+			Poco::Thread::sleep(1000);
 
-		Poco::Thread::sleep(1000);
+			std::cout << "main ForwarderApp.start" << std::endl;
 
-		std::cout << "main ForwarderApp.start" << std::endl;
+			this->forwarder = this->factory->createForwarder();
 
-		this->forwarder = this->factory->createForwarder();
+			this->observer = new TBS::BB::Services::Sensor::DBus::Client();
+			this->observer->DataDistributor().SensorDataReceived += Poco::delegate(this, &ForwarderApp::onData);
 
-		this->observer = new TBS::BB::Services::Sensor::DBus::Client();
-		this->observer->DataDistributor().SensorDataReceived += Poco::delegate(this, &ForwarderApp::onData);
+			BB::ServiceNotification::serviceReady();
 
-		BB::ServiceNotification::serviceReady();
+			this->waitForTerminationRequest();
 
-		this->waitForTerminationRequest();
+			BB::ServiceNotification::serviceDisabled();
 
-		BB::ServiceNotification::serviceDisabled();
+			this->observer->DataDistributor().SensorDataReceived -= Poco::delegate(this, &ForwarderApp::onData);
+			this->observer = NULL;
 
-		this->observer->DataDistributor().SensorDataReceived -= Poco::delegate(this, &ForwarderApp::onData);
-		this->observer = NULL;
+			forwarder = NULL;
 
-		forwarder = NULL;
-
-		std::cout << "main ForwarderApp.stop" << std::endl;
+			std::cout << "main ForwarderApp.stop" << std::endl;
+		} catch (Poco::Exception & e){
+			std::cout << "ERR: " << e.displayText() << std::endl;
+			throw;
+		}
 
 		return EXIT_OK;
 	}
