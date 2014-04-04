@@ -36,7 +36,7 @@
 #define TEMPLATE_CLASS "\
 <namespaceStart>\
 	   /** <classComment> */\n\
-       class <className> {\n\
+       class GEN_SERVICE_API <className> {\n\
 			public:\n\
 				typedef Poco::SharedPtr <<className>> Ptr;\n\
 				\n\

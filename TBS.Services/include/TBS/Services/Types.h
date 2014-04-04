@@ -7,6 +7,20 @@
 
 #ifndef TBS_SERVICESTYPES_H_
 #define TBS_SERVICESTYPES_H_
+
+#if defined(_WIN32)
+#if defined(GEN_SERVICE_EXPORT) && !defined(GEN_SERVICE_API)
+#define GEN_SERVICE_API __declspec(dllexport)
+#else
+#define GEN_SERVICE_API __declspec(dllimport)
+#endif
+#endif
+
+#if !defined(GEN_SERVICE_API)
+#define GEN_SERVICE_API
+#endif
+
+
 namespace TBS {
 	namespace Services {
 

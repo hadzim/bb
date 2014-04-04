@@ -32,7 +32,7 @@
 \n\
 \n\
 <namespaceStart>\
-       class Client {\n\
+       class GEN_SERVICE_API Client {\n\
 			public:\n\
 				typedef Poco::SharedPtr <Client> Ptr;\n\
 				\n\
@@ -48,7 +48,7 @@
 			};\n\
 			\n\
 			\n\
-		class Server {\n\
+		class GEN_SERVICE_API Server {\n\
 			public:\n\
 				typedef Poco::SharedPtr<Server> Ptr;\n\
 				Server(const TBS::Services::JsonServerChannel & ch);\n\

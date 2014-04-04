@@ -12,12 +12,14 @@
 #include <Poco/Timespan.h>
 #include "TBS/Nullable.h"
 #include "BB/Sensor/SensorData.h"
+#include <vector>
 
 namespace BB {
 
 	class IFilter {
 		public:
 			typedef Poco::SharedPtr<IFilter> Ptr;
+			typedef std::vector <Ptr> PtrList;
 			virtual ~IFilter() {
 			}
 			virtual TBS::Nullable<SensorData> filter(const SensorData & data) = 0;
@@ -47,6 +49,15 @@ namespace BB {
 			std::map <std::string, SingleTimespanFilter> filters;
 
 	};
+
+	class EmptyFilter : public IFilter {
+		public:
+			EmptyFilter(std::string sensorType);
+			TBS::Nullable<SensorData> filter(const SensorData & data);
+		private:
+			std::string sensorType;
+	};
+
 
 } /* namespace BB */
 #endif /* FILTER_H_ */

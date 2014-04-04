@@ -28,7 +28,7 @@ namespace BB {
 		private:
 			Poco::Mutex m;
 			IForwarder::Ptr wrappedForwarder;
-			typedef std::vector <IFilter::Ptr> Filters;
+			typedef IFilter::PtrList Filters;
 			Filters filters;
 	};
 

@@ -11,13 +11,15 @@
 #include <TBS/Services/Services.h>
 #include "BB/Services/WebUISvc_Jsonp.h"
 
+#include "BB/Forwarder/Filter.h"
+
 
 namespace BB {
 
 
 	class HttpServerForwarder : public IForwarder {
 		public:
-			HttpServerForwarder(int port);
+			HttpServerForwarder(int port, const IFilter::PtrList & filters, int oneSensorLimit);
 			virtual ~HttpServerForwarder();
 
 			virtual void forward(const SensorData & d);
@@ -27,6 +29,8 @@ namespace BB {
 
 			TBS::BB::WebUI::Json::Server::Ptr jsonServer;
 			IForwarder::Ptr query;
+
+
 	};
 
 } /* namespace BB */

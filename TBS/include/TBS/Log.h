@@ -19,7 +19,7 @@
 #define LOG_TIME 	"TIME"
 
 namespace TBS {
-	std::string logBasename(const std::string& fullname);
+	TBS_API std::string logBasename(const std::string& fullname);
 }
 
 #ifdef NO_LOGGING

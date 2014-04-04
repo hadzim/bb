@@ -63,4 +63,17 @@ namespace BB {
 		return filters.at(key).filter(data);
 	}
 
+	EmptyFilter::EmptyFilter(std::string sensorType) : sensorType(sensorType){
+
+	}
+
+	TBS::Nullable<SensorData> EmptyFilter::filter(const SensorData & data){
+		TBS::Nullable<SensorData> newdata;
+		if (data.getType() == sensorType){
+			newdata.set(data);
+		}
+		return newdata;
+	}
+
+
 } /* namespace BB */
