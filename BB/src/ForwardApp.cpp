@@ -12,9 +12,11 @@
 #include "Poco/Thread.h"
 #include "BB/Sensor/SensorDataHelpers.h"
 
+#include "TBS/Log.h"
+
 namespace BB {
 
-	ForwarderApp::ForwarderApp(IForwarderFactory::Ptr factory) : factory(factory){
+	ForwarderApp::ForwarderApp(std::string name, IForwarderFactory::Ptr factory) : name(name), factory(factory){
 
 	}
 
@@ -25,7 +27,9 @@ namespace BB {
 	int ForwarderApp::main(const std::vector<std::string>& args) {
 
 
-		Poco::Thread::sleep(1000);
+		Poco::Thread::sleep(2000);
+
+		TBS::initLogs(name, 6, "/tmp/");
 
 		std::cout << "main ForwarderApp.start" << std::endl;
 
