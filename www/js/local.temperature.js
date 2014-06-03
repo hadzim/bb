@@ -44,9 +44,10 @@ function renderTemperatures(){
 }
 
 function updateTemperatures(){
-      
+      var isOk = false;
       var si = tbsService.GetSensorsData("Temperature");
       si.done(function( data, tempTextStatus, forecastJqXHR ) {
+        isOk = true;
         console.log(data);
         $.each(data.ReturnObject, function( findex, fvalue ) {
               
@@ -57,10 +58,14 @@ function updateTemperatures(){
         
         renderTemperatures();
         $("#noTemperature").hide();
+        setIconStatus("info-connection", true);
+        
       });
-      si.fail(function( jqXHR, textStatus, errorThrown ) {
-         $("#noTemperature").show(); 
-      });
+      setTimeout(function(){ 
+        if(!isOk) {  
+          setIconStatus("info-connection", false);  
+        } 
+    }, 2500);
    
 }
 

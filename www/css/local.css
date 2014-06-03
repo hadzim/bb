@@ -13,14 +13,23 @@
 }
 
 #datetime {
-  font-size: 6.8em;
-}  
+  line-height: 110px;
+  font-size: 90px;
+  padding-left: 20px;
+  margin: 0px;
+}    
+.dateadditional {
+  position: absolute; 
+  width: 100%;
+  padding-right: 20px;
+  padding-top: 25px;
+}
 p#dateday {
-  font-size: 1.9em;
-  margin-bottom: 15px;
+  font-size: 30px;
+  padding-bottom: 15px;
 } 
 p#datedate {
-  font-size: 1.9em;
+  font-size: 30px;
 } 
 .temperature {
   float: left;
@@ -37,11 +46,11 @@ p#datedate {
 .temperature-big h2 {
   margin: 2px; 
   text-align: right;
-  font-size: 3.2rem;
-  line-height: 3.2rem; 
+  font-size: 29px;
+  line-height: 29px; 
 }
 .temperature p {
-  font-size: 0.9em;
+  font-size: 13px;
   margin-bottom: -5px;
   margin-top: -5px;
 }
@@ -70,16 +79,16 @@ div.aditional {
 }
 .places {
   position: absolute; 
-  width: 8.0em; 
+  width: 130px; 
   right: 0px; 
   top: 0px;
-  margin-right: 10px;
+  margin-right: 20px;
   margin-top: 20px;
   z-index: 30;
 }
 
 .places button {
-  margin-bottom: 2px; width: 7.9em;
+  margin-bottom: 2px; width: 130px;
 }
 .temp-under {
   color: #00aff0;
@@ -95,4 +104,18 @@ div.aditional {
    color: white;
    line-height: 5em;
    text-align: center;
+}
+.statusError {
+  /*text-shadow: 2px 2px 10px #ff2d19;*/
+  box-shadow: inset 0px 0px 15px #ff2d19 !important;
+  border: 1px solid #ff2d19;
+  
+}
+.statusOk {
+  /*text-shadow: 2px 2px 10px #7ad61d;*/
+  box-shadow: inset 0px 0px 15px #7ad61d !important;
+  border: 1px solid #7ad61d;
+}
+div.tile .status {
+  color: #ccc !important;
 }

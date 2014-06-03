@@ -22,7 +22,7 @@ namespace jsonrpc {
 		this->handlers[name] = service;
 	}
 	void ServiceHandlers::unregisterHandler(std::string name) {
-		std::cout << "unregister handler " << this << " " << name << std::endl;
+		//std::cout << "unregister handler " << this << " " << name << std::endl;
 		this->handlers.erase(name);
 	}
 
