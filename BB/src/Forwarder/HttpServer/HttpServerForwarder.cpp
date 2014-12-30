@@ -9,6 +9,8 @@
 #include "BB/Sensor/SensorDataHelpers.h"
 #include "BB/Configuration.h"
 
+#include "TBS/Log.h"
+
 namespace BB {
 
 	static std::string sensorDateKey(const BB::SensorData & d) {
@@ -67,11 +69,18 @@ namespace BB {
 
 				//std::cout << "accept " << sd << std::endl;
 
+
+
 				std::string key = SensorDataHelpers::sensorID(sd);
 
 				sensors[key].sensorRawName = sd.getRawName();
 				sensors[key].sensorName = sd.getName();
 				sensors[key].sensorType = sd.getType();
+
+				if (current.find(key) != current.end()){
+					current.erase(key);
+				}
+				current.insert(std::make_pair(key, sd));
 
 
 
@@ -87,8 +96,12 @@ namespace BB {
 				}
 
 				if (data.isSet()){
-					std::cout << "insert permanent: " << data.ref() << std::endl;
-					current.erase(key);
+
+					LINFO("HttpServer") << "SensorData: " << data.ref() << LE;
+				}
+
+				if (data.isSet()){
+
 					m.erase(sensorDateKey(data.ref()));
 					m.insert(std::pair<std::string, BB::SensorData>(sensorDateKey(data.ref()), data.ref()));
 				} else {
