@@ -1,5 +1,6 @@
 
 var tbsService;
+var tbsConfiguration;
 
 var dayNamesShort = new Array("Ne", "Po", "Út", "St", "Čt", "Pá", "So");
 var dayNamesLong = new Array("Neděle", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota");

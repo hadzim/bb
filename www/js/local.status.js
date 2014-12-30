@@ -1,3 +1,4 @@
+/*
 var temperatureSensors = {
     "Outside": {
       name: "Venku",
@@ -19,8 +20,9 @@ var temperatureSensors = {
       css: "normaltemp btn-danger",
       temp: undefined
     }  */ 
-}
+/*}*/
   
+/*  
 function renderTemperature(key){
      var content = "<div rel='temper' data-place='" + key + "' class='temperature " + temperatureSensors[key].css + "'>";
      content += "<p>"; 
@@ -41,35 +43,29 @@ function renderTemperatures(){
       c += renderTemperature(findex);
     });
     $("#temperature").html(c);
-}
+} */
 
-function updateTemperatures(){
+function updateStatus(){
       var isOk = false;
-      var si = tbsService.GetSensorsData("Temperature");
+      var si = tbsService.GetRuntimeStatus();
       si.done(function( data, tempTextStatus, forecastJqXHR ) {
         isOk = true;
-        console.log(data);
-        $.each(data.ReturnObject, function( findex, fvalue ) {
+        console.log("status", data);
+        /*$.each(data.ReturnObject, function( findex, fvalue ) {
               
             if(temperatureSensors.hasOwnProperty(fvalue.sensorName)){
                temperatureSensors[fvalue.sensorName].temp = fvalue.value;
             }
         }); 
-        
-        renderTemperatures();
-        $("#noTemperature").hide();
-        setIconStatus("info-connection", true);
+          */
+        //renderTemperatures();
+        //$("#noTemperature").hide();
+        //setIconStatus("info-connection", true);
         
       });
-      setTimeout(function(){ 
-        if(!isOk) {  
-          setIconStatus("info-connection", false);  
-        } 
-    }, 2500);
-   
 }
 
-  
+   /*
   function showTemperatureDetail(place){
     
     $.Dialog({
@@ -110,4 +106,4 @@ function updateTemperatures(){
       });
   
   }
-  
+  */

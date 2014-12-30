@@ -1,4 +1,5 @@
   var temperatureRefresh = 1000;
+  var statusRefresh = 1000;
   var forecastRefresh = 1000;
     
   function updateTime(){
@@ -16,11 +17,17 @@
           forecastRefresh = 0;
           updateDefaultForecast();
        }
+       
+       if (statusRefresh++ > 60){
+          statusRefresh = 0;
+          updateStatus();
+       }
   }
   
   $( document ).ready(function() {
-      	//tbsService = new Query({url: "http://127.0.0.1:8111/"});
+      	
         tbsService = new Query({url: Settings.url});
+        tbsConfiguration = new Configuration({url: Settings.url});
         
         updateTime();
         window.setInterval(updateTime,1000);
@@ -45,8 +52,12 @@
         
         $('button.fcoverview').click(function(){
             $('#mymodal').modal();
-            //$('#box').modal("ahoj");
         });
+        
+        $("#sensor-overview").click("click", function(e){
+              showSensorOverview();
+        });
+        
         
 
 	});

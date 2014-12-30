@@ -52,6 +52,7 @@
       return content;     
   }
   function renderOverviewHtml(data, place){
+       console.log("overview", data);
        var content = "";
        content += renderOverviewPartial("Dnes", data.today, place);
        content += renderOverviewPartial("Noc", data.night, place);
@@ -63,31 +64,35 @@
      //get DATA
     
     var at = new Date();
-    var todayTime = new Date(at.getFullYear(), at.getMonth(), at.getDay(), 12);
+    var todayTime = new Date(at.getFullYear(), at.getMonth(), at.getDate(), 12);
     var times = {
       today: todayTime,
       night: new Date(todayTime.getTime() + (12 * 3600 * 1000)),
       tommorow: new Date(todayTime.getTime() + (24 * 3600 * 1000)),
     }
+    
      var dates = {
       today: null,
       night: null,
       tommorow: null,
-    }
+    }         
     
-    var datetimes = new Object();
-     
      var sidata = tbsService.GetSensorData(sensorType, sensorName);
      sidata.done(function( data, forecastTextStatus, forecastJqXHR ) { 
           
           $.each(data.ReturnObject, function( findex, fvalue ) {
              var fdata = forecastData(fvalue);
-            
+             
+             //console.log(fdata.date);
+             
              $.each(times, function( timesKey, timesValue ) {
-                if (datetimes[timesKey] == null){
-                  //console.log(timesValue, fdata.date, daydiff(timesValue, fdata.date));
+                //console.log(timesKey, daydiff(timesValue, fdata.date));
+                if (dates[timesKey] == null){
+                    //console.log(timesValue, fdata.date, daydiff(timesValue, fdata.date), fdata);
+                    //console.log();
                     if (daydiff(timesValue, fdata.date) >= 0){
-                        datetimes[timesKey] = fdata;    
+                        //console.log("apply as", timesKey, times[timesKey]);
+                        dates[timesKey] = fdata;    
                     }
                 }        
              });
@@ -96,7 +101,7 @@
           }); 
          
         //createWeatherChart(item, graphData, sensorName);
-         renderOverviewHtml(datetimes, sensorName);
+         renderOverviewHtml(dates, sensorName);
      });
   }
   
@@ -145,6 +150,7 @@
                 var win = _dialog.children('.caption');
                 var content = _dialog.children('.content');
                 content.html("<div id='detailFc' style='width: 630px; height: 330px;'>loading...</div>");
+                win.html("Předpověď: " + sensorName);
                 //win.addClass("bg-dark");
                 //win.addClass("fg-white");
                 //content.addClass("bg-steel");
