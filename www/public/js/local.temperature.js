@@ -48,7 +48,7 @@ function updateTemperatures(){
       var si = tbsService.GetSensorsData("Temperature");
       si.done(function( data, tempTextStatus, forecastJqXHR ) {
         isOk = true;
-        console.log(data);
+        //console.log(data);
         $.each(data.ReturnObject, function( findex, fvalue ) {
               
             if(temperatureSensors.hasOwnProperty(fvalue.sensorName)){
@@ -65,7 +65,7 @@ function updateTemperatures(){
         if(!isOk) {  
           setIconStatus("info-connection", false);  
         } 
-    }, 2500);
+      }, 2500);
    
 }
 

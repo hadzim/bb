@@ -36,3 +36,5 @@ function parseDate(input) {
       $("#" + item).addClass(isOk ? okStyle : errStyle);
       $("#" + item).removeClass(isOk ? errStyle : okStyle);
   }
+  
+  

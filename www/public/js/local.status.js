@@ -51,13 +51,24 @@ function updateStatus(){
       si.done(function( data, tempTextStatus, forecastJqXHR ) {
         isOk = true;
         console.log("status", data);
-        /*$.each(data.ReturnObject, function( findex, fvalue ) {
+        
+        
+        $.each(data.ReturnObject, function( findex, fvalue ) {
               
-            if(temperatureSensors.hasOwnProperty(fvalue.sensorName)){
-               temperatureSensors[fvalue.sensorName].temp = fvalue.value;
+            if(fvalue.index == "A".charCodeAt(0)){
+               setIconStatus("runtime-alarm", fvalue.value == 2);
+               if (fvalue.value == 1){
+                  //ARMED
+                  $("#runtime-alarm").html("<i class='fa fa-lock status'></i>");
+               } else if (fvalue.value == 2) {
+                  //DISARMED
+                  $("#runtime-alarm").html("<i class='fa fa-unlock status'></i>");
+               } else {
+                  $("#runtime-alarm").html("<i class='fa fa-question status'></i>");
+               }
             }
         }); 
-          */
+        
         //renderTemperatures();
         //$("#noTemperature").hide();
         //setIconStatus("info-connection", true);
