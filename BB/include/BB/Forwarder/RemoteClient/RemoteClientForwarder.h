@@ -11,36 +11,34 @@
 #include "../Cache.h"
 #include "../IForwarder.h"
 
+#include "TBS/Log.h"
+
+#include "Poco/Thread.h"
+
+#include "Poco/Runnable.h"
+
+#include "BB/Forwarder/RemoteClient/RemoteClient.h"
+
 namespace BB {
 
-	class RemoteClientForwarder: public IForwarder {
-/*
-			class Cfg : public Configuration {
-				public:
-					Cfg();
-					std::string getHost();
-					std::string getRequest();
-				private:
-					Poco::AutoPtr<Poco::Util::ConfigurationView> webserver;
-			};
-*/
+
+	class RemoteClientForwarder: public IForwarder, public Poco::Runnable {
 		public:
 			typedef Poco::SharedPtr<RemoteClientForwarder> Ptr;
-			RemoteClientForwarder(std::string ip, int port, std::string requestUrl, std::string projetID);
+			RemoteClientForwarder(const RemoteClientSettings & settings);
 			virtual ~RemoteClientForwarder();
 
 			void forward(const SensorData & data);
+			void forward(const RuntimeStatus & data);
+			void forward(const Task & data);
+			void forward(const Notification & data);
 		private:
-			void sendToRemoteServer(const SensorData & m);
-			void sendCache();
+			void run();
 		private:
-			Cache cache;
+			RemoteClient client;
 
-			std::string ip;
-			int port;
-			std::string requestUrl;
-			std::string projectID;
-
+			bool stopped;
+			Poco::Thread t;
 
 	};
 

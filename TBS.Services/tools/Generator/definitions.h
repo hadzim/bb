@@ -57,12 +57,12 @@ struct Info {
 			return srcPath + "I" + name + ".cs";
 		}
 
-		string getJsDst() {
+		string getJsDst(std::string suffix) {
 			Poco::File f(jsPath);
 			if (!f.exists()){
 				f.createDirectories();
 			}
-			return jsPath + name + ".js";
+			return jsPath + name + suffix + ".js";
 		}
 
 		string getDocDst() {

@@ -1,6 +1,7 @@
 #ifndef JSON_FORWARDS_H_INCLUDED
 # define JSON_FORWARDS_H_INCLUDED
 
+#include "Poco/Types.h"
 # include "config.h"
 
 namespace Json {
@@ -16,8 +17,8 @@ namespace Json {
    class Features;
 
    // value.h
-   typedef int Int;
-   typedef unsigned int UInt;
+   typedef Poco::Int64 Int;
+   typedef Poco::UInt64 UInt;
    class StaticString;
    class Path;
    class PathArgument;

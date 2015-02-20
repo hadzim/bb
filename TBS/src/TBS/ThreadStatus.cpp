@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#endif
+
 
 #include <Poco/String.h>
 
@@ -27,6 +27,8 @@
 #include <fstream>
 #include <Poco/File.h>
 #include <Poco/NumberFormatter.h>
+#include <Poco/DateTimeFormat.h>
+#include <Poco/DateTimeFormatter.h>
 #include "TBS/Log.h"
 
 namespace TBS {
@@ -64,6 +66,10 @@ namespace TBS {
 		return start;
 	}
 
+	static void appendTimestamp(std::string& status) {
+		status.append(" (").append(Poco::DateTimeFormatter::format(Poco::LocalDateTime(), Poco::DateTimeFormat::SORTABLE_FORMAT)).append(")");
+	}
+
 	std::string DiagnosticsStatusMemory::data(char * dataPtr) {
 		std::string value(dataPtr, DiagnosticsStatusMemory::MaxStringLength);
 		return trimString(value);
@@ -88,7 +94,7 @@ namespace TBS {
 				t.push_back(ts);
 			}
 		} catch (Poco::Exception & e) {
-			LOG_STREAM_ERROR<< "Cannot read diagnostic info" << LOG_END;
+			LOG_STREAM_ERROR<< "Cannot read diagnostic info: " << e.displayText() << LOG_END;
 			}
 		return t;
 	}
@@ -99,7 +105,7 @@ namespace TBS {
 			Poco::NamedMutex::ScopedLock l(DiagnosticsStatusMemory::m);
 			rebuildIndexes();
 		} catch (Poco::Exception & e) {
-			LOG_STREAM_ERROR<< "Cannot create diagnostic info" << LOG_END;
+			LOG_STREAM_ERROR<< "Cannot create diagnostic info: " << e.displayText() << LOG_END;
 			}
 		}
 
@@ -109,8 +115,10 @@ namespace TBS {
 			memset(mem.cntPointer(), 0, DiagnosticsStatusMemory::size());
 			rebuildIndexes();
 		} catch (Poco::Exception & e) {
-			LOG_STREAM_ERROR<< "Cannot clear diagnostic info" << LOG_END;
-			}
+			LOG_STREAM_ERROR<< "Cannot clear diagnostic info: " << e.displayText() << LOG_END;
+			//std::cerr << "Cannot clear diagnostic info: " << e.displayText() << std::endl;
+
+		}
 		}
 
 	void DiagnosticsStatusWriter::rebuildIndexes() {
@@ -123,8 +131,12 @@ namespace TBS {
 
 	void DiagnosticsStatusWriter::writeStatus(std::string key, std::string status) {
 		try {
+			//std::cout << "write status: " << key << " " << status << " before: " << mem.records() << std::endl;
+			//LINFO("TS") << "Status: " << key << " " << status << LE;
+
 			Poco::NamedMutex::ScopedLock l(DiagnosticsStatusMemory::m);
 
+			appendTimestamp(status);
 			rebuildIndexes();
 
 			if (indexes.find(key) == indexes.end()) {
@@ -150,10 +162,15 @@ namespace TBS {
 			memset(mem.keyData(indexes[key]), 0, DiagnosticsStatusMemory::MaxStringLength);
 			//write real data
 			sprintf(mem.keyData(indexes[key]), "%s", key.c_str());
+			//std::cerr << "status written(" << key << ":" << status << ")" << " after: " << mem.records() << std::endl;
 		} catch (Poco::Exception & e) {
 			LOG_STREAM_WARNING<< "Cannot write diagnostic info (" << key << ":" << status << ")" << LOG_END;
-			}
+			std::cerr << "cannot write info (" << key << ":" << status << "): " << e.displayText() << std::endl;
+		} catch (...) {
+			LOG_STREAM_WARNING<< "Cannot write diagnostic info (" << key << ":" << status << ")" << LOG_END;
+			std::cerr << "cannot write info (" << key << ":" << status << "): " << "???" << std::endl;
 		}
+	}
 	void DiagnosticsStatusWriter::writeThread(std::string status) {
 		std::string tname = "<>";
 		Poco::Thread * thread = Poco::Thread::current();
@@ -179,7 +196,7 @@ namespace TBS {
 	}
 
 	DiagnosticsMemory::DiagnosticsMemory() :
-			writer_(NULL), reader_(NULL) {
+			writer_(NULL), reader_(NULL), buffer(NULL) {
 		/*
 		 Poco::File f("/run/user/sharedmem.dat");
 		 if (!f.exists() || f.getSize() < ThreadStatusMemory::size()){
@@ -193,18 +210,51 @@ namespace TBS {
 		 std::cout << "shared mem" << std::endl;
 		 */
 		//mem = Poco::SharedMemory(f, (Poco::SharedMemory::AccessMode)(Poco::SharedMemory::AM_READ | Poco::SharedMemory::AM_WRITE));
+#ifndef _WIN32
+
 		try {
+
+			//std::cout << "SHARED MEMORY INIT:" << std::endl;
+
+			Poco::File shared("/tmp/SharedMemDiagnostics");
+			if (!shared.exists() || shared.getSize() < DiagnosticsStatusMemory::size()){
+				std::ofstream ff(shared.path().c_str());
+				char buffer[DiagnosticsStatusMemory::size()];
+				ff.write(buffer, DiagnosticsStatusMemory::size());
+			}
+
 			buffer = NULL;
-			mem = Poco::SharedMemory("ThreadSharedMem", DiagnosticsStatusMemory::size(), (Poco::SharedMemory::AccessMode) (Poco::SharedMemory::AM_READ | Poco::SharedMemory::AM_WRITE));
+			mem = Poco::SharedMemory(
+					Poco::File("/tmp/SharedMemDiagnostics"),
+					(Poco::SharedMemory::AccessMode) (Poco::SharedMemory::AM_READ | Poco::SharedMemory::AM_WRITE)
+			);
+			/*mem = Poco::SharedMemory(
+					"SharedMemDiagnostics",
+					DiagnosticsStatusMemory::size(),
+					(Poco::SharedMemory::AccessMode) (Poco::SharedMemory::AM_READ | Poco::SharedMemory::AM_WRITE),
+					0,
+					true);
+			*/
+			//std::cout << "SHARED MEMORY BEGIN: " << (int *)mem.begin() << " first byte: " << (int)(*(mem.begin())) << std::endl;
+
 			writer_ = new DiagnosticsStatusWriter(mem.begin());
 			reader_ = new DiagnosticsStatusReader(mem.begin());
+
+			//std::cout << "SHARED MEMORY BEGIN: " << (int *)mem.begin() << " first byte: " << (int)(*(mem.begin())) << std::endl;
+
 		} catch (Poco::Exception & e) {
-			LOG_STREAM_WARNING<< "Cannot create diagnostic info, buffer workaround" << LOG_END;
+			LOG_STREAM_WARNING<< "Cannot create diagnostic info, buffer workaround: " << e.displayText() << LOG_END;
+			//std::cerr << "Cannot create diagnostic info, buffer workaround" << e.displayText() << std::endl;
 				buffer = new char[DiagnosticsStatusMemory::size()];
 				writer_ = new DiagnosticsStatusWriter(buffer);
 				reader_ = new DiagnosticsStatusReader(buffer);
 			}
+
+		//std::cout << "SHARED MEMORY INIT DONE" << std::endl;
+
+#endif
 		}
+
 
 	DiagnosticsMemory::~DiagnosticsMemory() {
 		delete writer_;
@@ -220,5 +270,5 @@ namespace TBS {
 	DiagnosticsStatusReader & DiagnosticsMemory::reader() {
 		return *this->reader_;
 	}
-
 } /* namespace TBS */
+#endif

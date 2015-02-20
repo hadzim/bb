@@ -13,7 +13,7 @@
 
 class JsonServiceGenerator: public Generator {
 	public:
-		JsonServiceGenerator(std::string interfaceFile, Info & info, bool jsonp = false);
+		JsonServiceGenerator(std::string interfaceFile, Info & info);
 		~JsonServiceGenerator();
 	private:
 			string generateHStub(Interface & i, Info & in);
@@ -22,7 +22,6 @@ class JsonServiceGenerator: public Generator {
 			std::string generateClientMethodSignature(Class & c, std::string cpp = "");
 			std::string generateServerMethodSignature(Class & c, std::string cpp = "");
 
-			bool jsonp;
 		//Interface interface;
 };
 

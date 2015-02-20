@@ -64,6 +64,14 @@ systemctl_service $IP_ADDRESS bb-collector.service
 systemctl_service $IP_ADDRESS bb-httpserver.service
 systemctl_service $IP_ADDRESS bb-forecast.service
 systemctl_service $IP_ADDRESS bb-temperature.service
+systemctl_service $IP_ADDRESS bb-remoteclient.service
+systemctl_service $IP_ADDRESS bb-status.service
+systemctl_service $IP_ADDRESS bb-motion.service
+systemctl_service $IP_ADDRESS bb-camera.service
+systemctl_service $IP_ADDRESS bb-network.service
+systemctl_service $IP_ADDRESS bb-actions.service
+systemctl_service $IP_ADDRESS bb-www.service
+systemctl_service $IP_ADDRESS bb-serialcollector.service
 exit 0
 
 

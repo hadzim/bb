@@ -12,8 +12,9 @@
 #include "Poco/Thread.h"
 #include "BB/Sensor/Net/Forecast.h"
 #include "BB/Sensor/SensorDataHelpers.h"
+#include "BB/Services/DataSvc_DBus.h"
 
-#include "BB/Services/SensorSvc_DBus.h"
+#include "TBS/Log.h"
 
 namespace BB {
 
@@ -47,8 +48,8 @@ void SensorExecutor::onTimer(TBS::SimpleTimer::TimerArg & t) {
 	this->RequestsReady(this, sensor);
 }
 
-SensorApp::SensorApp(ISensorFactory::Ptr factory) :
-		factory(factory) {
+SensorApp::SensorApp(std::string name, ISensorFactory::Ptr factory) :
+		name(name), factory(factory) {
 
 }
 
@@ -66,9 +67,11 @@ void SensorApp::addSensor(ISensor::Ptr sensor) {
 
 int SensorApp::main(const std::vector<std::string>& args) {
 
-	Poco::Thread::sleep(500);
+	Poco::Thread::sleep(1000);
 
-	this->client =  new TBS::BB::Services::Sensor::DBus::Client();
+	TBS::initLogs(name, 6, "/tmp/");
+
+	this->client =  new TBS::BB::Services::Data::DBus::Client();
 
 	std::cout << "main SensorApp.start" << std::endl;
 

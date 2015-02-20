@@ -10,7 +10,7 @@
 
 #include "Poco/Util/ServerApplication.h"
 #include "BB/Configuration.h"
-#include "BB/Services/Sensor.h"
+#include "BB/Services/Data.h"
 
 #include "BB/Sensor/SensorData.h"
 #include "BB/Sensor/SensorDataHelpers.h"

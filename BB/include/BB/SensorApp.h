@@ -13,7 +13,7 @@
 #include "BB/Sensor/ISensor.h"
 #include <vector>
 
-#include "BB/Services/SensorSvc_DBus.h"
+#include "BB/Services/DataSvc_DBus.h"
 
 namespace BB {
 
@@ -33,7 +33,7 @@ class SensorApp: public Poco::Util::ServerApplication {
 
 public:
 	typedef Poco::SharedPtr<SensorApp> Ptr;
-	SensorApp(ISensorFactory::Ptr factory);
+	SensorApp(std::string name, ISensorFactory::Ptr factory);
 	virtual ~SensorApp();
 
 protected:
@@ -42,7 +42,8 @@ protected:
 private:
 	void onRequest(ISensor::Ptr & t);
 private:
-	TBS::BB::Services::Sensor::DBus::Client::Ptr client;
+	std::string name;
+	TBS::BB::Services::Data::DBus::Client::Ptr client;
 	/*
 	static const int LED = 3;
 

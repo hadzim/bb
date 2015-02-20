@@ -62,9 +62,15 @@ project(www)
 # OTHER FILES
 
 install(
-	DIRECTORY . 
+	DIRECTORY public 
 	DESTINATION Default/www
 	COMPONENT Default)
 
+install(
+	FILES bb.js 
+	DESTINATION Default/www
+	COMPONENT Default)
 
+#install(FILES *.service DESTINATION Default COMPONENT Default)
 
+servicefile()

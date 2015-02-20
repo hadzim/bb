@@ -3,13 +3,14 @@
 
 #include "json/value.h"
 #include <memory>
+#include "TBS/TBS.h"
 
 namespace TBS {
 
 	/**
 		Very simple class to provide fast, read-only access to Json tree, based on paths.
 	*/
-	class JsonValueGetter {
+	class TBS_API JsonValueGetter {
 	public:
 		JsonValueGetter();
 		JsonValueGetter(std::shared_ptr<const Json::Value> root, const std::string& path);

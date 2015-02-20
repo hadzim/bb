@@ -15,7 +15,7 @@
 #include "dbus-c++/introspection.h"
 #include "dbus-c++/object.h"
 
-
+#include <iostream>
 
 namespace TBS {
 		namespace Services {
@@ -23,18 +23,22 @@ namespace TBS {
 			class CommunicationChannelHolder {
 				public:
 					CommunicationChannelHolder(ICommChannelHolder::Ptr ch) : ch(ch){
+
+					}
+					~CommunicationChannelHolder(){
+
 					}
 
 					DBus::Connection & getConnection(){
 						if (!conn.get()){
-							conn = std::auto_ptr<DBus::Connection>(new DBus::Connection(ConnectionWrapper::SessionBus(ch.cast<DBusCommChannelHolder>()->dispatcher())));
+							conn = std::unique_ptr<DBus::Connection>(new DBus::Connection(ConnectionWrapper::SessionBus(ch.cast<DBusCommChannelHolder>()->dispatcher())));
 						}
 						return *conn;
 					}
 
 				private:
 					ICommChannelHolder::Ptr ch;
-					std::auto_ptr<DBus::Connection> conn;
+					std::unique_ptr<DBus::Connection> conn;
 			};
 
 			template<class TProxy>
@@ -42,6 +46,7 @@ namespace TBS {
 				public:
 					DBusClientImpl(DBus::Connection & conn) :
 							DBus::ObjectProxy(conn, TProxy::dbuspath(), TProxy::dbusname().c_str()) {
+
 					}
 
 					virtual ~DBusClientImpl() {

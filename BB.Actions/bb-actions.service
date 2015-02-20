@@ -1,0 +1,19 @@
+[Unit]
+Description=BB actions service
+Wants=tbs-dbus-session.service
+Wants=bb-collector.service
+After=bb-collector.service
+Requires=bb-collector.service
+
+[Service]
+Type=notify
+NotifyAccess=all
+EnvironmentFile=/home/tbs/data/scripts/app.env
+EnvironmentFile=/home/tbs/data/scripts/tbs_dbus_session.env
+ExecStart=/home/tbs/bin/BB.Actions
+WorkingDirectory=/home/tbs/bin
+Restart=on-failure
+StandardOutput=null
+
+[Install]
+WantedBy=multi-user.target

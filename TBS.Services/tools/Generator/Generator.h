@@ -18,6 +18,8 @@ class Generator {
 		~Generator();
 	public:
 		static string fullClassName(const vector<string> & namespaces, std::string name);
+		static string fullNamepace(const vector<string> & namespaces);
+
 		static std::string argType( Argument & a, bool useAliases = false);
 	protected:
 		static void replaceAll(std::string& text, const std::string& fnd, const std::string& rep);

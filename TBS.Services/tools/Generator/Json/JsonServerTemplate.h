@@ -6,7 +6,7 @@
 	class <className> : public jsonrpc::AbstractServerInterface<<className>>\n\
 		{\n\
 			public:\n\
-				<className>(jsonrpc::ServiceHandlers & handlers, <interface>::Ptr interfaceImpl) :\n\
+				<className>(jsonrpc::ServiceHandlers::Ptr handlers, <interface>::Ptr interfaceImpl) :\n\
 					jsonrpc::AbstractServerInterface<<className>>(\"<interfaceName>\", handlers), interfaceImpl(interfaceImpl) \n\
 					{\n\
 						<procedureBindings>\n\

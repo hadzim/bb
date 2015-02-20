@@ -12,6 +12,7 @@
 #include <string>
 #include "json/value.h"
 #include <stdexcept>
+#include "TBS/Nullable.h"
 
 namespace jsonrpc {
 
@@ -57,6 +58,19 @@ namespace jsonrpc {
 				return val.asInt();
 			}
 			static Json::Value cpp2Json(const int & val) {
+				Json::Value v((Json::Int)val); return v;
+			}
+	};
+
+
+	// class template:
+	template<>
+	class InternalConvertor<Poco::Int64> {
+		public:
+			static Poco::Int64 json2Cpp(const Json::Value & val) {
+				return val.asInt();
+			}
+			static Json::Value cpp2Json(const Poco::Int64 & val) {
 				CPP2JSONBODY
 			}
 	};
@@ -123,7 +137,28 @@ namespace jsonrpc {
 			}
 	};
 
-
+	// class template:
+	template <typename IntT>
+	class InternalConvertor<TBS::Nullable<IntT> > {
+		public:
+			static TBS::Nullable<IntT>  json2Cpp(const Json::Value & val) {
+				TBS::Nullable<IntT> rval;
+				if (val.isNull()){
+					return rval;
+				}
+				if (val.isString() && val.asString() == "null"){
+					return rval;
+				}
+				rval.set(Convertor::json2Cpp<IntT>(val));
+				return rval;
+			}
+			static Json::Value cpp2Json(const TBS::Nullable<IntT> & val) {
+				if (val.isEmpty()){
+					return Json::Value();
+				}
+				return Convertor::cpp2Json<IntT>(val.cref());
+			}
+	};
 
 } /* namespace jsonrpc */
 #endif /* CONVERTOR_H_ */

@@ -206,7 +206,7 @@ void Dispatcher::dispatch_pending(Connection::PrivatePList &toDispatch) {
 			j = i;
 			++j;
 
-			if (ConnectionManager::instance().isDeleted((int) *i)) {
+			if (ConnectionManager::instance().isDeleted((intptr_t)*i)) {
 				debug_log("skip because of deleted");
 				toDispatch.erase(i);
 			} else {

@@ -1,0 +1,11 @@
+[Unit]
+Description=BB www service
+
+[Service]
+ExecStart=/usr/bin/node /home/tbs/www/bb.js
+WorkingDirectory=/home/tbs/www
+Restart=always
+StandardOutput=null
+
+[Install]
+WantedBy=multi-user.target

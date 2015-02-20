@@ -12,7 +12,7 @@
 #include <memory>
 #include <jsonrpc/rpc.h>
 ///includes
-#include "BB/Services/WebUI.h"
+#include "BB/Services//WebUI.h"
 
 
 namespace TBS { 
@@ -22,12 +22,14 @@ namespace TBS {
 	class Query_JsonServer : public jsonrpc::AbstractServerInterface<Query_JsonServer>
 		{
 			public:
-				Query_JsonServer(jsonrpc::ServiceHandlers & handlers, TBS::BB::WebUI::IQuery::Ptr interfaceImpl) :
+				Query_JsonServer(jsonrpc::ServiceHandlers::Ptr handlers, TBS::BB::WebUI::IQuery::Ptr interfaceImpl) :
 					jsonrpc::AbstractServerInterface<Query_JsonServer>("TBS.BB.WebUI.Query", handlers), interfaceImpl(interfaceImpl) 
 					{
 						            this->bindAndAddMethod(new jsonrpc::Procedure("GetSensors", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_ARRAY,  NULL), &Query_JsonServer::GetSensorsI);
             this->bindAndAddMethod(new jsonrpc::Procedure("GetSensorData", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_ARRAY, "sensorType",jsonrpc::JSON_STRING,"sensorName",jsonrpc::JSON_STRING, NULL), &Query_JsonServer::GetSensorDataI);
+            this->bindAndAddMethod(new jsonrpc::Procedure("ClearSensorData", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_NULL, "sensorType",jsonrpc::JSON_STRING,"sensorName",jsonrpc::JSON_STRING, NULL), &Query_JsonServer::ClearSensorDataI);
             this->bindAndAddMethod(new jsonrpc::Procedure("GetSensorsData", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_ARRAY, "sensorType",jsonrpc::JSON_STRING, NULL), &Query_JsonServer::GetSensorsDataI);
+            this->bindAndAddMethod(new jsonrpc::Procedure("GetRuntimeStatus", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_ARRAY,  NULL), &Query_JsonServer::GetRuntimeStatusI);
 
 					}
 					
@@ -41,9 +43,19 @@ namespace TBS {
             response = jsonrpc::Convertor::cpp2Json< std::vector< SensorData > >(this->GetSensorData(jsonrpc::Convertor::json2Cpp< std::string >(request["sensorType"]), jsonrpc::Convertor::json2Cpp< std::string >(request["sensorName"])));
         }
 
+        inline virtual void ClearSensorDataI(const ::Json::Value& request, ::Json::Value& response) 
+        {
+            this->ClearSensorData(jsonrpc::Convertor::json2Cpp< std::string >(request["sensorType"]), jsonrpc::Convertor::json2Cpp< std::string >(request["sensorName"]));
+        }
+
         inline virtual void GetSensorsDataI(const ::Json::Value& request, ::Json::Value& response) 
         {
             response = jsonrpc::Convertor::cpp2Json< std::vector< SensorData > >(this->GetSensorsData(jsonrpc::Convertor::json2Cpp< std::string >(request["sensorType"])));
+        }
+
+        inline virtual void GetRuntimeStatusI(const ::Json::Value& request, ::Json::Value& response) 
+        {
+            response = jsonrpc::Convertor::cpp2Json< std::vector< RuntimeStatus > >(this->GetRuntimeStatus());
         }
 
 
@@ -55,8 +67,16 @@ namespace TBS {
         	return interfaceImpl->GetSensorData(sensorType, sensorName);
         }
 
+        void ClearSensorData(const std::string & sensorType, const std::string & sensorName){
+        	 interfaceImpl->ClearSensorData(sensorType, sensorName);
+        }
+
         std::vector< SensorData > GetSensorsData(const std::string & sensorType){
         	return interfaceImpl->GetSensorsData(sensorType);
+        }
+
+        std::vector< RuntimeStatus > GetRuntimeStatus(){
+        	return interfaceImpl->GetRuntimeStatus();
         }
 
 
@@ -76,21 +96,51 @@ namespace TBS {
 	class Configuration_JsonServer : public jsonrpc::AbstractServerInterface<Configuration_JsonServer>
 		{
 			public:
-				Configuration_JsonServer(jsonrpc::ServiceHandlers & handlers, TBS::BB::WebUI::IConfiguration::Ptr interfaceImpl) :
+				Configuration_JsonServer(jsonrpc::ServiceHandlers::Ptr handlers, TBS::BB::WebUI::IConfiguration::Ptr interfaceImpl) :
 					jsonrpc::AbstractServerInterface<Configuration_JsonServer>("TBS.BB.WebUI.Configuration", handlers), interfaceImpl(interfaceImpl) 
 					{
-						            this->bindAndAddMethod(new jsonrpc::Procedure("SetSensorProperty", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_NULL, "sensorType",jsonrpc::JSON_STRING,"sensorRawName",jsonrpc::JSON_STRING,"sensorProperty",jsonrpc::JSON_STRING,"sensorValue",jsonrpc::JSON_STRING, NULL), &Configuration_JsonServer::SetSensorPropertyI);
+						            this->bindAndAddMethod(new jsonrpc::Procedure("GetSensorProperties", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_ARRAY, "sensorType",jsonrpc::JSON_STRING,"sensorRawName",jsonrpc::JSON_STRING, NULL), &Configuration_JsonServer::GetSensorPropertiesI);
+            this->bindAndAddMethod(new jsonrpc::Procedure("SetSensorProperty", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_NULL, "sensorType",jsonrpc::JSON_STRING,"sensorRawName",jsonrpc::JSON_STRING,"sensorPropertyName",jsonrpc::JSON_STRING,"sensorPropertyValue",jsonrpc::JSON_STRING, NULL), &Configuration_JsonServer::SetSensorPropertyI);
+            this->bindAndAddMethod(new jsonrpc::Procedure("SetRuntimeStatus", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_NULL, "status",jsonrpc::JSON_STRING, NULL), &Configuration_JsonServer::SetRuntimeStatusI);
+            this->bindAndAddMethod(new jsonrpc::Procedure("SendTask", jsonrpc::PARAMS_BY_NAME, jsonrpc::JSON_NULL, "what",jsonrpc::JSON_STRING,"params",jsonrpc::JSON_STRING,"from",jsonrpc::JSON_STRING,"to",jsonrpc::JSON_STRING, NULL), &Configuration_JsonServer::SendTaskI);
 
 					}
 					
-					        inline virtual void SetSensorPropertyI(const ::Json::Value& request, ::Json::Value& response) 
+					        inline virtual void GetSensorPropertiesI(const ::Json::Value& request, ::Json::Value& response) 
         {
-            this->SetSensorProperty(jsonrpc::Convertor::json2Cpp< std::string >(request["sensorType"]), jsonrpc::Convertor::json2Cpp< std::string >(request["sensorRawName"]), jsonrpc::Convertor::json2Cpp< std::string >(request["sensorProperty"]), jsonrpc::Convertor::json2Cpp< std::string >(request["sensorValue"]));
+            response = jsonrpc::Convertor::cpp2Json< std::vector< SensorProperty > >(this->GetSensorProperties(jsonrpc::Convertor::json2Cpp< std::string >(request["sensorType"]), jsonrpc::Convertor::json2Cpp< std::string >(request["sensorRawName"])));
+        }
+
+        inline virtual void SetSensorPropertyI(const ::Json::Value& request, ::Json::Value& response) 
+        {
+            this->SetSensorProperty(jsonrpc::Convertor::json2Cpp< std::string >(request["sensorType"]), jsonrpc::Convertor::json2Cpp< std::string >(request["sensorRawName"]), jsonrpc::Convertor::json2Cpp< std::string >(request["sensorPropertyName"]), jsonrpc::Convertor::json2Cpp< std::string >(request["sensorPropertyValue"]));
+        }
+
+        inline virtual void SetRuntimeStatusI(const ::Json::Value& request, ::Json::Value& response) 
+        {
+            this->SetRuntimeStatus(jsonrpc::Convertor::json2Cpp< std::string >(request["status"]));
+        }
+
+        inline virtual void SendTaskI(const ::Json::Value& request, ::Json::Value& response) 
+        {
+            this->SendTask(jsonrpc::Convertor::json2Cpp< std::string >(request["what"]), jsonrpc::Convertor::json2Cpp< std::string >(request["params"]), jsonrpc::Convertor::json2Cpp< std::string >(request["from"]), jsonrpc::Convertor::json2Cpp< std::string >(request["to"]));
         }
 
 
-					        void SetSensorProperty(const std::string & sensorType, const std::string & sensorRawName, const std::string & sensorProperty, const std::string & sensorValue){
-        	 interfaceImpl->SetSensorProperty(sensorType, sensorRawName, sensorProperty, sensorValue);
+					        std::vector< SensorProperty > GetSensorProperties(const std::string & sensorType, const std::string & sensorRawName){
+        	return interfaceImpl->GetSensorProperties(sensorType, sensorRawName);
+        }
+
+        void SetSensorProperty(const std::string & sensorType, const std::string & sensorRawName, const std::string & sensorPropertyName, const std::string & sensorPropertyValue){
+        	 interfaceImpl->SetSensorProperty(sensorType, sensorRawName, sensorPropertyName, sensorPropertyValue);
+        }
+
+        void SetRuntimeStatus(const std::string & status){
+        	 interfaceImpl->SetRuntimeStatus(status);
+        }
+
+        void SendTask(const std::string & what, const std::string & params, const std::string & from, const std::string & to){
+        	 interfaceImpl->SendTask(what, params, from, to);
         }
 
 

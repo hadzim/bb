@@ -16,6 +16,8 @@
 #include <stdio.h>
 #include "BB/Configuration.h"
 
+#include "TBS/Log.h"
+
 namespace BB {
 
 	DallasTemperatureSensor::DallasTemperatureSensor() {
@@ -61,11 +63,13 @@ namespace BB {
 					Configuration::getSensorName(SensorData::Temperature, sensorID),
 					sensorID,
 					SensorData::UnitTemperature,
-					Poco::DateTime(),
+					SensorData::localNow(),
 					SensorData::Sensor_Ok,
 					val,
 					""
 			);
+
+			LINFO("Temperature") << "Read temperature: " << s << LE;
 
 			std::cout << "sensor: " << sensorID  << " " << val << std::endl;
 

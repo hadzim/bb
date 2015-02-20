@@ -35,6 +35,17 @@ static void _parse_read_signature(const string &signature, string &type, unsigne
 
 	for (; i < signature.length(); ++i) {
 		switch (signature[i]) {
+			case '[': {
+
+				int start = i + 1;
+				do {
+					i++;
+				} while(signature[i] != ']');
+				std::string structname = signature.substr(start, i - start);
+				type += structname;
+				std::cout << "STRUCTNAME: " << structname << std::endl;
+				break;
+			}
 			case 'a': {
 				switch (signature[++i]) {
 					case '{': {

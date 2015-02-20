@@ -46,7 +46,7 @@ struct type< TBS::Services::Tuple<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, 
 {
   static std::string sig()
   {
-	  std::cout << "SiG tuple "  << std::endl;
+	  //std::cout << "SiG tuple "  << std::endl;
 
     return "("
            + type<T1>::sig()

@@ -15,7 +15,6 @@
 #include <vector>
 
 #include "rpcprotocolserver.h"
-#include "serverconnector.h"
 #include "ServiceHandlers.h"
 
 namespace jsonrpc
@@ -27,17 +26,17 @@ namespace jsonrpc
             typedef void(S::*methodPointer_t)(const Json::Value &parameter, Json::Value &result);
             typedef void(S::*notificationPointer_t)(const Json::Value &parameter);
 
-            AbstractServerInterface(std::string name, ServiceHandlers & handlers) :
+            AbstractServerInterface(std::string name, ServiceHandlers::Ptr handlers) :
                 name(name),
                 handlers(handlers)
             {
             	this->handler = new RpcProtocolServer(this);
-                handlers.registerHandler(name, handler);
+                handlers->registerHandler(name, handler);
             }
 
             virtual ~AbstractServerInterface()
             {
-                handlers.unregisterHandler(name);
+                handlers->unregisterHandler(name);
             }
 
 
@@ -98,7 +97,7 @@ namespace jsonrpc
 
         private:
             std::string name;
-            ServiceHandlers & handlers;
+            ServiceHandlers::Ptr handlers;
             RpcProtocolServer::Ptr handler;
             std::map<std::string, methodPointer_t> methods;
             std::map<std::string, notificationPointer_t> notifications;

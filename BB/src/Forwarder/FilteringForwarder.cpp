@@ -7,6 +7,8 @@
 
 #include "BB/Forwarder/FilteringForwarder.h"
 
+#include "TBS/Log.h"
+
 namespace BB {
 
 FilteringForwarder::FilteringForwarder(IForwarder::Ptr wrappedForwarder) : wrappedForwarder(wrappedForwarder) {
@@ -42,5 +44,18 @@ void FilteringForwarder::forward(const SensorData & d){
 	}
 }
 
+void FilteringForwarder::forward(const RuntimeStatus & s){
+	LINFO("RC") << "forward status" << LE;
+	wrappedForwarder->forward(s);
+}
+void FilteringForwarder::forward(const Task & t){
+	LINFO("RC") << "forward task" << LE;
+	wrappedForwarder->forward(t);
+}
+
+void FilteringForwarder::forward(const Notification & t){
+	LINFO("RC") << "forward notification" << LE;
+	wrappedForwarder->forward(t);
+}
 
 } /* namespace BB */

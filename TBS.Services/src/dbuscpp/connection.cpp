@@ -40,6 +40,7 @@
 #include "server_p.h"
 #include "message_p.h"
 #include "pendingcall_p.h"
+#include <iostream>
 
 using namespace DBus;
 
@@ -66,7 +67,8 @@ Connection::Private::Private(DBusBusType type)
 
 Connection::Private::~Private()
 {
-  ConnectionManager::instance().setAsDeleted((int)this);
+
+  ConnectionManager::instance().setAsDeleted((intptr_t)this);
   debug_log("terminating connection 0x%08x", conn);
 
   detach_server();
@@ -91,13 +93,13 @@ void Connection::Private::init()
   debug_log("init1 %p", conn);
 
   dbus_connection_ref(conn);
-
+/*
   debug_log("init2 %p", conn);
 
   dbus_connection_ref(conn);	//todo: the library has to own another reference
 
   debug_log("init3 %p", conn);
-
+*/
   disconn_filter = new Callback<Connection::Private, bool, const Message &>(
     this, &Connection::Private::disconn_filter_function
   );
@@ -219,6 +221,7 @@ Connection Connection::ActivationBus()
 Connection::Connection(const char *address, bool priv)
   : _timeout(-1)
 {
+
   InternalError e;
   DBusConnection *conn = priv
                          ? dbus_connection_open_private(address, e)
@@ -236,17 +239,20 @@ Connection::Connection(const char *address, bool priv)
 Connection::Connection(Connection::Private *p)
   : _pvt(p), _timeout(-1)
 {
+
   setup(default_dispatcher);
 }
 
 Connection::Connection(const Connection &c)
   : _pvt(c._pvt), _timeout(c._timeout)
 {
+
   dbus_connection_ref(_pvt->conn);
 }
 
 Connection::~Connection()
 {
+
   dbus_connection_unref(_pvt->conn);
 }
 

@@ -10,6 +10,7 @@
 #include "Poco/Mutex.h"
 #include <deque>
 #include <map>
+#include <unistd.h>
 
 namespace DBus {
 
@@ -18,15 +19,15 @@ namespace DBus {
 			ConnectionManager();
 			virtual ~ConnectionManager();
 
-			bool isDeleted(int ptr);
-			void setAsDeleted(int ptr);
+			bool isDeleted(intptr_t ptr);
+			void setAsDeleted(intptr_t ptr);
 
 			static ConnectionManager & instance();
 		private:
 			static Poco::Mutex globalm;
 			Poco::Mutex m;
-			typedef std::deque<int> DeletedQueue;
-			typedef std::map <int, bool> Deleted;
+			typedef std::deque<intptr_t> DeletedQueue;
+			typedef std::map <intptr_t, bool> Deleted;
 			DeletedQueue deletedQueue;
 			Deleted deleted;
 	};

@@ -121,7 +121,7 @@ namespace Json {
       typedef ValueConstIterator const_iterator;
       typedef Json::UInt UInt;
       typedef Json::Int Int;
-      typedef UInt ArrayIndex;
+      typedef Poco::UInt32 ArrayIndex;
 
       static const Value null;
       static const Int minInt;
@@ -182,6 +182,8 @@ namespace Json {
 	\endcode
       */
       Value( ValueType type = nullValue );
+      Value( Poco::Int32 value );
+      Value( Poco::UInt32 value );
       Value( Int value );
       Value( UInt value );
       Value( double value );
@@ -248,7 +250,7 @@ namespace Json {
       bool isConvertibleTo( ValueType other ) const;
 
       /// Number of values in array or object
-      UInt size() const;
+      Poco::UInt32 size() const;
 
       /// \brief Return true if empty array, empty object, or null;
       /// otherwise, false.
@@ -267,24 +269,24 @@ namespace Json {
       /// May only be called on nullValue or arrayValue.
       /// \pre type() is arrayValue or nullValue
       /// \post type() is arrayValue
-      void resize( UInt size );
+      void resize( Poco::UInt32 size );
 
       /// Access an array element (zero based index ).
       /// If the array contains less than index element, then null value are inserted
       /// in the array so that its size is index+1.
       /// (You may need to say 'value[0u]' to get your compiler to distinguish
       ///  this from the operator[] which takes a string.)
-      Value &operator[]( UInt index );
+      Value &operator[]( Poco::UInt32 index );
       /// Access an array element (zero based index )
       /// (You may need to say 'value[0u]' to get your compiler to distinguish
       ///  this from the operator[] which takes a string.)
-      const Value &operator[]( UInt index ) const;
+      const Value &operator[]( Poco::UInt32 index ) const;
       /// If the array contains at least index+1 elements, returns the element value, 
       /// otherwise returns defaultValue.
-      Value get( UInt index, 
+      Value get( Poco::UInt32 index,
                  const Value &defaultValue ) const;
       /// Return true if index < size().
-      bool isValidIndex( UInt index ) const;
+      bool isValidIndex( Poco::UInt32 index ) const;
       /// \brief Append value to array at the end.
       ///
       /// Equivalent to jsonvalue[jsonvalue.size()] = value;
@@ -454,7 +456,7 @@ namespace Json {
       friend class Path;
 
       PathArgument();
-      PathArgument( UInt index );
+      PathArgument( Poco::UInt32 index );
       PathArgument( const char *key );
       PathArgument( const std::string &key );
 
@@ -466,7 +468,7 @@ namespace Json {
          kindKey
       };
       std::string key_;
-      UInt index_;
+      Poco::UInt32 index_;
       Kind kind_;
    };
 
@@ -910,7 +912,7 @@ public: // overridden from ValueArrayAllocator
       Value key() const;
 
       /// Return the index of the referenced Value. -1 if it is not an arrayValue.
-      UInt index() const;
+      Poco::UInt32 index() const;
 
       /// Return the member name of the referenced Value. "" if it is not an objectValue.
       const char *memberName() const;

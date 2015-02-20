@@ -40,25 +40,25 @@ namespace Poco {
 
 		BtSharedPtr(C* ptr): _pCounter(new RC), _ptr(ptr)
 		{
-			TBS::dumpBacktrace("construct", "Ptr", false);
+			TBS::dumpBacktrace("construct", "Ptr", 7);
 		}
 
 		template <class Other, class OtherRP>
 		BtSharedPtr(const BtSharedPtr<Other, RC, OtherRP>& ptr): _pCounter(ptr._pCounter), _ptr(const_cast<Other*>(ptr.get()))
 		{
-			TBS::dumpBacktrace("copyconstruct1", "Ptr", false);
+			TBS::dumpBacktrace("copyconstruct1", "Ptr", 7);
 			_pCounter->duplicate();
 		}
 
 		BtSharedPtr(const BtSharedPtr& ptr): _pCounter(ptr._pCounter), _ptr(ptr._ptr)
 		{
-			TBS::dumpBacktrace("copyconstruct2", "Ptr", false);
+			TBS::dumpBacktrace("copyconstruct2", "Ptr", 7);
 			_pCounter->duplicate();
 		}
 
 		~BtSharedPtr()
 		{
-			TBS::dumpBacktrace("destruct", "Ptr", false);
+			TBS::dumpBacktrace("destruct", "Ptr", 7);
 			release();
 		}
 
@@ -97,20 +97,20 @@ namespace Poco {
 
 		BtSharedPtr& operator = (C* ptr)
 		{
-			TBS::dumpBacktrace("operator=1", "Ptr", false);
+			TBS::dumpBacktrace("operator=1", "Ptr", 7);
 			return assign(ptr);
 		}
 
 		BtSharedPtr& operator = (const BtSharedPtr& ptr)
 		{
-			TBS::dumpBacktrace("operator=2", "Ptr", false);
+			TBS::dumpBacktrace("operator=2", "Ptr", 7);
 			return assign(ptr);
 		}
 
 		template <class Other, class OtherRP>
 		BtSharedPtr& operator = (const BtSharedPtr<Other, RC, OtherRP>& ptr)
 		{
-				TBS::dumpBacktrace("operator=3", "Ptr", false);
+				TBS::dumpBacktrace("operator=3", "Ptr", 7);
 			return assign<Other>(ptr);
 		}
 
@@ -303,7 +303,7 @@ namespace Poco {
 
 		void release()
 		{
-			TBS::dumpBacktrace("release", "Ptr", false);
+			TBS::dumpBacktrace("release", "Ptr", 7);
 			poco_assert_dbg (_pCounter);
 			int i = _pCounter->release();
 			if (i == 0)

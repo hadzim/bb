@@ -16,39 +16,28 @@
 #include <Poco/Net/HTTPClientSession.h>
 
 #include <memory>
+#include "TBS/Services/Json/JsonServices.h"
 
 
 namespace jsonrpc
 {
-    
-	class HttpClientParams {
-		public:
-			std::string host;
-			int port;
-			bool allowCrossDomain;
-			bool isHttps;
-			bool isProtected;
-			std::string username;
-			std::string password;
-			HttpClientParams();
-	};
+
 
     class HttpInterfaceClient : public AbstractClientConnector
     {
         public:
-    		HttpInterfaceClient(const  std::string & interfaceName, const HttpClientParams & p);
+    		HttpInterfaceClient(const  std::string & interfaceName, const TBS::Services::JsonClientParams & p);
             virtual ~HttpInterfaceClient();
 
             virtual void SendMessage(const std::string& message, std::string& result);
 
-            void SetUrl(const std::string& url);
 
         private:
             std::string interfaceName;
 
-            HttpClientParams p;
+            TBS::Services::JsonClientParams p;
 
-            typedef std::auto_ptr<Poco::Net::HTTPClientSession> ClientPtr;
+            typedef std::unique_ptr<Poco::Net::HTTPClientSession> ClientPtr;
             ClientPtr client;
 
     };

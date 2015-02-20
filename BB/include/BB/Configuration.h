@@ -15,11 +15,18 @@ namespace BB {
 
 	class Configuration {
 	public:
+		struct Property {
+			typedef std::vector <Property> List;
+			std::string propName;
+			std::string propValue;
+		};
 		static const std::string NameProperty;
 
 		static void setSensorProperty(const std::string sensorType, const std::string & rawName, const std::string & propertyName, const std::string & value);
 
 		static std::string getSensorProperty(const std::string sensorType, const std::string & rawName, const std::string & propertyName);
+
+		static Property::List getSensorProperties(const std::string sensorType, const std::string & rawName);
 
 		static std::string getSensorName(const std::string sensorType, const std::string & rawName);
 

@@ -8,6 +8,7 @@
 #ifndef DotNetJSONSERVICESa_H_
 #define DotNetJSONSERVICESa_H_
 
+#include <Poco/Timespan.h>
 #include <string>
 
 
@@ -19,6 +20,7 @@ namespace TBS {
 					std::string host;
 					int port;
 					std::string query;
+					Poco::Timespan timeout;
 		};
 	}
 }

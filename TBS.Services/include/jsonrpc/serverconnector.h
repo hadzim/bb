@@ -28,6 +28,7 @@ namespace jsonrpc
 
 			virtual bool StopListening() = 0;
 
+			virtual void EmitSignal(std::string signal);
 	};
 
 	class ServerHandlerProvider {

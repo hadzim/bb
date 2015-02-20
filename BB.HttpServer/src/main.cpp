@@ -25,6 +25,9 @@ namespace BB {
 					new TimespanFilter(SensorData::Temperature, Poco::Timespan(0, 0, 10, 0, 0))
 			);
 			filters.push_back(
+					new TimespanFilter(SensorData::Motion, Poco::Timespan(0, 0, 10, 0, 0))
+			);
+			filters.push_back(
 					new EmptyFilter(SensorData::ForecastTemperature)
 			);
 
@@ -33,6 +36,6 @@ namespace BB {
 	};
 }
 
-FWD_BB_MAIN(BB::Factory)
+FWD_BB_MAIN("HttpServer", BB::Factory)
 
 

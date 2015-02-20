@@ -137,9 +137,9 @@ std::string InterfaceGenerator::generateStub(Interface & i, Info & info) {
 		std::cout << "structs" << std::endl;
 			//generate structs
 			std::string s;
-			for (Struct::Map::iterator c = i.structs.begin(); c != i.structs.end(); c++) {
-				std::cout << "struct " << c->second.name << std::endl;
-				s.append(generateStruct(i, c->second));
+			for (Struct::Indexes::iterator c = i.structsIndexes.begin(); c != i.structsIndexes.end(); c++) {
+				std::cout << "struct " << i.structs.at(*c).name << std::endl;
+				s.append(generateStruct(i, i.structs.at(*c)));
 			}
 
 			replaceAll(tmp, "<structs>", s);

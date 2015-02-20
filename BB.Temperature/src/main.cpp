@@ -23,5 +23,5 @@ class BoardTemperatureFactory: public ISensorFactory {
 };
 }
 
-SENSOR_BB_MAIN(BB::BoardTemperatureFactory)
+SENSOR_BB_MAIN("Temperature", BB::BoardTemperatureFactory)
 

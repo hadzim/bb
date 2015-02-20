@@ -17,6 +17,30 @@ namespace TBS{ namespace Services{ namespace Introspection{ class Class; struct 
 namespace TBS { 
 	namespace BB { 
 		namespace WebUI { 
+       struct RuntimeStatus {
+				
+				static std::string name(){
+					static std::string n = "RuntimeStatus";
+					return n;
+				}
+				static const ::TBS::Services::Introspection::Struct & introspection();
+				
+ //members 
+						int32_t index;
+		std::string readableIndex;
+		int32_t value;
+		std::string readableValue;
+
+				
+			};
+ } 
+ } 
+ } 
+
+
+namespace TBS { 
+	namespace BB { 
+		namespace WebUI { 
        struct SensorData {
 				
 				static std::string name(){
@@ -65,13 +89,35 @@ namespace TBS {
  } 
 
 
+namespace TBS { 
+	namespace BB { 
+		namespace WebUI { 
+       struct SensorProperty {
+				
+				static std::string name(){
+					static std::string n = "SensorProperty";
+					return n;
+				}
+				static const ::TBS::Services::Introspection::Struct & introspection();
+				
+ //members 
+						std::string propertyName;
+		std::string propertyValue;
+
+				
+			};
+ } 
+ } 
+ } 
+
+
 
 
 namespace TBS { 
 	namespace BB { 
 		namespace WebUI { 
 	   /** [interface] IQuery:  */
-       class IQuery {
+       class GEN_SERVICE_API IQuery {
 			public:
 				typedef Poco::SharedPtr <IQuery> Ptr;
 				
@@ -100,11 +146,24 @@ namespace TBS {
 		        virtual std::vector< SensorData > GetSensorData(const std::string & sensorType, const std::string & sensorName) = 0;
 
 		/** 
+		  * [method] ClearSensorData: 
+		  * [in] std::string sensorType: 
+		  * [in] std::string sensorName: 
+		  */ 
+		        virtual void ClearSensorData(const std::string & sensorType, const std::string & sensorName) = 0;
+
+		/** 
 		  * [method] GetSensorsData: 
 		  * [in] std::string sensorType: 
 		  * [out] std::vector< SensorData > allSensorData: 
 		  */ 
 		        virtual std::vector< SensorData > GetSensorsData(const std::string & sensorType) = 0;
+
+		/** 
+		  * [method] GetRuntimeStatus: 
+		  * [out] std::vector< RuntimeStatus > status: 
+		  */ 
+		        virtual std::vector< RuntimeStatus > GetRuntimeStatus() = 0;
 
 				
  //signals 
@@ -120,7 +179,7 @@ namespace TBS {
 	namespace BB { 
 		namespace WebUI { 
 	   /** [interface] IConfiguration:  */
-       class IConfiguration {
+       class GEN_SERVICE_API IConfiguration {
 			public:
 				typedef Poco::SharedPtr <IConfiguration> Ptr;
 				
@@ -135,13 +194,36 @@ namespace TBS {
  //methods 
 				
 		/** 
+		  * [method] GetSensorProperties: 
+		  * [in] std::string sensorType: 
+		  * [in] std::string sensorRawName: 
+		  * [out] std::vector< SensorProperty > sensorProperty: 
+		  */ 
+		        virtual std::vector< SensorProperty > GetSensorProperties(const std::string & sensorType, const std::string & sensorRawName) = 0;
+
+		/** 
 		  * [method] SetSensorProperty: 
 		  * [in] std::string sensorType: 
 		  * [in] std::string sensorRawName: 
-		  * [in] std::string sensorProperty: 
-		  * [in] std::string sensorValue: 
+		  * [in] std::string sensorPropertyName: 
+		  * [in] std::string sensorPropertyValue: 
 		  */ 
-		        virtual void SetSensorProperty(const std::string & sensorType, const std::string & sensorRawName, const std::string & sensorProperty, const std::string & sensorValue) = 0;
+		        virtual void SetSensorProperty(const std::string & sensorType, const std::string & sensorRawName, const std::string & sensorPropertyName, const std::string & sensorPropertyValue) = 0;
+
+		/** 
+		  * [method] SetRuntimeStatus: 
+		  * [in] std::string status: 
+		  */ 
+		        virtual void SetRuntimeStatus(const std::string & status) = 0;
+
+		/** 
+		  * [method] SendTask: 
+		  * [in] std::string what: 
+		  * [in] std::string params: 
+		  * [in] std::string from: 
+		  * [in] std::string to: 
+		  */ 
+		        virtual void SendTask(const std::string & what, const std::string & params, const std::string & from, const std::string & to) = 0;
 
 				
  //signals 

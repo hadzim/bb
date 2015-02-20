@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
-<node name="TBS.BB.Services.Sensor">
+<node name="TBS.BB.Services.Data">
   
-  <interface name="TBS.BB.Services.Sensor.DataCollector">
+  <interface name="TBS.BB.Services.Data.DataCollector">
     
     <method name="SendSensorData">
       <arg type="s" name="sensorType" direction="in"/>
@@ -14,9 +14,26 @@
       <arg type="s" name="sensorTextValue" direction="in"/>
     </method>
    
+   <method name="SendStatus">
+      <arg type="s" name="status" direction="in"/>
+   </method>
+   
+   <method name="SendTask">
+      <arg type="s" name="what" direction="in"/>
+      <arg type="s" name="params" direction="in"/>
+      <arg type="s" name="source" direction="in"/>
+      <arg type="s" name="destination" direction="in"/>
+   </method>
+   
+   <method name="SendNotification">
+      <arg type="i" name="level" direction="in"/>
+      <arg type="s" name="source" direction="in"/>
+      <arg type="s" name="message" direction="in"/>
+   </method>
+   
   </interface>
   
-  <interface name="TBS.BB.Services.Sensor.DataDistributor">
+  <interface name="TBS.BB.Services.Data.DataDistributor">
     
     <signal name="SensorDataReceived">
       <arg type="s" name="sensorType"/>
@@ -27,6 +44,23 @@
       <arg type="i" name="sensorStatus"/>
       <arg type="d" name="sensorValue"/>
       <arg type="s" name="sensorTextValue"/>
+    </signal>
+   
+   <signal name="StatusReceived">
+      <arg type="s" name="status"/>
+    </signal>
+   
+   <signal name="TaskReceived">
+      <arg type="s" name="what"/>
+      <arg type="s" name="params"/>
+      <arg type="s" name="source"/>
+      <arg type="s" name="destination"/>
+    </signal>
+   
+   <signal name="NotificationReceived">
+      <arg type="i" name="level"/>
+      <arg type="s" name="source"/>
+      <arg type="s" name="message"/>
     </signal>
    
   </interface>

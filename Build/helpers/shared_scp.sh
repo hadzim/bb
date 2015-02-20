@@ -15,7 +15,7 @@ function copy_libs {
 	scp ./lib/lib* root@$1:/home/tbs/lib/
 }
 function copy_www { 
-	ssh root@$1 rm -r /home/tbs/www
+	ssh root@$1 rm -r /home/tbs/www/public
 	scp -r ./www root@$1:/home/tbs/
 }
 

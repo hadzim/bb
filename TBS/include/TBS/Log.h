@@ -14,6 +14,9 @@
 #include <Poco/Logger.h>
 #include <Poco/LogStream.h>
 #include <Poco/NullStream.h>
+#include <set>
+#include <string>
+
 
 #define LOG_THREAD  "THREAD"
 #define LOG_TIME 	"TIME"
@@ -39,9 +42,9 @@ namespace TBS {
 	#define LOG_NAMED_STREAM_CRITICAL(name) LOG_STREAM
 	#define LOG_NAMED_STREAM_ERROR(name) LOG_STREAM
 	#define LOG_NAMED_STREAM_WARNING(name)  LOG_STREAM
-	#define LOG_NAMED_STREAM_NOTICE(name)  LOG_STREAM
+	#define LNOTICE(name)  LOG_STREAM
     #define LOG_NAMED_STREAM_INFO(name) LOG_STREAM
-	#define LOG_NAMED_STREAM_DEBUG(name) LOG_STREAM
+	#define LDEBUG(name) LOG_STREAM
     #define LOG_NAMED_STREAM_TRACE(name) LOG_STREAM
 
 #else
@@ -83,13 +86,13 @@ namespace TBS {
 	#define LOG_STREAM_CRITICAL LOG_NAMED_STREAM_CRITICAL("TS")
 	#define LOG_STREAM_ERROR LOG_NAMED_STREAM_ERROR("TS")
 	#define LOG_STREAM_WARNING LOG_NAMED_STREAM_WARNING("TS")
-	#define LOG_STREAM_NOTICE LOG_NAMED_STREAM_NOTICE("TS")
+	#define LOG_STREAM_NOTICE LNOTICE("TS")
 	#define LOG_STREAM_INFO LOG_NAMED_STREAM_INFO("TS")
-	#define LOG_STREAM_DEBUG LOG_NAMED_STREAM_DEBUG("TS")
+	#define LOG_STREAM_DEBUG LDEBUG("TS")
 	#define LOG_STREAM_TRACE LTRACE("TS")
 
-	#define LOG_STREAM_IDENT LOG_NAMED_STREAM_NOTICE("IDENT")
-	#define LOG_STREAM_BGENROLL LOG_NAMED_STREAM_NOTICE("BGENROLL")
+	#define LOG_STREAM_IDENT LNOTICE("IDENT")
+	#define LOG_STREAM_BGENROLL LNOTICE("BGENROLL")
 
 	//journal log
 	#define LOG_EVENT_ERROR(module) 	LOG_NAMED_STREAM_ERROR   ("TBS." module)
@@ -111,7 +114,8 @@ namespace TBS {
 		};
 
 		TBS_API void initLogs(std::string logName, int level, std::string logDir = "");
-		TBS_API void initLogs(std::string logName, int level, std::string logDir, LogHistory history);
+		TBS_API void initLogs(std::string logName, int level, std::string logDir, LogHistory history, Poco::Channel * channel = NULL);
+
 
 		TBS_API void separeLog(std::string logName, std::string fileName, int level = 8);
 		TBS_API void separateIdentLog(std::string logName = "ident.log");
@@ -119,7 +123,9 @@ namespace TBS {
 
 
 
-		TBS_API void dumpBacktrace(std::string name, std::string logname = "TS", bool isWarning = true);
+		TBS_API void dumpBacktrace(std::string name, std::string logname = "TS", int level = 4);
+
+		TBS_API void initSepareLogs(const std::set<std::string> & names, std::string dir, std::string prefix = "");
 
 }
 

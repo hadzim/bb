@@ -23,7 +23,6 @@ namespace DotNet {
 
 	class DotNetClient {
 		public:
-			//typedef std::auto_ptr<Poco::Net::DotNetClient> Ptr;
 
 			DotNetClient(const TBS::Services::DotNetClientParams & params);
 			Json::Value sendRequest(std::string url) ;
@@ -31,7 +30,7 @@ namespace DotNet {
 		private:
 			TBS::Services::DotNetClientParams params;
 
-			typedef std::auto_ptr<Poco::Net::HTTPClientSession> ClientPtr;
+			typedef std::unique_ptr<Poco::Net::HTTPClientSession> ClientPtr;
 			ClientPtr client;
 
 	};

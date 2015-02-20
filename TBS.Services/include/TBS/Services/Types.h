@@ -7,9 +7,13 @@
 
 #ifndef TBS_SERVICESTYPES_H_
 #define TBS_SERVICESTYPES_H_
-
-#if defined(_WIN32)
-#if defined(GEN_SERVICE_EXPORT) && !defined(GEN_SERVICE_API)
+/*
+#ifdef GEN_SERVICE_API_
+#define GEN_SERVICE_API
+#endif
+*/
+#if defined(_WIN32) && !defined(GEN_SERVICE_API_EMPTY)
+#if defined(GEN_SERVICE_EXPORT)
 #define GEN_SERVICE_API __declspec(dllexport)
 #else
 #define GEN_SERVICE_API __declspec(dllimport)
@@ -20,6 +24,7 @@
 #define GEN_SERVICE_API
 #endif
 
+#include "TBS/Nullable.h"
 
 namespace TBS {
 	namespace Services {

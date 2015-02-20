@@ -9,7 +9,7 @@
 
 #include "jsonrpc/rpcprotocolserver.h"
 #include "jsonrpc/errors.h"
-#include "jsonrpc/server.h"
+#include "TBS/Log.h"
 
 #include <iostream>
 
@@ -67,13 +67,16 @@ namespace jsonrpc
 			retValue = w.write(response);
 
     	} catch (Poco::Exception & e){
-			errorMessage = e.message();
-			std::cout << "EXception: " << e.displayText() << std::endl;
+			errorMessage = e.displayText();
+			std::cout << "Exception: " << e.displayText() << std::endl;
+			LNOTICE("JSON") << "Exception: " << e.displayText() << LE;
 		} catch (std::exception & e){
-			std::cout << "EXception: " << e.what() << std::endl;
+			std::cout << "Exception: " << e.what() << std::endl;
 			errorMessage = e.what();
+			LNOTICE("JSON") << "Exception: " << e.what() << LE;
 		} catch (...){
-			std::cout << "EXception: ??" << std::endl;
+			std::cout << "Exception: ??" << std::endl;
+			LNOTICE("JSON") << "Exception: ???"  << LE;
 			errorMessage = "Unknown error";
 		}
 

@@ -19,14 +19,14 @@ namespace DBus {
 
 	}
 
-	bool ConnectionManager::isDeleted(int ptr) {
+	bool ConnectionManager::isDeleted(intptr_t ptr) {
 		Poco::Mutex::ScopedLock l(m);
 		if (deleted.find(ptr) != deleted.end()){
 			return deleted[ptr];
 		}
 		return false;
 	}
-	void ConnectionManager::setAsDeleted(int ptr) {
+	void ConnectionManager::setAsDeleted(intptr_t ptr) {
 		Poco::Mutex::ScopedLock l(m);
 		if (deleted.find(ptr) != deleted.end()){
 			deleted[ptr] = true;
@@ -36,7 +36,7 @@ namespace DBus {
 		}
 
 		while (deleted.size() > 100 && !deletedQueue.empty()){
-			int act = deletedQueue.front();
+			intptr_t act = deletedQueue.front();
 			deletedQueue.pop_front();
 			deleted.erase(act);
 		}

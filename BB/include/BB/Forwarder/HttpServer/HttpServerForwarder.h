@@ -9,7 +9,7 @@
 #define HTTPSERVERFORWARDER_H_
 #include "BB/Forwarder/IForwarder.h"
 #include <TBS/Services/Services.h>
-#include "BB/Services/WebUISvc_Jsonp.h"
+#include "BB/Services/WebUISvc_Json.h"
 
 #include "BB/Forwarder/Filter.h"
 
@@ -23,6 +23,9 @@ namespace BB {
 			virtual ~HttpServerForwarder();
 
 			virtual void forward(const SensorData & d);
+			virtual void forward(const RuntimeStatus & d);
+			virtual void forward(const Task & d);
+			virtual void forward(const Notification & d);
 		private:
 			TBS::Services::IServer::Ptr sq;
 			TBS::Services::IServer::Ptr sc;

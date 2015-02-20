@@ -1,10 +1,15 @@
 <?xml version="1.0" ?>
 <node name="TBS.BB.WebUI" comment="Web user interface API">
+  <struct name='SensorProperty'>
+      <arg type="s" name="propertyName"/>
+      <arg type="s" name="propertyValue"/>
+  </struct>
   <struct name='SensorInfo'>
       <arg type="s" name="sensorType"/>
       <arg type="s" name="sensorName"/>
       <arg type="s" name="sensorRawName"/>
   </struct>
+  
   <struct name='SensorData'>
       <arg type="s" name="sensorType"/>
       <arg type="s" name="sensorName"/>
@@ -16,6 +21,13 @@
       <arg type="s" name="textValue"/>
   </struct>
 
+  <struct name='RuntimeStatus'>
+      <arg type="i" name="index"/>
+      <arg type="s" name="readableIndex"/>
+      <arg type="i" name="value"/>
+      <arg type="s" name="readableValue"/>
+  </struct>	
+
   <interface name="TBS.BB.WebUI.Query">
   	
   	<method name="GetSensors">
@@ -26,18 +38,38 @@
       <arg type="s" name="sensorName" direction="in" />
       <arg type="a[SensorData]" name="sensorData" direction="out"/>
     </method>
+    <method name="ClearSensorData">
+      <arg type="s" name="sensorType" direction="in" />
+      <arg type="s" name="sensorName" direction="in" />
+    </method>
     <method name="GetSensorsData">
       <arg type="s" name="sensorType" direction="in" />
       <arg type="a[SensorData]" name="allSensorData" direction="out"/>
+    </method>
+    <method name="GetRuntimeStatus">
+      <arg type="a[RuntimeStatus]" name="status" direction="out"/>
     </method> 
   </interface>
   <interface name="TBS.BB.WebUI.Configuration">
-  
+  	<method name="GetSensorProperties">
+      <arg type="s" name="sensorType" direction="in"/>
+      <arg type="s" name="sensorRawName" direction="in"/>
+      <arg type="a[SensorProperty]" name="sensorProperty" direction="out"/>
+    </method>
   	 <method name="SetSensorProperty">
       <arg type="s" name="sensorType" direction="in"/>
       <arg type="s" name="sensorRawName" direction="in"/>
-      <arg type="s" name="sensorProperty" direction="in"/>
-      <arg type="s" name="sensorValue" direction="in"/>
+      <arg type="s" name="sensorPropertyName" direction="in"/>
+      <arg type="s" name="sensorPropertyValue" direction="in"/>
+    </method>
+    <method name="SetRuntimeStatus">
+      <arg type="s" name="status" direction="in"/>
+    </method>
+    <method name="SendTask">
+      <arg type="s" name="what" direction="in"/>
+      <arg type="s" name="params" direction="in"/>
+      <arg type="s" name="from" direction="in"/>
+      <arg type="s" name="to" direction="in"/>
     </method>
     </interface>
 </node>

@@ -95,12 +95,16 @@ string dotNETClientGenerator::generateMethod(Class &c, Method & m) {
 
 	url << "eventtype=" << eventtype;
 */
+
+
+
 	if (!m.inArguments.empty()){
 		for (Argument::List::iterator a = m.inArguments.begin(); a != m.inArguments.end(); a++){
 			if (a != m.inArguments.begin()){
-				assignment_string << "url << \"&\";" << std::endl;
+				assignment_string << "url.append(\"&\");" << std::endl;
 			}
-			assignment_string << "url << \"" << a->name << "=\" << " << a->name << ";" << std::endl;; //= jsonrpc::Convertor::cpp2Json< " << argType(*a) << " >(" << a->name << "); " << endl;
+			assignment_string << "url.append(\"" << a->name << "=\"); ";
+			assignment_string << "{ std::stringstream _urlstr; _urlstr  << " << a->name << ";" << "Poco::URI::encode(_urlstr.str(), \"\", url); }" << std::endl; //= jsonrpc::Convertor::cpp2Json< " << argType(*a) << " >(" << a->name << "); " << endl;
 		}
 	} else {
 		//assignment_string << "pIn = ::Json::nullValue;";
@@ -110,7 +114,7 @@ string dotNETClientGenerator::generateMethod(Class &c, Method & m) {
 
 
 	if (m.isReturn()){
-		replaceAll(tmp, "<returnStatement>", "return jsonrpc::Convertor::json2Cpp<" + returnType(m) + " >(this->client.sendRequest(url.str()));");
+		replaceAll(tmp, "<returnStatement>", "return jsonrpc::Convertor::json2Cpp<" + returnType(m) + " >(this->client.sendRequest(url));");
 	} else {
 		//parse out arguments
 
@@ -123,7 +127,7 @@ string dotNETClientGenerator::generateMethod(Class &c, Method & m) {
 			}
 			replaceAll(tmp, "<returnStatement>", assignment_outstring.str());*/
 		} else {
-			replaceAll(tmp, "<returnStatement>", "this->client.sendRequest(url.str());");
+			replaceAll(tmp, "<returnStatement>", "this->client.sendRequest(url);");
 		}
 		//replaceAll(tmp, "<returnStatement>", "this->client->CallNotification(\"" + m.name + "\", p);");
 	}

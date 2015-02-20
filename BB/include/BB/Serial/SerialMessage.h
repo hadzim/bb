@@ -30,19 +30,20 @@ namespace BB {
 
 
 
-			typedef unsigned char NodeID;
+			typedef int NodeID;
 			typedef unsigned char Length;
 			enum NodeStatus {
-				NodeOk = 1,
-				NodeError = 2
+				NodeOk = 'O',
+				NodeError = 'E'
 			};
 			enum NodeType {
-				NodeTemperature = 1
+				NodeTemperature = 'T',
+				NodeMotion = 'M'
 			};
 
 			enum DataType {
-							DataDouble = 1
-						};
+				DataDouble = 'D'
+			};
 
 			NodeID 		nodeID;
 			NodeStatus 	nodeStatus;

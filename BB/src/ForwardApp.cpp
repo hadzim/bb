@@ -20,6 +20,10 @@ namespace BB {
 
 	}
 
+	ForwarderApp::ForwarderApp(std::string name, IForwarderFactory::Ptr factory, IForwarderFactory::Ptr factory2) : name(name), factory(factory), factory2(factory2){
+
+	}
+
 	ForwarderApp::~ForwarderApp() {
 
 	}
@@ -38,9 +42,15 @@ namespace BB {
 
 
 			this->forwarder = this->factory->createForwarder();
+			if (this->factory2){
+				this->forwarder2 = this->factory2->createForwarder();
+			}
 
-			this->observer = new TBS::BB::Services::Sensor::DBus::Client();
+			this->observer = new TBS::BB::Services::Data::DBus::Client();
 			this->observer->DataDistributor().SensorDataReceived += Poco::delegate(this, &ForwarderApp::onData);
+			this->observer->DataDistributor().StatusReceived += Poco::delegate(this, &ForwarderApp::onStatus);
+			this->observer->DataDistributor().TaskReceived += Poco::delegate(this, &ForwarderApp::onTask);
+			this->observer->DataDistributor().NotificationReceived += Poco::delegate(this, &ForwarderApp::onNtf);
 
 			BB::ServiceNotification::serviceReady();
 
@@ -49,9 +59,14 @@ namespace BB {
 			BB::ServiceNotification::serviceDisabled();
 
 			this->observer->DataDistributor().SensorDataReceived -= Poco::delegate(this, &ForwarderApp::onData);
+			this->observer->DataDistributor().StatusReceived -= Poco::delegate(this, &ForwarderApp::onStatus);
+			this->observer->DataDistributor().TaskReceived -= Poco::delegate(this, &ForwarderApp::onTask);
+			this->observer->DataDistributor().NotificationReceived -= Poco::delegate(this, &ForwarderApp::onNtf);
+
 			this->observer = NULL;
 
 			forwarder = NULL;
+			forwarder2 = NULL;
 
 			std::cout << "main ForwarderApp.stop" << std::endl;
 		} catch (Poco::Exception & e){
@@ -62,12 +77,49 @@ namespace BB {
 		return EXIT_OK;
 	}
 
-	void ForwarderApp::onData(TBS::BB::Services::Sensor::IDataDistributor::SensorDataReceivedArg & arg){
-		Poco::Mutex::ScopedLock l(m);
+	void ForwarderApp::onData(TBS::BB::Services::Data::IDataDistributor::SensorDataReceivedArg & arg){
 		BB::SensorData sd = BB::SensorDataHelpers::eventArg2SensorData(arg);
 
-		//std::cout << "fwd data: " << sd << std::endl;
+		Poco::Mutex::ScopedLock l(m);
 		this->forwarder->forward(sd);
+		if (this->forwarder2){
+			this->forwarder2->forward(sd);
+		}
+	}
+
+	void ForwarderApp::onStatus(TBS::BB::Services::Data::IDataDistributor::StatusReceivedArg & arg){
+		BB::RuntimeStatus sd = BB::RuntimeStatus::fromShortString(arg);
+		Poco::Mutex::ScopedLock l(m);
+
+		this->cummulativeStatus.update(sd);
+		this->forwarder->forward(this->cummulativeStatus);
+		if (this->forwarder2){
+			this->forwarder2->forward(this->cummulativeStatus);
+		}
+	}
+
+	void ForwarderApp::onTask(TBS::BB::Services::Data::IDataDistributor::TaskReceivedArg & arg){
+		BB::Task t(arg.what, arg.params, arg.source, arg.destination);
+
+		LDEBUG("FWApp") << "fwd: task received " << t << LE;
+
+		Poco::Mutex::ScopedLock l(m);
+		this->forwarder->forward(t);
+		if (this->forwarder2){
+			this->forwarder2->forward(t);
+		}
+	}
+
+	void ForwarderApp::onNtf(TBS::BB::Services::Data::IDataDistributor::NotificationReceivedArg & arg){
+		BB::Notification t((BB::Notification::Level)arg.level, arg.source, arg.message);
+
+		LDEBUG("FWApp") << "fwd: ntf received " << t << LE;
+
+		Poco::Mutex::ScopedLock l(m);
+		this->forwarder->forward(t);
+		if (this->forwarder2){
+			this->forwarder2->forward(t);
+		}
 	}
 
 

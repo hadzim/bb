@@ -31,6 +31,7 @@ namespace TBS {
 
 			struct Struct {
 				typedef std::map <std::string, Struct> Map;
+				typedef std::vector <std::string> Indexes;
 				std::string name;
 				Argument::List members;
 			};
@@ -85,6 +86,7 @@ namespace TBS {
 					Namespace namesp;
 					std::string comment;
 					Struct::Map structs;
+					Struct::Indexes structsIndexes;
 					Class::List classes;
 
 					Interface(/*std::string name,*/ Namespace namesp, std::string comment = "") : /*name(name),*/ namesp(namesp), comment(comment){

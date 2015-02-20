@@ -15,12 +15,19 @@
 #include <Poco/SharedPtr.h>
 #include <sstream>
 #include "JsonHelpers.h"
-JsonJavascriptClientGenerator::JsonJavascriptClientGenerator(std::string ifile, Info & info, bool jsonp) : jsonp(jsonp) {
+JsonJavascriptClientGenerator::JsonJavascriptClientGenerator(std::string ifile, Info & info) {
 	Interface i = parseXml(ifile);
-	std::string stub = generateStub(i, info);
+
+
 
 	{
-		std::ofstream of(info.getJsDst().c_str());
+		std::string stub = generateStub(i, info, true);
+		std::ofstream of(info.getJsDst(".jsonp").c_str());
+		of << stub << std::endl;
+	}
+	{
+		std::string stub = generateStub(i, info, false);
+		std::ofstream of(info.getJsDst(".jsonrpc").c_str());
 		of << stub << std::endl;
 	}
 }
@@ -29,21 +36,21 @@ JsonJavascriptClientGenerator::~JsonJavascriptClientGenerator() {
 
 }
 
-std::string JsonJavascriptClientGenerator::generateStub(Interface & i, Info & info) {
+std::string JsonJavascriptClientGenerator::generateStub(Interface & i, Info & info, bool jsonp) {
 
 	string tmp = TEMPLATE_STUB;
 
 	std::string s;
 
 	for (Class::List::iterator c = i.classes.begin(); c != i.classes.end(); c++) {
-		s.append(generateClass(*c));
+		s.append(generateClass(*c, jsonp));
 	}
 
 	replaceAll(tmp, "<classes>", s);
 	return tmp;
 }
 
-string JsonJavascriptClientGenerator::generateClass(Class &c) {
+string JsonJavascriptClientGenerator::generateClass(Class &c, bool jsonp) {
 	string tmp = jsonp ? JSONP_TEMPLATE_CLASS : TEMPLATE_CLASS;
 
 	vector <string> fullnmspc = c.namesp;
@@ -56,14 +63,14 @@ string JsonJavascriptClientGenerator::generateClass(Class &c) {
 	std::string ms;
 	//methods
 	for (Method::List::iterator m = c.methods.begin(); m != c.methods.end(); m++) {
-		ms.append(generateMethod(*m));
+		ms.append(generateMethod(*m, jsonp));
 	}
 	replaceAll(tmp, "<methods>", ms);
 
 	return tmp;
 }
 
-string JsonJavascriptClientGenerator::generateMethod(Method & m) {
+string JsonJavascriptClientGenerator::generateMethod(Method & m, bool jsonp) {
 	string tmp = jsonp ? JSONP_TEMPLATE_CLIENT_METHOD : TEMPLATE_CLIENT_METHOD;
 
 

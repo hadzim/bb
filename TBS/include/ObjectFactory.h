@@ -1,8 +1,10 @@
-#ifndef OBJF
-#define OBJF
+#ifndef TBSOBJFACTORY
+#define TBSOBJFACTORY
 
 #include <map>
 #include <cstddef> // because of NULL definition
+
+#include <TBS/Log.h>
 
 template<class AbstractProduct, typename IdentifierType>
 class ObjectFactory {
@@ -50,6 +52,14 @@ class ObjectFactory {
 		iterator end() {
 			return factoryMap.end();
 		}
+
+		ObjectFactory(){
+			LDEBUG("Factory") << "Create factory of " << typeid(AbstractProduct).name() << " addr: " << this << LE;
+		}
+		~ObjectFactory(){
+			LDEBUG("Factory") << "Delete factory of " << typeid(AbstractProduct).name() << " addr: " << this << LE;
+		}
+
 
 };
 
@@ -103,6 +113,14 @@ class ObjectFactory1 {
 			return factoryMap.end();
 		}
 
+		ObjectFactory1(){
+			LDEBUG("Factory") << "Create factory(arg1) of " << typeid(AbstractProduct).name() << " addr: " << this << LE;
+		}
+		~ObjectFactory1(){
+			LDEBUG("Factory") << "Delete factory(arg1) of " << typeid(AbstractProduct).name() << " addr: " << this << LE;
+		}
+
+
 };
 
 
@@ -153,6 +171,14 @@ class ObjectFactory2 {
 		iterator end() {
 			return factoryMap.end();
 		}
+
+		ObjectFactory2(){
+			LDEBUG("Factory") << "Create factory(arg2) of " << typeid(AbstractProduct).name() << " addr: " << this << LE;
+		}
+		~ObjectFactory2(){
+			LDEBUG("Factory") << "Delete factory(arg2) of " << typeid(AbstractProduct).name() << " addr: " << this << LE;
+		}
+
 };
 
 

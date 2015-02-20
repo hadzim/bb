@@ -17,15 +17,21 @@ int main(int argc, char** argv) {\
 	return app.run(argc, argv);\
 }
 
-#define SENSOR_BB_MAIN(FACTORY) \
+#define SENSOR_BB_MAIN(name, FACTORY) \
 int main(int argc, char** argv) {\
-	BB::SensorApp app(new FACTORY());\
+	BB::SensorApp app(name, new FACTORY());\
 	return app.run(argc, argv);\
 }
 
-#define FWD_BB_MAIN(FACTORY) \
+#define FWD_BB_MAIN(name, FACTORY) \
 int main(int argc, char** argv) {\
-	BB::ForwarderApp app(new FACTORY());\
+	BB::ForwarderApp app(name, new FACTORY());\
+	return app.run(argc, argv);\
+}
+
+#define FWD_BB_MAIN2(name, FACTORY1, FACTORY2) \
+int main(int argc, char** argv) {\
+	BB::ForwarderApp app(name, new FACTORY1(), new FACTORY2());\
 	return app.run(argc, argv);\
 }
 

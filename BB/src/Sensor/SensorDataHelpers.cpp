@@ -9,10 +9,10 @@
 namespace BB {
 namespace SensorDataHelpers {
 
-TBS::BB::Services::Sensor::IDataDistributor::SensorDataReceivedArg sensorData2EventArg(
+TBS::BB::Services::Data::IDataDistributor::SensorDataReceivedArg sensorData2EventArg(
 		const SensorData & s) {
 
-	TBS::BB::Services::Sensor::IDataDistributor::SensorDataReceivedArg a;
+	TBS::BB::Services::Data::IDataDistributor::SensorDataReceivedArg a;
 	a.sensorDate = SensorData::date2string(s.getDate());
 	a.sensorName = s.getName();
 	a.sensorRawName = s.getRawName();
@@ -25,14 +25,14 @@ TBS::BB::Services::Sensor::IDataDistributor::SensorDataReceivedArg sensorData2Ev
 }
 
 SensorData eventArg2SensorData(
-		const TBS::BB::Services::Sensor::IDataDistributor::SensorDataReceivedArg & a) {
+		const TBS::BB::Services::Data::IDataDistributor::SensorDataReceivedArg & a) {
 	return SensorData(a.sensorType, a.sensorName, a.sensorRawName, a.sensorUnit,
 			SensorData::string2date(a.sensorDate),
 			(SensorData::Status) a.sensorStatus, a.sensorValue,
 			a.sensorTextValue);
 }
 
-void sendData(TBS::BB::Services::Sensor::IDataCollector & collector,
+void sendData(TBS::BB::Services::Data::IDataCollector & collector,
 		const SensorData & s) {
 	collector.SendSensorData(s.getType(), s.getName(), s.getRawName(),
 			s.getUnit(), BB::SensorData::date2string(s.getDate()),
@@ -51,5 +51,11 @@ std::string sensorID(const TBS::BB::WebUI::SensorInfo & i){
 	return sensorID(i.sensorType, i.sensorName);
 }
 
+std::string sensorRawID(const TBS::BB::WebUI::SensorInfo & i){
+	return sensorID(i.sensorType, i.sensorRawName);
+}
+std::string sensorRawID(const SensorData & s){
+	return sensorID(s.getType(), s.getRawName());
+}
 }
 }

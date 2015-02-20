@@ -3,11 +3,10 @@
 
 #define TEMPLATE_CLIENT_METHOD "\
         <returnType> <methodName>(<parameters>){\n\
-            std::stringstream url;\n\
-            url << \"/\" << \"<className>\" << \".svc/\";\n\
-			url << \"<methodName>\" << \"?\";\n\
+            std::string url;\n\
+            url.append(\"/<methodName>?\");\n\
             <parameterAssign>\n\
-            //std::string _res_ = client.sendRequest(url.str());\n\
+            //std::string _res_ = client.sendRequest(url);\n\
             <returnStatement>\n\
         }\n\
 "
@@ -18,7 +17,7 @@
 			public:\n\
 				typedef Poco::SharedPtr <<className>> Ptr;\n\
 				\n\
-				<className>(const TBS::Services::DotNetClientParams & params) : client(client){\n\
+				<className>(const TBS::Services::DotNetClientParams & params) : client(params){\n\
 				}\n\
 				virtual ~<className>() {\n\
 				 }\n\n\
@@ -50,6 +49,7 @@
 #include <TBS/Services/DotNet/DotNetServices.h>\n\
 #include <DotNet/DotNetClient.h>\n\
 #include <jsonrpc/Convertor.h>\n\
+#include <Poco/URI.h>\n\
 ///includes\n\
 <includes>\n\
 \n\

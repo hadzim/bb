@@ -14,7 +14,7 @@
 #include "TBS/TBS.h"
 
 namespace TBS {
-
+/*
 	class TBS_API NotificationQueue
 
 	{
@@ -58,7 +58,7 @@ namespace TBS {
 			WaitQueue _waitQueue;
 			mutable Poco::FastMutex _mutex;
 	};
-
+*/
 	class TBS_API NotificationBasedRunnable: public Poco::Runnable {
 		public:
 			NotificationBasedRunnable(std::string threadName);
@@ -73,7 +73,7 @@ namespace TBS {
 		protected:
 			int queueSize();
 		private:
-			NotificationQueue queue;
+			Poco::NotificationQueue queue;
 			Poco::Thread thread;
 			Poco::Mutex m;
 			volatile bool stopped;

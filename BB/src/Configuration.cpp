@@ -43,6 +43,16 @@ namespace BB {
 				all[type][name][property] = value;
 				save();
 			}
+			Configuration::Property::List getProperties(const std::string type, const std::string & name){
+				Configuration::Property::List l;
+				for (Properties::iterator i =  all[type][name].begin(); i != all[type][name].end(); i++){
+					Configuration::Property p;
+					p.propName = i->first;
+					p.propValue = i->second;
+					l.push_back(p);
+				}
+				return l;
+			}
 
 			std::string getGlobalProperty(std::string name, std::string property) {
 				return global.at(name).at(property);
@@ -134,7 +144,7 @@ namespace BB {
 					root["global"] = globalRoot;
 				}
 
-				std::string obj = Json::FastWriter().write(root);
+				std::string obj = Json::StyledWriter().write(root);
 				std::ofstream ostr(cfgName.c_str());
 				ostr << obj;
 			}
@@ -158,6 +168,11 @@ namespace BB {
 			const std::string & propertyName) {
 		ConfigurationImpl cimpl;
 		return cimpl.getProperty(sensorType, rawName, propertyName);
+	}
+
+	Configuration::Property::List Configuration::getSensorProperties(const std::string sensorType, const std::string & rawName){
+		ConfigurationImpl cimpl;
+		return cimpl.getProperties(sensorType, rawName);
 	}
 
 	void Configuration::setSensorProperty(const std::string sensorType, const std::string & rawName,

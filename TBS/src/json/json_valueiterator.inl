@@ -176,7 +176,7 @@ ValueIteratorBase::key() const
 }
 
 
-UInt 
+Poco::UInt32
 ValueIteratorBase::index() const
 {
 #ifndef JSON_VALUE_USE_INTERNAL_MAP

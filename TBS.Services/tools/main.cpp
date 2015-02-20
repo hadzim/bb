@@ -141,29 +141,18 @@ class GeneratorApp: public Poco::Util::Application {
 				dotNETInterfaceGenerator dbs(definition, info);
 				dotNETClientGenerator dcl(definition, info);
 				dotNETServiceGenerator dsv(definition, info);
-				//DBusServerGenerator dbs(definition, info);
-				//DBusServiceGenerator dbsvc(definition, info);
 			}
 			if (generate.find("dbus") != generate.end()) {
 				DBusClientGenerator dbc(definition, info);
 				DBusServerGenerator dbs(definition, info);
 				DBusServiceGenerator dbsvc(definition, info);
 			}
-			if (generate.find("json") != generate.end() && generate.find("jsonp") == generate.end()) {
+			if (generate.find("json") != generate.end()) {
 				std::cout << "JSON NORMAL" << std::endl;
 				JsonClientGenerator dbc(definition, info);
 				JsonServerGenerator dbs(definition, info);
 				JsonServiceGenerator dbsvc(definition, info);
 				JsonJavascriptClientGenerator javascript(definition, info);
-
-			}
-
-			if (generate.find("jsonp") != generate.end()) {
-				std::cout << "JSONPPPPPPP" << std::endl;
-				JsonClientGenerator dbc(definition, info);
-				JsonServerGenerator dbs(definition, info);
-				JsonServiceGenerator dbsvc(definition, info, true);
-				JsonJavascriptClientGenerator javascript(definition, info, true);
 			}
 
 			if (generate.find("doc") != generate.end()) {

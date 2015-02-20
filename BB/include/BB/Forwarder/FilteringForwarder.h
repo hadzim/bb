@@ -24,6 +24,9 @@ namespace BB {
 			void addFilter(IFilter::Ptr f);
 
 			virtual void forward(const SensorData & d);
+			virtual void forward(const RuntimeStatus & s);
+			virtual void forward(const Task & t);
+			virtual void forward(const Notification & t);
 
 		private:
 			Poco::Mutex m;

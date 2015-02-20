@@ -8,6 +8,12 @@
 #ifndef THREADSTATUS_H_
 #define THREADSTATUS_H_
 
+#ifdef __WIN32__
+	#define THREAD_DUMP(message) {}
+	#define CLASS_DUMP(obj, message) {}
+	#define CUSTOM_DUMP(name, message) {}
+#else
+
 #include <map>
 #include <string>
 #include <vector>
@@ -21,6 +27,7 @@
 
 #define THREAD_DUMP(message) TBS::DiagnosticsMemory::instance().writer().writeThread(message);
 #define CLASS_DUMP(obj, message) TBS::DiagnosticsMemory::instance().writer().writeStatus(typeid(obj).name(), message);
+#define CUSTOM_DUMP(name, message) TBS::DiagnosticsMemory::instance().writer().writeStatus(name, message);
 
 namespace TBS {
 
@@ -100,4 +107,6 @@ namespace TBS {
 	};
 
 } /* namespace TBS */
+#endif
 #endif /* THREADSTATUS_H_ */
+

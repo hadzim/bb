@@ -14,21 +14,38 @@
 
 //INDEXES
 
-#define INDEX_NODEID 1
-#define INDEX_NODESTATUS 2
+#define INDEX_NODEID_HIGH 1
+#define INDEX_NODEID_LOW 2
+
 #define INDEX_NODETYPE 3
 #define INDEX_DATATYPE 4
-#define INDEX_LENGTH 5
-#define INDEX_MESSAGE0 6
+
+#define INDEX_NODESTATUS 5
+
+#define INDEX_LENGTH 6
+
+#define INDEX_MESSAGE0 7
+#define INDEX_MESSAGE1 8
+#define INDEX_MESSAGE2 9
+#define INDEX_MESSAGE3 10
+#define INDEX_MESSAGE4 11
+#define INDEX_MESSAGE5 12
+#define INDEX_MESSAGE6 13
+#define INDEX_MESSAGE7 14
+#define INDEX_MESSAGE8 15
+#define INDEX_MESSAGE9 16
+#define INDEX_MESSAGE10 17
 
 //VALUES
 
-#define NODETYPE_TEMPERATURE 1
+#define NODETYPE_TEMPERATURE 'T'
 
-#define DATATYPE_DOUBLE 1
 
-#define NODESTATUS_OK 1
-#define NODESTATUS_ERROR 2
+#define DATATYPE_DOUBLE  'D'
+
+
+#define NODESTATUS_OK    'O'
+#define NODESTATUS_ERROR 'E'
 
 namespace BB {
 
@@ -51,6 +68,9 @@ namespace BB {
 			case SerialMessage::NodeTemperature:
 				return SerialMessage::NodeTemperature;
 				break;
+			case SerialMessage::NodeMotion:
+				return SerialMessage::NodeMotion;
+				break;
 		}
 		throw Poco::Exception("Unknown type byte");
 	}
@@ -69,11 +89,17 @@ namespace BB {
 		if (bytes.size() < INDEX_LENGTH) {
 			throw Poco::Exception("Message too short");
 		}
-		if (bytes.at(0) != 0) {
-			throw Poco::Exception("First byte should be 0x00");
+		if (bytes.at(0) != 'x') {
+			throw Poco::Exception("First byte should be 'x'");
 		}
 
-		nodeID = bytes.at(INDEX_NODEID);
+		std::string hexstr = "0x";
+
+		hexstr.push_back((char)bytes.at(INDEX_NODEID_HIGH));
+		hexstr.push_back((char)bytes.at(INDEX_NODEID_LOW));
+
+		nodeID = Poco::NumberParser::parseHex(hexstr);
+
 		nodeStatus = convertStatus(bytes.at(INDEX_NODESTATUS));
 		nodeType = convertType(bytes.at(INDEX_NODETYPE));
 		dataType = convertDataType(bytes.at(INDEX_DATATYPE));
@@ -92,6 +118,8 @@ namespace BB {
 		switch (s.nodeType) {
 			case BB::SerialMessage::NodeTemperature:
 				return SensorData::Temperature;
+			case BB::SerialMessage::NodeMotion:
+				return SensorData::Motion;
 				break;
 		}
 		throw Poco::Exception("Non existing value");
@@ -101,6 +129,9 @@ namespace BB {
 			switch (s.nodeType) {
 				case BB::SerialMessage::NodeTemperature:
 					return SensorData::UnitTemperature;
+					break;
+				case BB::SerialMessage::NodeMotion:
+					return "";
 					break;
 			}
 			throw Poco::Exception("Non existing value");
@@ -141,6 +172,9 @@ std::ostream & operator<<(std::ostream & stream, const BB::SerialMessage::NodeTy
 	switch (s) {
 		case BB::SerialMessage::NodeTemperature:
 			stream << "Temperature";
+			break;
+		case BB::SerialMessage::NodeMotion:
+			stream << "Motion";
 			break;
 	}
 	return stream;

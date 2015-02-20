@@ -23,12 +23,10 @@ namespace TBS {
 
 			Poco::Mutex::ScopedLock(this->mutex);
 			if (!this->active) {
-					LOG_STREAM_DEBUG<< "before active event " << (this->BeforeActivate.empty() ? "none" : "some") << LE
 					this->OuterActivation(this, act);
 					this->BeforeActivate(this, this->active);
 
 					this->active = true;
-					LOG_STREAM_DEBUG << "after active event " << (this->AfterActivate.empty() ? "none" : "some") << LE
 					this->AfterActivate(this, this->active);
 					this->InnerActivation(this, act);
 				}

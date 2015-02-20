@@ -8,28 +8,64 @@
 #ifndef SENSORDATARW_H_
 #define SENSORDATARW_H_
 
+
+#include <BB/Notification.h>
+#include <BB/RuntimeStatus.h>
+#include <BB/Sensor/SensorData2.h>
+#include <BB/Task/Task.h>
 #include <string>
 
 #include <iostream>
 #include "json/value.h"
 #include "BB/Sensor/SensorData.h"
+#include "BB/Node/NodeTypes.h"
 
 namespace BB {
 
+	class RW {
+		public:
+			static std::string json2String(const Json::Value & v);
+			static std::string json2OneLine(const Json::Value & v);
+			static Json::Value string2json(const std::string & v);
+	};
+
 	class SensorDataRW {
 		public:
-			static Json::Value write2Json(const SensorData & sensorData);
+			static Json::Value write(const SensorData & sensorData);
 			static SensorData read(const Json::Value & value);
+	};
 
-			static std::string write2String(const SensorData & sensorData);
-			static std::string write2OneLine(const SensorData & sensorData);
+	class Sensor2DataRW {
+		public:
+			static Json::Value write(const Sensor::Data & sensorData);
+			static Sensor::Data read(const Json::Value & value);
+	};
 
-			static SensorData read(const std::string &);
+	class NodeDataRW {
+		public:
+			static Json::Value write(const Node::Data & sensorData);
+			static Node::Data read(const Json::Value & value);
+	};
 
+
+	class StatusDataRW {
+		public:
+			static Json::Value write(const RuntimeStatus & status);
+			static RuntimeStatus read(const Json::Value & value);
+	};
+
+	class TaskDataRW {
+		public:
+			static Json::Value write(const Task & status);
+			static Task read(const Json::Value & value);
+	};
+
+	class NotificationDataRW {
+		public:
+			static Json::Value write(const Notification & ntf);
+			static Notification read(const Json::Value & value);
 	};
 
 }
-
-
 
 #endif /* SENSORDATA_H_ */

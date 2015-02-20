@@ -27,7 +27,6 @@ namespace TBS {
 			DBus::Connection ConnectionWrapper::SessionBus(DBus::Dispatcher & disp) {
 				Poco::Mutex::ScopedLock l(m);
 				DBus::default_dispatcher = &disp;
-				std::cout << "session bus" << std::endl;
 				return DBus::Connection::SessionBus();
 			}
 

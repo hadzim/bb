@@ -91,6 +91,7 @@ Interface parseXml(std::string file) {
 
 		//std::cout << "struct " << s.name << " size: " << s.members.size() << std::endl;
 		interface.structs[s.name] = s;
+		interface.structsIndexes.push_back(s.name);
 	}
 
 	Xml::Nodes xinterfaces = root["interface"];

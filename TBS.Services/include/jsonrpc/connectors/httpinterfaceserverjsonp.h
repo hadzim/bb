@@ -12,6 +12,7 @@
 
 
 #include "httpinterfaceserver.h"
+#include "TBS/Services/Json/JsonServices.h"
 namespace jsonrpc
 {
 
@@ -32,18 +33,17 @@ namespace jsonrpc
              * @param enableSpecification - defines if the specification is returned in case of a GET request
              * @param sslcert - defines the path to a SSL certificate, if this path is != "", then SSL/HTTPS is used with the given certificate.
              */
-    		JsonpHttpInterfaceServer(const HttpServerParams & p);
+    		JsonpHttpInterfaceServer(const TBS::Services::JsonServerParams & p);
             virtual ~JsonpHttpInterfaceServer();
 
             virtual bool StartListening();
             virtual bool StopListening();
 
-            ServiceHandlers & handlers();
 
         private:
-            HttpServerParams p;
-            ServiceHandlers handlers_;
-            std::auto_ptr<Poco::Net::HTTPServer> srv;
+            TBS::Services::JsonServerParams p;
+            std::unique_ptr<Poco::Net::HTTPServer> srv;
+            Poco::ThreadPool tp;
 
     };
 

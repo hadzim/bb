@@ -43,5 +43,5 @@ namespace BB {
 }
 
 
-SENSOR_BB_MAIN(BB::ForecastFactory)
+SENSOR_BB_MAIN("Forecast", BB::ForecastFactory)
 

@@ -55,6 +55,7 @@ namespace jsonrpc {
 	}
 
 	bool Procedure::ValdiateParameters(Json::Value& parameters, bool fixParam) {
+		//validate params
 		if (parameters.isArray() && this->paramDeclaration == PARAMS_BY_POSITION) {
 			return this->ValidatePositionalParameters(parameters, fixParam);
 		} else if (parameters.isObject() && this->paramDeclaration == PARAMS_BY_NAME) {
@@ -92,12 +93,10 @@ namespace jsonrpc {
 		map<string, jsontype_t>::iterator it = this->parametersName.begin();
 		bool ok = true;
 		while (ok == true && it != this->parametersName.end()) {
-			std::cout << "param: " << it->first.c_str() << std::endl;
 			if (!parameters.isMember(it->first.c_str())) {
 				std::cout << "not found: " << std::endl;
 				ok = false;
 			} else {
-				std::cout << "validate found: " << std::endl;
 				ok = this->ValidateSingleParameter(it->second, parameters[it->first], fixParam);
 			}
 			it++;
@@ -120,6 +119,13 @@ namespace jsonrpc {
 
 	bool Procedure::ValidateSingleParameter(jsontype_t expectedType, Json::Value &value, bool fixParam) {
 		bool ok = true;
+		return ok;
+
+		//TODO done by HONZA - because of NULLABLE TYPE
+		if (value.isNull()){
+			return ok;
+		}
+
 		if (fixParam) {
 
 			switch (expectedType) {

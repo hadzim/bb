@@ -47,7 +47,11 @@
 namespace TBS {
 
 	std::string logBasename(const std::string& fullname){
+#ifdef _WIN32
+		size_t last_delim = fullname.rfind('\\');
+#else
 		size_t last_delim = fullname.rfind('/');
+#endif
 		if (last_delim == std::string::npos) return fullname;
 		else return fullname.substr(last_delim+1);
 	}
@@ -74,9 +78,10 @@ class ColorConsoleChannel : public Poco::Channel {
 		virtual ~ColorConsoleChannel(){}
 
 		void log(const Poco::Message& msg){
-#ifndef __WIN32__
 			Poco::LocalDateTime t;
 			std::string lctime = Poco::DateTimeFormatter::format(t, "%M:%S.%i");
+#ifndef __WIN32__
+
 
 			std::string color = "\033[38;5;146m";
 			//std::string utctime = Poco::DateTimeFormatter::format(t.utc(), "%Y-%m-%d %H:%M:%S.%i");
@@ -96,7 +101,9 @@ class ColorConsoleChannel : public Poco::Channel {
 				}
 			//}
 			std::string colorEnd = "\033[39m";
-			std::cout << color << lctime << ": " << msg.getText() << colorEnd << "\n";
+			std::cout << color << lctime << ": " << msg.getText() << colorEnd << std::endl;
+#else
+			std::cout << lctime << ": " << msg.getText() << std::endl;
 #endif
 
 		}
@@ -117,9 +124,9 @@ namespace TBS {
 
 			Poco::Thread * thread = Poco::Thread::current();
 			if (!thread){
-				LOG_NAMED_STREAM_NOTICE("THRDBG") << "Thread " << "MAIN" << " has Thread ID " << Poco::Thread::currentTid() << " and PID " << tid << LE
+				LNOTICE("THRDBG") << "Thread " << "MAIN" << " has Thread ID " << Poco::Thread::currentTid() << " and PID " << tid << LE
 			} else {
-				LOG_NAMED_STREAM_NOTICE("THRDBG") << "Thread " << thread->name() << " has Thread ID " << Poco::Thread::current()->tid() << " and PID " << tid << LE
+				LNOTICE("THRDBG") << "Thread " << thread->name() << " has Thread ID " << Poco::Thread::current()->tid() << " and PID " << tid << LE
 			}
 
 		}
@@ -148,19 +155,36 @@ namespace TBS {
 
 				void separeLog(std::string logName, std::string fileName, int level){
 
+
+						if (Poco::File(fileName).exists()){
+							Poco::File(fileName).remove();
+						}
+						if (Poco::File(fileName + ".0").exists()){
+							Poco::File(fileName + ".0").remove();
+						}
+
 						Poco::AutoPtr<Poco::SimpleFileChannel> identChannel(new Poco::SimpleFileChannel);
 
 						identChannel->setProperty("path", fileName);
+#ifdef __WIN32
+						identChannel->setProperty("rotation", "4096 K");
+#else
 						identChannel->setProperty("rotation", "1024 K");
-
+#endif
 						Poco::AutoPtr<Poco::PatternFormatter> identPF(new Poco::PatternFormatter);
 						identPF->setProperty("pattern", "%q %H:%M:%S.%i %s<%T>: %t");
 						Poco::AutoPtr<Poco::FormattingChannel> identFC(new Poco::FormattingChannel(identPF, identChannel));
 
-						Poco::Logger::get(logName).setChannel(identFC);
+
+						Poco::AutoPtr<Poco::SplitterChannel> pSplitter(new Poco::SplitterChannel());
+						pSplitter->addChannel(identFC);
+						Poco::AutoPtr<ColorConsoleChannel> pColor(new ColorConsoleChannel());
+						pSplitter->addChannel(pColor);
+
+						Poco::Logger::get(logName).setChannel(pSplitter);
 						Poco::Logger::get(logName).setLevel((Poco::Message::Priority)level);
 
-						LOG_NAMED_STREAM_NOTICE(logName) << "log init" << LE
+						LNOTICE(logName) << "log init" << LE
 
 				}
 
@@ -172,7 +196,8 @@ namespace TBS {
 				}
 
 
-				static void initLogsInternally(std::string logName, int level, std::string logDir, Nullable<LogHistory> history = Nullable<LogHistory>()){
+				static void initLogsInternally(std::string logName, int level, std::string logDir, Nullable<LogHistory> history = Nullable<LogHistory>(), Poco::Channel * channel = NULL){
+					std::cout << "init log " << logName << " to level " << level << std::endl;
 					std::string logFile =  logName + std::string (".log");
 					std::string logFile0 = logName + std::string (".log.0");
 
@@ -208,18 +233,23 @@ namespace TBS {
 					Poco::AutoPtr<Poco::SimpleFileChannel> pCons(new Poco::SimpleFileChannel);
 
 					pCons->setProperty("path", logDir + logFile);
+#ifdef __WIN32
+					pCons->setProperty("rotation", "4096 K");
+#else
 					pCons->setProperty("rotation", "1024 K");
-
+#endif
 					Poco::AutoPtr<Poco::PatternFormatter> pPF(new Poco::PatternFormatter);
 					pPF->setProperty("pattern", "%q %H:%M:%S.%i %s<%T>: %t");
 					Poco::AutoPtr<Poco::FormattingChannel> pFC(new Poco::FormattingChannel(pPF, pCons));
-
-					std::cout << "LOGGING IS " << level << std::endl;
 
 					Poco::AutoPtr<Poco::SplitterChannel> pSplitter(new Poco::SplitterChannel());
 					pSplitter->addChannel(pFC);
 					Poco::AutoPtr<ColorConsoleChannel> pColor(new ColorConsoleChannel());
 					pSplitter->addChannel(pColor);
+
+					if (channel != NULL){
+						pSplitter->addChannel(channel);
+					}
 
 
 					Poco::Logger::root().setChannel(pSplitter);
@@ -234,35 +264,55 @@ namespace TBS {
 				void initLogs(std::string logName, int level, std::string logDir){
 					initLogsInternally(logName, level, logDir);
 				}
-				void initLogs(std::string logName, int level, std::string logDir, LogHistory history){
-					initLogsInternally(logName, level, logDir, history);
+				void initLogs(std::string logName, int level, std::string logDir, LogHistory history, Poco::Channel * channel){
+					initLogsInternally(logName, level, logDir, history, channel);
 				}
 
+				void initSepareLogs(const std::set<std::string> & names, std::string dir, std::string prefix){
+					for (std::set<std::string>::const_iterator slog = names.begin(); slog != names.end(); slog++){
+						std::string slogname = *slog;
 
-				void dumpBacktrace(std::string name, std::string logname, bool isWarning){
+						//try parse for @ for distinguish log level
+						Poco::StringTokenizer stoken(slogname, "@");
+						int level = 8;
+						if (stoken.count() == 2 && Poco::NumberParser::tryParse(stoken[1], level)){
+							slogname = stoken[0];
+							separeLog(slogname, dir + prefix + slogname +".log", level);
+						} else {
+							separeLog(slogname, dir + prefix + slogname +".log");
+						}
+					}
+				}
+
+				void dumpBacktrace(std::string name, std::string logname, int level){
 #ifndef __WIN32__
-				   void *array[10];
-				   size_t size;
-				   char **strings;
-				   size_t i;
 
-				   size = backtrace (array, 10);
-				   strings = backtrace_symbols (array, size);
-				   if (isWarning){
-					   LWARNING(logname) << name << "- backtrace: " << size << " stack frames" << LOG_END;
-				   } else {
-					   LDEBUG(logname) << name << "- backtrace: " << size << " stack frames" << LOG_END;
-				   }
-				   for (i = 0; i < size; i++){
-					   if (isWarning){
-						   LWARNING(logname) << "> " << strings[i] << LOG_END;
-					   } else {
-						   LDEBUG(logname) << "> " << strings[i] << LOG_END;
+				   Poco::Logger & pl = Poco::Logger::get(logname);
+
+				 //  LERROR(logname) << "dump " << name << "logname" << logname << " level " << level << " loglevel" << pl.getLevel() << LE;
+
+				   if (pl.getLevel() >= level){
+
+					   void *array[10];
+					   size_t size;
+					   char **strings;
+					   size_t i;
+
+					   size = backtrace (array, 10);
+					   strings = backtrace_symbols (array, size);
+
+					   Poco::LogStream str(pl);
+					   str.priority((Poco::Message::Priority)level);
+					   str << name << " - backtrace: " << size << " stack frames (in " << ::TBS::logBasename(__FILE__) << ":" << __func__ << ":" << __LINE__ << ")"<< std::endl;
+
+					   for (i = 0; i < size; i++){
+						   str  << " > " << strings[i] << " (in " << ::TBS::logBasename(__FILE__) << ":" << __func__ << ":" << __LINE__ << ")"<< std::endl;
 					   }
-				   }
 
-				   free (strings);
+					   free (strings);
+				   }
 #endif
+
 				}
 
 

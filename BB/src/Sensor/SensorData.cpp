@@ -9,10 +9,16 @@
 
 namespace BB {
 
+const std::string SensorData::Motion = "Motion";
 const std::string SensorData::Temperature = "Temperature";
 const std::string SensorData::ForecastTemperature = "ForecastTemperature";
 
+const std::string SensorData::Camera = "Camera";
+
 const std::string SensorData::UnitTemperature = "C";
+
+
+
 
 SensorData::SensorData(
 				const std::string & type,

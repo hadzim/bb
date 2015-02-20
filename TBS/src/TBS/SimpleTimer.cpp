@@ -17,6 +17,7 @@ namespace TBS {
 	}
 
 	SimpleTimer::SimpleTimer(TimerNotifier::Ptr tntf) : isRunning_(false), isOneShot(false)  {
+		timer = new TimerImpl();
 		notifier = tntf;
 	}
 
@@ -52,7 +53,7 @@ namespace TBS {
 
 	void SimpleTimer::onTimer(TimerArg & a) {
 
-		this->Timer(a);
+		this->Timer(this, a);
 		if (isOneShot){
 			isRunning_ = false;
 		}

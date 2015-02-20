@@ -27,6 +27,8 @@
 #include <sstream>
 #include "BB/Configuration.h"
 
+#include "TBS/Log.h"
+
 namespace BB {
 
 	Forecast::Forecast(std::string name, std::string url_) : name(name), url(url_ + "forecast.xml") {
@@ -108,6 +110,10 @@ namespace BB {
 				data.temperature,
 				str.str()
 		);
+
+
+		LINFO("Forecast") << "Read forecast: " << s << LE;
+
 		r.push_back(s);
 	}
 
@@ -117,7 +123,7 @@ namespace BB {
 	}
 	int Forecast::getPeriodInMs(){
 		//each 4 hours
-		return 1000*60*10;//1000*60*60*2; //60*4;
+		return 1000*60*60*4;//1000*60*60*2; //60*4;
 	}
 
 

@@ -12,8 +12,8 @@
 #include "TBS/SafeTimer.h"
 #include "BB/Forwarder/IForwarder.h"
 #include <vector>
-#include "BB/Services/Sensor.h"
-#include "BB/Services/SensorSvc_DBus.h"
+#include "BB/Services/Data.h"
+#include "BB/Services/DataSvc_DBus.h"
 
 namespace BB {
 
@@ -31,22 +31,29 @@ namespace BB {
 
 		public:
 			typedef Poco::SharedPtr<ForwarderApp> Ptr;
-			ForwarderApp(IForwarderFactory::Ptr factory);
+			ForwarderApp(std::string name, IForwarderFactory::Ptr factory);
+			ForwarderApp(std::string name, IForwarderFactory::Ptr factory1, IForwarderFactory::Ptr factory2);
 			virtual ~ForwarderApp();
 
 		protected:
 			int main(const std::vector<std::string>& args);
 
 		private:
-			void onData(TBS::BB::Services::Sensor::IDataDistributor::SensorDataReceivedArg & arg);
+			void onData(TBS::BB::Services::Data::IDataDistributor::SensorDataReceivedArg & arg);
+			void onStatus(TBS::BB::Services::Data::IDataDistributor::StatusReceivedArg & arg);
+			void onTask(TBS::BB::Services::Data::IDataDistributor::TaskReceivedArg & arg);
+			void onNtf(TBS::BB::Services::Data::IDataDistributor::NotificationReceivedArg & arg);
 		private:
-
+			std::string name;
 			IForwarder::Ptr forwarder;
+			IForwarder::Ptr forwarder2;
 			IForwarderFactory::Ptr factory;
+			IForwarderFactory::Ptr factory2;
 
-			TBS::BB::Services::Sensor::DBus::Client::Ptr observer;
+			TBS::BB::Services::Data::DBus::Client::Ptr observer;
 			Poco::Mutex m;
 
+			RuntimeStatus cummulativeStatus;
 	};
 
 } /* namespace BB */

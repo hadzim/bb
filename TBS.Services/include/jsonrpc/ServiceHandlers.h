@@ -10,6 +10,7 @@
 
 #include <map>
 #include "jsonrpc/rpcprotocolserver.h"
+#include <memory>
 
 namespace jsonrpc {
 
@@ -17,6 +18,9 @@ namespace jsonrpc {
 		public:
 
 			typedef std::map <std::string, RpcProtocolServer::Ptr> Handlers;
+
+			typedef std::shared_ptr<ServiceHandlers> Ptr;
+			typedef std::weak_ptr<ServiceHandlers> WeakPtr;
 
 			ServiceHandlers();
 			virtual ~ServiceHandlers();

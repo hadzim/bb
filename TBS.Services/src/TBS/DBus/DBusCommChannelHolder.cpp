@@ -16,27 +16,33 @@ namespace TBS {
 	namespace Services {
 
 		DBusCommChannelHolder::DBusCommChannelHolder(std::string name) :
-				t("DBus" + name) {
-
+				t("DBus" + name), running(false) {
+			dispatcher_ = new ::DBus::BusDispatcher();
+			std::cout << "DBusCommChannelHolder C" << std::endl;
 		}
 
 		DBusCommChannelHolder::~DBusCommChannelHolder() {
-			std::cout << "dbus destuct entered" << std::endl;
+			std::cout << "DBusCommChannelHolder D" << std::endl;
+			LTRACE("DBUS") << "DBusCommChannelHolder D" << LE;
 			this->stop();
-			std::cout << "dbus destuct after stop" << std::endl;
+			LTRACE("DBUS") << "DBusCommChannelHolder D after stop" << LE;
+			delete dispatcher_;
+			LTRACE("DBUS") << "DBusCommChannelHolder D after delete" << LE;
+			//std::cout << "dbus destuct after stop" << std::endl;
 		}
 
 		void DBusCommChannelHolder::start() {
-			std::cout << "dbus thread started" << std::endl;
+			//std::cout << "dbus thread started" << std::endl;
 			t.start(*this);
 			running = true;
 		}
 
 		void DBusCommChannelHolder::stop() {
-			std::cout << "dbus thread stop" << std::endl;
+			//std::cout << "dbus thread stop" << std::endl;
 			running = false;
-			dispatcher_.leave();
-			std::cout << "dbus thread stop done" << std::endl;
+			dispatcher_->leave();
+			t.join();
+			//std::cout << "dbus thread stop done" << std::endl;
 		}
 
 		bool DBusCommChannelHolder::isRunning() {
@@ -46,20 +52,27 @@ namespace TBS {
 		void DBusCommChannelHolder::run() {
 			try {
 				TBS::threadDebug();
-				std::cout << "dbus thread started BG" << std::endl;
-				dispatcher_.enter();
+				LTRACE("DBUS") << "dbus thread started BG" << LE;
+				dispatcher_->enter();
+				LTRACE("DBUS") << "dbus thread finished BG" << LE;
 			} catch (::DBus::Error & e){
+				LWARNING("DBUS") << "dbus thread BG dbus exc:" << e.message() << LE;
 				std::cout << "dbus thread started exception: " << e.message() << std::endl;
 			}  catch (Poco::Exception & e){
+				LWARNING("DBUS") << "dbus thread BG poco exc:" << e.displayText() << LE;
 				std::cout << "dbus thread started exception: " << e.displayText() << std::endl;
 			} catch (std::exception & e){
+				LWARNING("DBUS") << "dbus thread BG std exc:" << e.what() << LE;
 				std::cout << "dbus thread started exception: " << e.what() << std::endl;
+			} catch (...){
+				LWARNING("DBUS") << "dbus thread BG unknown exc" << LE;
+				std::cout << "dbus thread ??? exception " << std::endl;
 			}
+			LTRACE("DBUS") << "dbus thread done BG" << LE;
 		}
 		::DBus::BusDispatcher & DBusCommChannelHolder::dispatcher(){
-			std::cout << "get dispatcher" << std::endl;
-
-			return this->dispatcher_;
+			
+			return *this->dispatcher_;
 		}
 
 	} /* namespace Services */

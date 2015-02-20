@@ -6,6 +6,7 @@
 */
 
 #include "Poco/BasicEvent.h"
+#include "Poco/Delegate.h"
 #include "Poco/AbstractDelegate.h"
 #include <memory>
 #include <iostream>
@@ -13,7 +14,7 @@
 
 class IEventForwarder {
 	public:
-		typedef std::auto_ptr <IEventForwarder> AutoPtr;
+		typedef std::unique_ptr <IEventForwarder> AutoPtr;
 		virtual ~IEventForwarder() {}
 		virtual void enable(void) = 0;
 		virtual void disable(void) = 0;
@@ -23,7 +24,7 @@ class IEventForwarder {
 template <class T>
 class EventForwarder: public IEventForwarder {
 	public:
-		typedef std::auto_ptr <EventForwarder<T> > AutoPtr;
+		typedef std::unique_ptr <EventForwarder<T> > AutoPtr;
 		EventForwarder(Poco::BasicEvent<T>& from, Poco::BasicEvent<T>& to) : from(from), to(to), enabled(false) {
 			from += Poco::delegate(this, &EventForwarder<T>::fwd);
 			enabled = true;

@@ -70,6 +70,7 @@ dd code i {  color: gray;}\n\
           <div class='masthead'>\n\
             <h1><serviceName></h1>\n\
             <p class='comment'><serviceComment></p>\n\
+            <p class=''>Service available via <a href='http://www.jsonrpc.org/specification'>JSON-RPC 2.0</a> protocol</p>\n\
           </div>\n\
           <hr />\n\
           	<classes>\n\

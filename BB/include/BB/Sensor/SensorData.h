@@ -27,6 +27,9 @@ class SensorData {
 
 		static const std::string UnitTemperature;
 
+		static const std::string Motion;
+		static const std::string Camera;
+
 		typedef std::vector <SensorData> List;
 
 		enum Status {

@@ -33,7 +33,7 @@ namespace TBS {
 				virtual void run();
 			private:
 				Poco::Thread t;
-				::DBus::BusDispatcher dispatcher_;
+				::DBus::BusDispatcher * dispatcher_;
 				bool running;
 		};
 

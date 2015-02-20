@@ -14,7 +14,7 @@ namespace TBS {
 	{}
 
 	const Json::Value& JsonValueGetter::get(const std::string& name, Json::ValueType check) const {
-		if (!root) throw std::logic_error("no root in JSonValueGetter");
+		if (!root) throw std::logic_error("no root in JSonValueGetter::get("+name+")");
 		const Json::Value& target(Json::Path(path).resolve(*root));
 		if (not target.isMember(name)) {
 			throw std::runtime_error("JsonValueGetter cannot find " + name + " in " + path);
@@ -28,7 +28,7 @@ namespace TBS {
 
 
 	JsonValueGetter JsonValueGetter::subtree(const std::string& name) const {
-		if (!root) throw std::logic_error("no root in JSonValueGetter");
+		if (!root) throw std::logic_error("no root in JSonValueGetter::subtree("+name+")");
 		if (name[0] == '.') {
 			return JsonValueGetter(root, path+name);
 		} else {

@@ -20,7 +20,7 @@
 #include <pthread.h>
 
 #if defined(__linux__)
-# include <serial.h>
+#include "BB/Serial/lib/serial.h"
 #endif
 
 #include <sys/select.h>
@@ -31,7 +31,7 @@
 #include <mach/mach.h>
 #endif
 
-#include "serial/impl/unix.h"
+#include "unix.h"
 
 #ifndef TIOCINQ
 #ifdef FIONREAD
@@ -309,6 +309,7 @@ Serial::SerialImpl::reconfigurePort ()
     }
     // Linux Support
 #elif defined(__linux__) && defined (TIOCSSERIAL)
+    /*
     struct serial_struct ser;
 
     if (-1 == ioctl (fd_, TIOCGSERIAL, &ser)) {
@@ -323,7 +324,9 @@ Serial::SerialImpl::reconfigurePort ()
 
     if (-1 == ioctl (fd_, TIOCSSERIAL, &ser)) {
       THROW (IOException, errno);
-    }
+    }*/
+    //HONZA
+    throw invalid_argument ("OS does not currently support custom bauds");
 #else
     throw invalid_argument ("OS does not currently support custom bauds");
 #endif

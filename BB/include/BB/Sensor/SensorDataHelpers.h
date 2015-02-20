@@ -8,24 +8,28 @@
 #ifndef SENSORDATAHELPERS_H_
 #define SENSORDATAHELPERS_H_
 
-#include "BB/Services/Sensor.h"
+#include "BB/Services/Data.h"
 #include "BB/Sensor/SensorData.h"
 #include "BB/Services/WebUI.h"
 namespace BB {
 namespace SensorDataHelpers {
 
 
-	TBS::BB::Services::Sensor::IDataDistributor::SensorDataReceivedArg sensorData2EventArg(
+	TBS::BB::Services::Data::IDataDistributor::SensorDataReceivedArg sensorData2EventArg(
 			const SensorData & s);
 
 	SensorData eventArg2SensorData (
-			const TBS::BB::Services::Sensor::IDataDistributor::SensorDataReceivedArg & a);
+			const TBS::BB::Services::Data::IDataDistributor::SensorDataReceivedArg & a);
 
-	void sendData( TBS::BB::Services::Sensor::IDataCollector & collector, const SensorData & s);
+	void sendData( TBS::BB::Services::Data::IDataCollector & collector, const SensorData & s);
 
 	std::string sensorID(const std::string & sensorType, const std::string & sensorName);
 	std::string sensorID(const SensorData & s);
 	std::string sensorID(const TBS::BB::WebUI::SensorInfo & i);
+
+	std::string sensorRawID(const SensorData & s);
+	std::string sensorRawID(const TBS::BB::WebUI::SensorInfo & i);
+
 
 }
 }

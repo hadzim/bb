@@ -20,47 +20,49 @@
 #include <Poco/Thread.h>
 #include "Poco/Net/HTTPBasicCredentials.h"
 #include <Poco/Net/HTTPSClientSession.h>
+#include "TBS/Log.h"
 
 using namespace std;
 using namespace Poco::Net;
 using namespace Poco;
 namespace jsonrpc {
 
-	HttpClientParams::HttpClientParams() : isHttps(false), isProtected(false){
 
-	}
-
-	HttpInterfaceClient::HttpInterfaceClient(const std::string& ifacename, const HttpClientParams & p) :
+	HttpInterfaceClient::HttpInterfaceClient(const std::string& ifacename, const TBS::Services::JsonClientParams & p) :
 			interfaceName(ifacename), p(p) {
 
-		if (p.isHttps){
-			std::cout << "no verify " << std::endl;
+		LTRACE("Json") << "create json http conector " << p.hostName() << " port " << p.port() << LE;
+
+		if (p.isHttps()){
+			//std::cout << "no verify " << std::endl;
 			Poco::Net::Context::Ptr context = new Poco::Net::Context(Poco::Net::Context::CLIENT_USE, "", "", "", Poco::Net::Context::VERIFY_NONE);
 
-			std::cout << "create https for "<< p.host << " port " << p.port << std::endl;
-			client = ClientPtr(new Poco::Net::HTTPSClientSession(p.host, p.port, context));
-			std::cout << "create https done" << std::endl;
+			//std::cout << "create https for "<< p.hostName() << " port " << p.port() << std::endl;
+			client = ClientPtr(new Poco::Net::HTTPSClientSession(p.hostName(), p.port(), context));
+			//std::cout << "create https done" << std::endl;
 		} else {
-			std::cout << "create http" << std::endl;
-			client = ClientPtr(new Poco::Net::HTTPClientSession(p.host, p.port));
-			std::cout << "create http done" << std::endl;
+			//std::cout << "create http" << std::endl;
+			client = ClientPtr(new Poco::Net::HTTPClientSession(p.hostName(), p.port()));
+			//std::cout << "create http done" << std::endl;
 		}
 
 		client->setTimeout(5l * 1000000l);
 	}
 
 	HttpInterfaceClient::~HttpInterfaceClient() {
-
+		LTRACE("Json") << "destruct http conector " << LE;
 	}
 
 	void HttpInterfaceClient::SendMessage(const std::string& message, std::string& result) {
+
+		LTRACE("Json") << "send message via http conector " << LE;
 
 		Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_GET, "/" + interfaceName);
 		request.setContentType("application/json");
 		request.set("charsets:", "utf-8");
 
-		if (p.isProtected){
-			Poco::Net::HTTPBasicCredentials c(p.username, p.password);
+		if (p.isProtected()){
+			Poco::Net::HTTPBasicCredentials c(p.getUserName(), p.getPassword());
 			//TODO on win !!!
 #ifndef _WIN32
 			c.authenticate(request);
@@ -70,7 +72,7 @@ namespace jsonrpc {
 		request.setContentLength((int) message.length());
 		client->sendRequest(request) << message;
 
-		std::cout << "send " << message << std::endl;
+		//std::cout << "send " << message << std::endl;
 
 		Poco::Net::HTTPResponse response;
 		std::istream& rs = client->receiveResponse(response);
@@ -79,13 +81,10 @@ namespace jsonrpc {
 
 		result = outstr.str();
 
-		std::cout << "res " << result << std::endl;
+		//std::cout << "res " << result << std::endl;
 
-	}
+		LTRACE("Json") << "send message via http conector done" << LE;
 
-	void HttpInterfaceClient::SetUrl(const std::string& url) {
-		this->p.host = url;
-		throw Poco::NotImplementedException("cannot set url");
 	}
 
 } /* namespace jsonrpc */

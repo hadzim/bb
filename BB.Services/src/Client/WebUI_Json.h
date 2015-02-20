@@ -11,8 +11,9 @@
 #include <map>
 #include <memory>
 #include <jsonrpc/rpc.h>
+#include <TBS/Services/Json/JsonServices.h>
 ///includes
-#include "BB/Services/WebUI.h"
+#include "BB/Services//WebUI.h"
 
 
 namespace TBS { 
@@ -23,11 +24,8 @@ namespace TBS {
 			public:
 				typedef Poco::SharedPtr <Query_JsonClient> Ptr;
 				
-				Query_JsonClient(jsonrpc::AbstractClientConnector* param){
-					this->client = std::auto_ptr<jsonrpc::Client>(new jsonrpc::Client(param));
-				}
-				Query_JsonClient(const jsonrpc::HttpClientParams & p){
-					this->client = std::auto_ptr<jsonrpc::Client>(new jsonrpc::Client(new jsonrpc::HttpInterfaceClient(TBS::BB::WebUI::IQuery::name(), p)));
+				Query_JsonClient(jsonrpc::AbstractClientConnector::Ptr param){
+					this->client = std::unique_ptr<jsonrpc::Client>(new jsonrpc::Client(param));
 				}
 				virtual ~Query_JsonClient() {
 				 }
@@ -47,11 +45,23 @@ pIn["sensorName"] = jsonrpc::Convertor::cpp2Json< std::string >(sensorName);
 
             return jsonrpc::Convertor::json2Cpp<std::vector< SensorData > >(this->client->CallMethod("GetSensorData", pIn));
         }
+        void ClearSensorData(const std::string & sensorType, const std::string & sensorName){
+            ::Json::Value pIn;
+            pIn["sensorType"] = jsonrpc::Convertor::cpp2Json< std::string >(sensorType); 
+pIn["sensorName"] = jsonrpc::Convertor::cpp2Json< std::string >(sensorName); 
+
+            this->client->CallMethod("ClearSensorData", pIn);
+        }
         std::vector< SensorData > GetSensorsData(const std::string & sensorType){
             ::Json::Value pIn;
             pIn["sensorType"] = jsonrpc::Convertor::cpp2Json< std::string >(sensorType); 
 
             return jsonrpc::Convertor::json2Cpp<std::vector< SensorData > >(this->client->CallMethod("GetSensorsData", pIn));
+        }
+        std::vector< RuntimeStatus > GetRuntimeStatus(){
+            ::Json::Value pIn;
+            pIn = ::Json::nullValue;
+            return jsonrpc::Convertor::json2Cpp<std::vector< RuntimeStatus > >(this->client->CallMethod("GetRuntimeStatus", pIn));
         }
 
 				
@@ -59,7 +69,7 @@ pIn["sensorName"] = jsonrpc::Convertor::cpp2Json< std::string >(sensorName);
 				//TODO
 				
 		private: 
-				std::auto_ptr<jsonrpc::Client> client;
+				std::unique_ptr<jsonrpc::Client> client;
 			};
  } 
  } 
@@ -75,11 +85,8 @@ namespace TBS {
 			public:
 				typedef Poco::SharedPtr <Configuration_JsonClient> Ptr;
 				
-				Configuration_JsonClient(jsonrpc::AbstractClientConnector* param){
-					this->client = std::auto_ptr<jsonrpc::Client>(new jsonrpc::Client(param));
-				}
-				Configuration_JsonClient(const jsonrpc::HttpClientParams & p){
-					this->client = std::auto_ptr<jsonrpc::Client>(new jsonrpc::Client(new jsonrpc::HttpInterfaceClient(TBS::BB::WebUI::IConfiguration::name(), p)));
+				Configuration_JsonClient(jsonrpc::AbstractClientConnector::Ptr param){
+					this->client = std::unique_ptr<jsonrpc::Client>(new jsonrpc::Client(param));
 				}
 				virtual ~Configuration_JsonClient() {
 				 }
@@ -87,14 +94,36 @@ namespace TBS {
 				
 				
  //methods 
-				        void SetSensorProperty(const std::string & sensorType, const std::string & sensorRawName, const std::string & sensorProperty, const std::string & sensorValue){
+				        std::vector< SensorProperty > GetSensorProperties(const std::string & sensorType, const std::string & sensorRawName){
             ::Json::Value pIn;
             pIn["sensorType"] = jsonrpc::Convertor::cpp2Json< std::string >(sensorType); 
 pIn["sensorRawName"] = jsonrpc::Convertor::cpp2Json< std::string >(sensorRawName); 
-pIn["sensorProperty"] = jsonrpc::Convertor::cpp2Json< std::string >(sensorProperty); 
-pIn["sensorValue"] = jsonrpc::Convertor::cpp2Json< std::string >(sensorValue); 
+
+            return jsonrpc::Convertor::json2Cpp<std::vector< SensorProperty > >(this->client->CallMethod("GetSensorProperties", pIn));
+        }
+        void SetSensorProperty(const std::string & sensorType, const std::string & sensorRawName, const std::string & sensorPropertyName, const std::string & sensorPropertyValue){
+            ::Json::Value pIn;
+            pIn["sensorType"] = jsonrpc::Convertor::cpp2Json< std::string >(sensorType); 
+pIn["sensorRawName"] = jsonrpc::Convertor::cpp2Json< std::string >(sensorRawName); 
+pIn["sensorPropertyName"] = jsonrpc::Convertor::cpp2Json< std::string >(sensorPropertyName); 
+pIn["sensorPropertyValue"] = jsonrpc::Convertor::cpp2Json< std::string >(sensorPropertyValue); 
 
             this->client->CallMethod("SetSensorProperty", pIn);
+        }
+        void SetRuntimeStatus(const std::string & status){
+            ::Json::Value pIn;
+            pIn["status"] = jsonrpc::Convertor::cpp2Json< std::string >(status); 
+
+            this->client->CallMethod("SetRuntimeStatus", pIn);
+        }
+        void SendTask(const std::string & what, const std::string & params, const std::string & from, const std::string & to){
+            ::Json::Value pIn;
+            pIn["what"] = jsonrpc::Convertor::cpp2Json< std::string >(what); 
+pIn["params"] = jsonrpc::Convertor::cpp2Json< std::string >(params); 
+pIn["from"] = jsonrpc::Convertor::cpp2Json< std::string >(from); 
+pIn["to"] = jsonrpc::Convertor::cpp2Json< std::string >(to); 
+
+            this->client->CallMethod("SendTask", pIn);
         }
 
 				
@@ -102,7 +131,7 @@ pIn["sensorValue"] = jsonrpc::Convertor::cpp2Json< std::string >(sensorValue);
 				//TODO
 				
 		private: 
-				std::auto_ptr<jsonrpc::Client> client;
+				std::unique_ptr<jsonrpc::Client> client;
 			};
  } 
  } 

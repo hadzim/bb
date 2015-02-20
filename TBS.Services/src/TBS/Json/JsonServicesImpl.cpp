@@ -1,3 +1,5 @@
+#include <jsonrpc/connectors/RawInterfaceClient.h>
+#include <jsonrpc/connectors/SerialInterfaceClient.h>
 #include "TBS/Services/Json/JsonServicesImpl.h"
 /*
  * JsonServerCommChannelHolder.cpp
@@ -9,40 +11,20 @@
 namespace TBS {
 	namespace Services {
 
-		jsonrpc::HttpServerParams convert(const JsonServerChannel & ch) {
-			jsonrpc::HttpServerParams p;
-			p.port = ch.port();
-			p.allowCrossDomain = ch.isCrossDomainAllowed();
-			p.isHttps = ch.isHttps();
-			if (ch.isHttps()) {
-				p.privateKey = ch.getHttpsPrivateKey();
-				p.certificate = ch.getHttpsCertificate();
+		jsonrpc::AbstractClientConnector::Ptr createClientConnector(const std::string & name, const JsonClientParams & params) {
+			if (params.protocol() == JsonClientParams::JsonHttp) {
+				return new jsonrpc::HttpInterfaceClient(name, params);
+			} else if (params.protocol() == JsonClientParams::JsonWs) {
+				return new jsonrpc::WsInterfaceClient(name, params);
+			} else if (params.protocol() == JsonClientParams::JsonRaw) {
+				return new jsonrpc::RawInterfaceClient(name, params);
+			} else {
+				throw Poco::Exception("Cannot create client - undefined protocol");
 			}
-			p.isProtected = ch.isProtected();
-			if (ch.isProtected()) {
-				p.username = ch.getUserName();
-				p.passwordMd5Hash = ch.getPasswordHash();
-			}
-			p.isDocFile = ch.hasDocumentation();
-			if (ch.hasDocumentation()) {
-				p.docFile = ch.getDocumentation();
-
-			}
-			return p;
 		}
 
-		jsonrpc::HttpClientParams convert(const JsonClientChannel & ch) {
-			jsonrpc::HttpClientParams p;
-			p.host = ch.hostName();
-			p.port = ch.port();
-			p.isHttps = ch.isHttps();
-
-			p.isProtected = ch.isProtected();
-			if (ch.isProtected()) {
-				p.username = ch.getUserName();
-				p.password = ch.getPassword();
-			}
-			return p;
+		jsonrpc::AbstractClientConnector::Ptr createClientConnector(const std::string & name, const SerialParams & params) {
+			return new jsonrpc::SerialInterfaceClient(name, params);
 		}
 
 	} /* namespace Services */

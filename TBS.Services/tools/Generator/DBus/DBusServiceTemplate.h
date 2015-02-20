@@ -52,7 +52,7 @@ namespace TBS {\n\
 				\n\
 		private: \n\
 				TBS::Services::ICommChannelHolder::Ptr ch;\n\
-				std::auto_ptr<TBS::Services::CommunicationChannelHolder> comChannelHolder;\n\
+				std::unique_ptr<TBS::Services::CommunicationChannelHolder> comChannelHolder;\n\
 				<private>\n\
 			};\n\
 			\n\

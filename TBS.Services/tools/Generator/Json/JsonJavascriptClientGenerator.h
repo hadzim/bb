@@ -13,14 +13,14 @@
 
 class JsonJavascriptClientGenerator: public Generator {
 	public:
-		JsonJavascriptClientGenerator(std::string interfaceFile, Info & info, bool jsonp = false);
+		JsonJavascriptClientGenerator(std::string interfaceFile, Info & info);
 		~JsonJavascriptClientGenerator();
 	private:
-			string generateClass(Class &c);
-			string generateMethod(Method & m) ;
-			string generateStub(Interface & i, Info & in);
+			string generateClass(Class &c, bool jsonp);
+			string generateMethod(Method & m, bool jsonp) ;
+			string generateStub(Interface & i, Info & in, bool jsonp);
 	private:
-			bool jsonp ;
+
 		//Interface interface;
 };
 

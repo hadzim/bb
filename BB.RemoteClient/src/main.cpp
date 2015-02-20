@@ -30,14 +30,10 @@ namespace BB {
 	class Factory : public IForwarderFactory {
 		virtual IForwarder::Ptr createForwarder(){
 
-			std::string url 		= Configuration::initCfg("RemoteClient", "url", 		"127.0.0.1");
-			int			port		= Configuration::initCfg("RemoteClient", "port", 		80);
-			std::string query 		= Configuration::initCfg("RemoteClient", "query", 		"/mereni2/www/");
-			std::string projectID 	= Configuration::initCfg("RemoteClient", "projectID", 	"1");
 
 
 			//create remote client
-			IForwarder::Ptr remoteClient = new RemoteClientForwarder(url,port,query,projectID);
+			IForwarder::Ptr remoteClient = new RemoteClientForwarder(RemoteClientSettings());
 
 			//forward on background
 			BgForwarder::Ptr bg = new BgForwarder("rc-bg", remoteClient);
@@ -47,12 +43,18 @@ namespace BB {
 			filter->addFilter(
 				new TimespanFilter(SensorData::Temperature, Poco::Timespan(0, 0, 5, 0, 0))
 			);
+			filter->addFilter(
+				new TimespanFilter(SensorData::Motion, Poco::Timespan(0, 0, 5, 0, 0))
+			);
+			filter->addFilter(
+				new EmptyFilter(SensorData::Camera)
+			);
 
 			return filter;
 		}
 	};
 }
 
-FWD_BB_MAIN(BB::Factory)
+FWD_BB_MAIN("RemoteClient", BB::Factory)
 
 

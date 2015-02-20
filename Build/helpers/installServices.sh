@@ -4,7 +4,7 @@ if [ $# -eq 0 ]; then
 fi
 
 echo "copying env structure"
-scp -r environment/* root@$1:/
+scp -r services/*.service root@$1:/lib/systemd/system/
 
 
 echo "making directories"
@@ -12,6 +12,7 @@ echo "making directories"
 ssh root@$1 mkdir /home/tbs/
 ssh root@$1 mkdir /home/tbs/bin/
 ssh root@$1 mkdir /home/tbs/lib/
+ssh root@$1 mkdir /home/tbs/www/
 
 echo "reload daemon"
 
@@ -24,6 +25,14 @@ ssh root@$1 systemctl enable bb-collector.service
 ssh root@$1 systemctl enable bb-httpsender.service
 ssh root@$1 systemctl enable bb-forecast.service
 ssh root@$1 systemctl enable bb-temperature.service
+ssh root@$1 systemctl enable bb-remoteclient.service
+ssh root@$1 systemctl enable bb-status.service
+ssh root@$1 systemctl enable bb-motion.service
+ssh root@$1 systemctl enable bb-camera.service
+ssh root@$1 systemctl enable bb-network.service
+ssh root@$1 systemctl enable bb-actions.service
+ssh root@$1 systemctl enable bb-www.service
+ssh root@$1 systemctl enable bb-serialcollector.service
 
 
 #cd /etc/systemd/system/
