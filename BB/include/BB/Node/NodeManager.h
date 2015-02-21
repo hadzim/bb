@@ -5,18 +5,25 @@
  *      Author: root
  */
 
-#ifndef INODE_H_
-#define INODE_H_
+#ifndef NODEMANAGER_H_
+#define NODEMANAGER_H_
 #include <BB/Node/NodeTypes.h>
 #include "Poco/SharedPtr.h"
 #include <vector>
 #include <string>
+
+#include "BB/DataRW.h"
+
+#include "MQTT/MQTTClient.h"
 
 namespace BB {
 
 
 	class NodeManager {
 		public:
+
+			typedef Poco::SharedPtr <NodeManager> Ptr;
+
 			NodeManager(INode::Ptr node){
 				client = new TBS::MQTT::MQTTClient(node->getInfo().getUID());
 				client->OnMessage += Poco::delegate(this, &NodeManager::onMessage);
@@ -27,18 +34,18 @@ namespace BB {
 
 				//public node meta data
 				//data channels
-				for (const auto & key : info.getDataStreams().keys()){
-					const Node::DataStream & dataStream = info.getDataStreams().get(key);
+				for (const auto & sensor : info.getSensors()){
+					const Node::Sensor & s = sensor.second;
 
-					std::string dataTopic = NodeChannel::dataTopic(info, dataStream);
+					std::string dataTopic = NodeChannel::dataTopic(info, s);
 
-					client->publish(dataTopic + "type", dataStream.type);
-					client->publish(dataTopic + "unit", dataStream.unit);
+					client->publish(dataTopic + "type", s.type);
+					client->publish(dataTopic + "unit", s.unit);
 				}
 
 				//settings channels
-				for (const auto & key : info.getSettings().keys()){
-					const Node::Setting & s = info.getSettings().get(key);
+				for (const auto & setting : info.getSettings()){
+					const Node::Setting & s = setting.second;
 
 					std::string topic = NodeChannel::settingTopic(info, s);
 
@@ -63,14 +70,14 @@ namespace BB {
 				INode::AllData allData = node->read();
 				const Node::Info & info = node->getInfo();
 				for (auto & d : allData){
-					const Node::DataStream & dataStream = info.getDataStreams().get(d.first);
+					const Node::Sensor & sensor = info.getSensors().at(d.first);
 					client->publish(
-							NodeChannel::dataTopic(info, dataStream) + "current",
+							NodeChannel::dataTopic(info, sensor) + "current",
 							RW::json2OneLine(NodeDataRW::write(d.second))
 					);
 				}
 			}
-			void onMessage(TBS::SimpleTimer::TimerArg & arg){
+			void onMessage(TBS::MQTT::Message & arg){
 				//TODO react on new settings
 			}
 		private:

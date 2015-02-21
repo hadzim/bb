@@ -11,6 +11,7 @@
 #include "Poco/SharedPtr.h"
 #include <vector>
 #include <string>
+#include <sstream>
 
 namespace BB {
 
@@ -30,9 +31,9 @@ namespace BB {
 				return s.str();
 			}
 
-			static std::string dataTopic(const Node::Info & info, const Node::DataStream & dataStream){
+			static std::string dataTopic(const Node::Info & info, const Node::Sensor & sensor){
 				std::stringstream s;
-				s << nodeTopic(info) << "data/" << dataStream.name << "/";
+				s << nodeTopic(info) << "data/" << sensor.name << "/";
 				return s.str();
 			}
 
@@ -48,7 +49,7 @@ namespace BB {
 			typedef Poco::SharedPtr <INode> Ptr;
 			typedef std::vector<Ptr> PtrList;
 
-			virtual ~INode();
+			virtual ~INode(){}
 
 			virtual Node::Info getInfo() = 0;
 			virtual int getCheckingPeriodInMs() = 0;

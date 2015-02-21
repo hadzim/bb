@@ -26,7 +26,7 @@ namespace BB {
 
 		TBS::initLogs(name, 8, "/tmp/");
 
-		timer.start(factory->getPeriodInMs() / 20, factory->getPeriodInMs());
+		timer.start(factory->getCheckingPeriodInMs() / 20, factory->getCheckingPeriodInMs());
 
 		std::cout << "main SensorApp2.start" << std::endl;
 
@@ -50,7 +50,7 @@ namespace BB {
 			for (auto & n : newnodes) {
 				std::string key = n->getInfo().getUID();
 				if (nodes.find(key) == nodes.end()){
-					nodes.insert(std::make_pair(key, NodeManager(n)));
+					nodes.insert(std::make_pair(key, new NodeManager(n)));
 				}
 			}
 		} catch (Poco::Exception & e) {

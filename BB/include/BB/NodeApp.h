@@ -34,7 +34,7 @@ namespace BB {
 
 			TBS::SimpleTimer timer;
 
-			std::map <std::string, NodeManager> nodes;
+			std::map <std::string, NodeManager::Ptr> nodes;
 
 			INodeFactory::Ptr factory;
 	};

@@ -20,8 +20,8 @@ namespace BB {
 		Info::Info(std::string uid, std::string type, const Settings & settings) :
 				uid(uid), type(type), settings(settings) {
 		}
-		Info::Info(std::string uid, std::string type, const DataStreams & dataStreams, const Settings & settings) :
-				uid(uid), type(type), dataStreams(dataStreams), settings(settings) {
+		Info::Info(std::string uid, std::string type, const Sensors & sensors, const Settings & settings) :
+				uid(uid), type(type), sensors(sensors), settings(settings) {
 
 		}
 
@@ -37,8 +37,8 @@ namespace BB {
 			return this->settings;
 		}
 
-		const DataStreams & Info::getDataStreams() const {
-			return this->dataStreams;
+		const Sensors & Info::getSensors() const {
+			return this->sensors;
 		}
 
 		std::string date2string(const Poco::DateTime & date) {

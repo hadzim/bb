@@ -43,15 +43,15 @@ namespace BB {
 				}
 		};
 
-		class DataStream {
+		class Sensor {
 			public:
-				typedef std::vector<DataStream> List;
-				typedef std::map<std::string, DataStream> Map;
+				typedef std::vector<Sensor> List;
+				typedef std::map<std::string, Sensor> Map;
 				std::string name;
 				std::string type;
 				std::string unit;
 
-				DataStream(std::string n, std::string t = "text", std::string unit = "") :
+				Sensor(std::string n, std::string t = "text", std::string unit = "") :
 						name(n), type(t), unit(unit) {
 				}
 		};
@@ -94,7 +94,7 @@ namespace BB {
 						allKeys.insert(val.name);
 					}
 				}
-				const InnerClass & get(Key key) const {
+				const InnerClass & at(Key key) const {
 					if (map.find(key) == map.end()) {
 						throw Poco::Exception("No Key " + key + " in map");
 					}
@@ -106,12 +106,22 @@ namespace BB {
 				const Keys & keys() const {
 					return allKeys;
 				}
+
+				typedef typename Map::const_iterator const_iterator;
+
+				const_iterator begin() const{
+					return map.begin();
+				}
+				const_iterator end() const{
+					return map.end();
+				}
+
 			private:
 				Map map;
 				Keys allKeys;
 		};
 
-		typedef Collection<DataStream> DataStreams;
+		typedef Collection<Sensor> Sensors;
 		typedef Collection<Setting> Settings;
 
 		class Info {
@@ -122,7 +132,7 @@ namespace BB {
 				static const std::string Camera;
 				static const std::string Status;
 
-				Info(std::string uid, std::string type, const DataStreams & dataStreams = DataStreams(), const Settings & settings = Settings());
+				Info(std::string uid, std::string type, const Sensors & sensores = Sensors(), const Settings & settings = Settings());
 				Info(std::string uid, std::string type, const Settings & settings);
 
 				std::string getUID() const;
@@ -130,11 +140,11 @@ namespace BB {
 				std::string getType() const;
 				std::string getUnit() const;
 				const Settings & getSettings() const;
-				const DataStreams & getDataStreams() const;
+				const Sensors & getSensors() const;
 			private:
 				std::string uid;
 				std::string type;
-				DataStreams dataStreams;
+				Sensors sensors;
 				Settings settings;
 		};
 

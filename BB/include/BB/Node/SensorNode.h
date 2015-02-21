@@ -11,6 +11,8 @@
 #include <vector>
 #include <string>
 
+#include "BB/Node/INode.h"
+
 namespace BB {
 
 
@@ -33,26 +35,17 @@ namespace BB {
 
 			virtual AllData read(){
 				AllData data;
-				for (const auto & sensor : info.getDataStreams().keys()){
-
+				for (const auto & sensor : info.getSensors()){
+					auto d = readOne(info, sensor.second);
+					data.insert(std::make_pair(sensor.first, d));
 				}
+				return data;
 			}
 		protected:
-			void readOne() = 0;
+			virtual Node::Data readOne(const Node::Info & info, const Node::Sensor & sensor) = 0;
 		private:
 			Node::Info info;
 			int period;
-	};
-
-	class INodeFactory {
-		public:
-
-			typedef Poco::SharedPtr <INodeFactory> Ptr;
-
-			virtual ~INodeFactory(){}
-
-			virtual int getCheckingPeriodInMs() = 0;
-			virtual INode::PtrList getNodes() = 0;
 	};
 
 } /* namespace TBS */
