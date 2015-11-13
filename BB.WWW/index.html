@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>AdminLTE 2 | Dashboard</title>
+    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+    <link href="css/all.css" rel="stylesheet" type="text/css" />    
+  </head>
+  <body class="skin-blue">
+    <div class="wrapper" id='layout'>
+    </div><!-- ./wrapper -->
+
+    
+    <script id="header-template" type="text/template">
+        <a href="index2.html" class="logo">BB@Chalupa</a>
+        <!-- Header Navbar: style can be found in header.less -->
+        <nav class="navbar navbar-static-top" role="navigation">
+          <!-- Sidebar toggle button-->
+          <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+            <span class="sr-only">Toggle navigation</span>
+          </a>
+          <div class="navbar-custom-menu">
+            <ul class="nav navbar-nav">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  <i class="fa fa-retweet"></i> 
+                  <span class="hidden-xs">Connected</span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li>
+                      <h4>Server</h4>
+                      <p>localhost</p>
+                  </li>
+                  <li>
+                      <h4>Port</h4>
+                      <p>18883</p>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </nav>
+</script><script id="layout-sidemenu-template" type="text/template">
+<section class="sidebar">
+  <ul class="sidebar-menu">
+  
+            <li class="header">NAVIGATION</li>
+            
+            <li>
+              <a href="#">
+                <i class="fa fa-th"></i> 
+                <span>Home</span>
+              </a>
+            </li>
+            
+            <li>
+              <a href="#nodes">
+                <i class="fa fa-cog"></i> 
+                <span>Nodes</span>
+              </a>
+            </li>
+            
+            <li>
+              <a href="#data">
+                <i class="fa fa-dashboard"></i> 
+                <span>Data</span>
+              </a>
+            </li>
+  </ul>
+</section>
+</script>    <script id="room-link-template" type="text/template">
+      <a href="<%=link%>">
+        <%= id  %>
+      </a>
+    </script><script id="component-data-template" type="text/template">
+
+</script>	    <script id="page-nodes-template" type="text/template">
+
+</script>	    <script id="page-data-template" type="text/template">
+  
+	    
+</script>	    <script id="connection-template" type="text/template">
+      <div class="card">
+        <h1>
+          Settings
+        </h1>
+
+        <div class="subviews">
+          <form>
+            <div class="subview">
+              <h2>
+                Host
+              </h2>
+              <input type="text" value="<%= host %>" name="host"/>
+            </div>
+            <div class="subview">
+              <h2>
+                Port
+              </h2>
+              <input type="text" value="<%= port %>" name="port" />
+            </div>
+            <div class="subview">
+              <div class="button save">Save</div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </script>
+
+<script id="node-template" type="text/template">
+
+<div class="box box-primary">
+
+ 
+	 <div class="box-header">
+	      <h3 class="box-title"><%= name || id %></h3>
+	      <div class="box-tools pull-right">
+	 	        <button class="btn btn-primary btn-sm" data-widget="graph"><i class="fa fa-line-chart"></i></button>
+	    	    <button class="btn btn-primary btn-sm" data-widget="remove"><i class="fa fa-cog"></i></button>
+	      </div>
+	 </div>	
+	 
+	 <div class="box-body">
+	 
+      	 <div class="data"></div>
+	 
+          Box class: <code>.box.box-primary</code>
+          <p>
+            amber, microbrewery abbey hydrometer, brewpub ale lauter tun saccharification oxidized barrel.
+            berliner weisse wort chiller adjunct hydrometer alcohol aau!
+            sour/acidic sour/acidic chocolate malt ipa ipa hydrometer.
+          </p>
+	</div>
+	
+	
+	<div class="box-footer settings">
+	      
+	</div>
+ 
+
+</div>
+</script>
+
+<script id="node-settings-template" type="text/template">
+	<% if (value){ %>
+		<span class='label label-primary id-<%= id %>'><%= id %>: <%= value %></span> &nbsp;
+	<% } else { %>
+		<span class='label label-default id-<%= id %>'><%= id %>: <%= value %></span> &nbsp;
+	<% } %>
+</script>
+
+
+<script id="node-data-template" type="text/template">
+		<span class='label label-success id-<%= id %>'><%= id %>: <%= value %> <%= unit %></span> &nbsp;
+</script><script id="component-data-summary-template2" type="text/template">
+
+          <h2>
+			<%= value.value %>
+			<span class='mysmaller'><%= unit %></span>
+            
+            <div class='labels'>
+            
+            <% var i = 0; %>
+			<% for (i = 0; i < tags.length; i++){ %>
+				<span class='label bg-darker'><%= tags[i] %></span>
+			<% } %>
+            </div>
+          </h2>
+          <%= name %>	
+          
+</script>	    <script id="component-node-template" type="text/template">
+  
+  <div class="box box-primary">
+
+	 <div class="box-header">
+	      <h3 class="box-title"><%= name %> <span class='small'>@<%= place %></span></h3>
+	      <div class="box-tools pull-right">
+	      		<span class='small'><%= id %></span>
+	 	        <button class="btn btn-primary btn-sm graph"><i class="fa fa-line-chart"></i></button>
+	    	    <button class="btn btn-primary btn-sm edit"><i class="fa fa-cog"></i></button>
+	      </div>
+	 </div>	
+	
+	
+	<div class="formodal">      
+	</div>
+	 
+	<div class="box-body row">
+	
+	      <div class="col-xs-12 data">
+	      </div>
+	      
+	      <div class="col-sm-12 hidden-xs">
+	      	<div class='row settings settings-box'>
+	      	</div>
+	      </div>
+      
+    </div>
+    
+	
+</div>
+  
+
+  
+</script>	    <script id="page-home-template" type="text/template">
+  home page content
+	    
+</script>	    <script id="component-setting-edit-template" type="text/template">
+	<td>
+		<%= id %>
+	</td>
+	<td class='input'>
+	
+		<% if (type == "text"){ %>
+		
+			<input type="text" class="form-control" value='<%= value %>' />
+		
+		<% } else if (type == "switch") { %>
+		
+			 <% var selected = (value == "1" ? "checked='checked'" : ""); %>
+			 <input type="checkbox" class="switch-value" <%= selected %> />
+		
+		<% } else if (type == "range") { %>
+			<div class='slider'>
+			<input id="slider-<%= id %>" data-slider-id='sliderdata-<%= id %>' type="text"  data-slider-min="<%= (typeof min !== 'undefined') ? min : 0 %>" data-slider-max="<%= (typeof max !== 'undefined') ? max : 100 %>" data-slider-step="1" data-slider-value="<%= value %>"/>
+			</div>
+		<% } else { %>
+		
+			<%= value %>
+			
+		<% } %>
+		
+	</td>
+</script>	    
+
+
+
+                      <script id="component-setting-summary-template" type="text/template">
+	<div class='setting-box'>
+	<%= id %>: <%= value %>
+    </div>
+</script><script id="component-node-edit-template" type="text/template">  
+<div class="modal-dialog">
+    <div class="modal-content">
+    
+      	<div class="modal-header">
+    
+      		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    
+      		<h4 class="modal-title"><%= name %> <span class='small'>(<%= id %>)</span></h4>
+      		
+	    </div>
+	    
+	    <table class='modal-body table editsettings'>
+	    </table>
+	    
+	    <div class="modal-footer">
+        	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        	<button type="button" class="btn btn-primary confirm">Save changes</button>
+      </div>
+      
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</script><script id="component-node-template2" type="text/template">
+
+  <div class='node bg-aqua'>
+    <div class='nodeheader'>
+      <span class='original'><%= id %> <i class="fa fa-cog edit"></i></span>
+      <div class='nodeicon '>
+           <i class="fa <%= icon %>"></i>
+      </div>
+      <h3><%= name %> <span class='mysmaller'>@<%= place %></span></h3>
+    </div>
+    <div class='nodebody'>
+    	<div class="row data">
+        </div>
+    </div>
+  </div>
+         
+  
+</script>	    <script id="dummysub" type="text/template">
+      <h4>My dummy sub</h4>
+ </script>
+
+
+<script id="dummy" type="text/template">
+      <h3>My dummy</h3>
+      <p></p>
+ </script>
+<script id="menu-template" type="text/template">
+<section class="sidebar">
+  <ul class="sidebar-menu">
+  
+            <li class="header">NAVIGATION</li>
+            
+            
+            <li class="active treeview">
+              <a href="#"><i class="fa fa-dashboard"></i> 
+              <span>Info</span></a>
+            </li>
+            
+            
+            <li>
+              <a href="data.html">
+                <i class="fa fa-th"></i> 
+                <span>Data</span>
+              </a>
+            </li>
+            
+            
+            <li>
+              <a href="settings.html">
+                <i class="fa fa-cog"></i> 
+                <span>Settings</span>
+              </a>
+            </li>
+  </ul>
+</section>
+</script>    <script id="undefined-setting-template" type="text/template">
+      <h2>
+        <%= id %>
+      <h2>
+      <span "missing-type">Loading...</span>
+    </script>
+    <script id="range-control-template" type="text/template">
+      <h2>
+        <%= id %>
+      </h2>
+      <div class="rangeWrapper">
+        <input type="range" value="<%= value %>"  min="0" max="255"/> <span class='value'><%= value %></span> <span class='unit'><%= unit %></span> 
+      </div>
+    </script>
+    <script id="switch-setting-template" type="text/template">
+      <h2>
+        <%= id %>
+      </h2>
+      <input type="checkbox" <%= checkedAttribute %>/> 
+    </script>
+    <script id="text-setting-template" type="text/template">
+      <h2>
+        <%= id %>
+      </h2>
+      <span class='value'><%= value %></span>  
+    </script>
+    <script id="image-setting-template" type="text/template">
+      <h2>
+        <%= id %>
+      </h2>
+      <img src="<%= value %>" />
+    </script>
+<script id="layout-topmenu-template" type="text/template">
+      
+      <a href="index.html" class="logo">NEW BB@Chalupa</a>
+        
+        <nav class="navbar navbar-static-top" role="navigation">
+        
+        
+	      <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+            <span class="sr-only">Toggle navigation</span>
+          </a>
+          
+          <div class="navbar-custom-menu">
+            <ul class="nav navbar-nav">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  <i class="fa fa-retweet"></i> 
+                  <span class="hidden-xs"><%= connectivity %></span>
+                </a>
+                <!--
+                <ul class="dropdown-menu">
+                  <li>
+                      <h4>Server</h4>
+                      <p>localhost</p>
+                  </li>
+                  <li>
+                      <h4>Port</h4>
+                      <p>18883</p>
+                  </li>
+                </ul>
+                -->
+              </li>
+            </ul>
+          </div>
+        </nav>
+      
+ </script>
+
+<script id="component-data-summary-template" type="text/template">
+
+	<div class="data-box bg-aqua dataid-<%= id %>">
+                
+                
+                <span class="data-box-icon">
+                	<i class="fa <%= icon %>"></i>
+                </span>
+                
+               
+                <div class="data-box-content">
+                
+                  <span class="data-box-number pull-right"><%= value.value %> <%= unit %></span>
+                  <span class="data-box-graph pull-right"></span>
+                  <span class="data-box-image pull-right"></span>
+                  <span class="data-box-time pull-right">
+                    <%= timeSince(parseDate(value.date)) %>
+                  </span>
+                  
+                  <span class="data-box-text">
+                  	<%= name %>	
+                  </span>
+                  <% var i = 0; %>
+                  <% for (i = 0; i < tags.length; i++){ %>
+                  		<span class='label label-warning'><%= tags[i] %></span>
+                  <% } %>
+                  
+                  
+                </div><!-- /.data-box-content -->
+                
+      </div>
+
+</script>	    <script id="layout-template" type="text/template">
+
+	<header class="main-header" id='topmenu'>
+	 </header>
+	 
+	<aside class="main-sidebar" id='sidemenu'>
+	</aside>
+	
+	<div class="content-wrapper">
+	    
+	  	<section class="content-header" id='headline'>
+	  	</section>
+	  
+	  	<section class='content container-fluid' id='content'>
+	  	</section>
+	  	
+	  	<div class='clearfix'></div>
+	</div>
+	  
+	<footer class="main-footer">
+	  	
+	  	<div id="room-links"><ul></ul></div>
+	  		<span id="connectivity">Disconnected</span>
+	  		<a id="settings" href="#settings">Settings</a>
+	  		ahoj
+	  	</div>
+	</footer>
+</script><script id="layout-headline-template" type="text/template">
+  <h1>
+	<%= title %>
+	<small><%= subtitle %></small>
+  </h1>
+	    
+</script>	        <script id="device-template" type="text/template">
+      <h1>
+        <a href="#/devices/<%= id %>/settings">
+          <%= name || id %>
+        </a>
+      </h1>
+      <div class="subviews">
+      </div>
+    </script>	<script src="js/all.js"></script>
+  </body>
+</html>

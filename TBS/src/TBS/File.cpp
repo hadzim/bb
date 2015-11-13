@@ -34,6 +34,7 @@ namespace TBS {
 		pclose(p);
 		return s;
 #else
+		LERROR("File") << "cmd on win not implemented: " << cmd << LE;
 		throw Poco::Exception("Not implemented on win");
 #endif
 	}

@@ -31,6 +31,20 @@
 
 namespace BB {
 
+	Json::Value FullNodeDataRW::write(const FullNodeData & sensorData){
+		Json::Value v = Json::objectValue;
+		v["d"] = NodeDataRW::write(sensorData.data);
+		v["n"] = sensorData.node;
+		v["s"] = sensorData.sensor;
+		return v;
+	}
+
+	FullNodeData FullNodeDataRW::read(const Json::Value & value){
+		Node::Data data = NodeDataRW::read(value["d"]);
+		return FullNodeData(value["n"].asString(), value["s"].asString(), data);
+	}
+
+
 	RemoteClientSettings::RemoteClientSettings() {
 		url = Configuration::initCfg("RemoteClient", "url", "mereni.hadzim.net");
 		port = Configuration::initCfg("RemoteClient", "port", 80);
@@ -44,22 +58,31 @@ namespace BB {
 	}
 
 	RemoteClient::RemoteClient(RemoteClientSettings s) :
-			sensorCache("/tmp/cache.sensor"), statusCache("/tmp/cache.status"), notificationCache("/tmp/cache.notification"), settings(s) {
+			sensorCache("/tmp/cache.sensor"), statusCache("/tmp/cache.status"), notificationCache("/tmp/cache.notification"), nodeDataCache("/tmp/nodedata.notification"), nodeInfoCache("/tmp/nodeinfo.notification"), settings(s) {
 
 	}
 
+	void RemoteClient::setEndpoint(const RemoteClientSettings & s){
+		Poco::Mutex::ScopedLock l(settingsMutex);
+		this->settings = s;
+	}
+
 	void RemoteClient::sendImage(std::string path, std::string info) {
+		TBS::Nullable<RemoteClientSettings> s;
+		{
+			Poco::Mutex::ScopedLock l(settingsMutex);
+			s.set(settings);
+		}
+		Poco::Net::HTTPClientSession session(s.ref().url, s.ref().port);
 
-		Poco::Net::HTTPClientSession session(settings.url, settings.port);
-
-		Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_POST, settings.query + "?presenter=Data%3AInsert&action=binary", Poco::Net::HTTPMessage::HTTP_1_1);
+		Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_POST, s.ref().query + "?presenter=Data%3AInsert&action=binary", Poco::Net::HTTPMessage::HTTP_1_1);
 
 		request.set("origin", "null");
 		request.add("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
 		request.setChunkedTransferEncoding(false);
 
 		Poco::Net::HTMLForm form(Poco::Net::HTMLForm::ENCODING_MULTIPART);
-		form.set("project", settings.projectID);
+		form.set("project", s.ref().projectID);
 		form.set("info", info);
 		form.addPart("image", new Poco::Net::FilePartSource(path, "image/jpeg"));
 
@@ -96,35 +119,44 @@ namespace BB {
 	}
 
 	std::string RemoteClient::remoteQuery(std::string action, std::string data) {
-		LINFO("RemoteClient")<< "Sending: " << data << LE;
+		LNOTICE("RemoteClient")<< "Sending: " << data << LE;
 
-			Poco::Net::HTTPClientSession s(settings.url, settings.port);
-			Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_GET, settings.query);
-			Poco::Net::HTMLForm form;
-			form.add("presenter", "Data:Insert");
-			form.add("action", action);
-			//std::string encodedData = "";
-			//Poco::URI::encode(data, "#", encodedData);
-
-			form.add("data", data);
-			form.add("project", settings.projectID);
-			form.prepareSubmit(request);
-
-			std::cout << "request before: " << settings.query << std::endl;
-
-			s.sendRequest(request);
-
-			Poco::Net::HTTPResponse response;
-			std::istream& rs = s.receiveResponse(response);
-
-			std::stringstream of;//("errStatus.txt");
-
-			Poco::StreamCopier::copyStream(rs, of);
-
-			LINFO("RemoteClient") << "Received: " << of.str() << LE;
-
-			return of.str();
+		TBS::Nullable<RemoteClientSettings> s;
+		{
+			Poco::Mutex::ScopedLock l(settingsMutex);
+			s.set(settings);
 		}
+
+		LNOTICE("RemoteClient")<< "Sending to: " << s.ref().url << " port " << s.ref().port << LE;
+
+
+		Poco::Net::HTTPClientSession session(s.ref().url, s.ref().port);
+		Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_GET, settings.query);
+		Poco::Net::HTMLForm form;
+		form.add("presenter", "Data:Insert");
+		form.add("action", action);
+		//std::string encodedData = "";
+		//Poco::URI::encode(data, "#", encodedData);
+
+		form.add("data", data);
+		form.add("project", s.ref().projectID);
+		form.prepareSubmit(request);
+
+		std::cout << "request before: " << settings.query << std::endl;
+
+		session.sendRequest(request);
+
+		Poco::Net::HTTPResponse response;
+		std::istream& rs = session.receiveResponse(response);
+
+		std::stringstream of;//("errStatus.txt");
+
+		Poco::StreamCopier::copyStream(rs, of);
+
+		LINFO("RemoteClient") << "Received: " << of.str() << LE;
+
+		return of.str();
+	}
 
 	void RemoteClient::sendToRemoteServer(const RuntimeStatus & st) {
 		std::string res = this->remoteQuery("status", RW::json2String(StatusDataRW::write(st)));
@@ -142,7 +174,16 @@ namespace BB {
 		std::ofstream f("/tmp/lastNotification.txt");
 		f << res;
 	}
-
+	void RemoteClient::sendToRemoteServer(const FullNodeData & s){
+		std::string res = this->remoteQuery("nodeSensor", RW::json2String(FullNodeDataRW::write(s)));
+		std::ofstream f("/tmp/lastNodeSensor.txt");
+		f << res;
+	}
+	void RemoteClient::sendToRemoteServer(const Node::Info & s){
+		std::string res = this->remoteQuery("nodeInfo", RW::json2String(NodeInfoRW::write(s)));
+		std::ofstream f("/tmp/lastNodeInfo.txt");
+		f << res;
+	}
 
 	void RemoteClient::sendCache() {
 		sendCacheImpl<NotificationCache>(notificationCache);
@@ -162,6 +203,18 @@ namespace BB {
 	void RemoteClient::forward(const Notification & data){
 		LINFO("RC")<<"forward ntf" << LE;
 		forwardImpl<Notification, NotificationCache>(data, notificationCache);
+	}
+
+	void RemoteClient::forward(const Node::Info & info, const Node::Sensor & sensor, const Node::Data & data){
+		LINFO("RC")<<"forward node data" << LE;
+		FullNodeData fd(info.getUID(), sensor.name, data);
+		forwardImpl<FullNodeData, NodeDataCache>(fd, nodeDataCache);
+		int size = nodeDataCache.size();
+		this->CacheChanged.notify(this, size);
+	}
+	void RemoteClient::forward(const Node::Info & data){
+		LINFO("RC")<<"forward node info" << LE;
+		forwardImpl<Node::Info, NodeInfoCache>(data, nodeInfoCache);
 	}
 
 }

@@ -7,7 +7,7 @@
 
 #include <BB/Service/DataSender2.h>
 
-#include "MQTT/MQTTClient.h"
+#include "TBS/MQTT/Client.h"
 
 #include "BB/DataRW.h"
 namespace BB {
@@ -39,7 +39,7 @@ namespace BB {
 
 		private:
 			std::string project;
-			TBS::MQTT::MQTTClient client;
+			TBS::MQTT::Client client;
 	};
 
 	IDataSender2::Ptr IDataSender2::create(std::string name, std::string projectID){

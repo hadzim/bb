@@ -10,12 +10,14 @@
 #include <Poco/SharedPtr.h>
 #include <Poco/Exception.h>
 #include <vector>
+#include "TBS/Services/Types.h"
+
 namespace TBS {
 	namespace Services {
 
 		typedef std::vector <unsigned char> Binary;
 
-		class ICommChannelHolder {
+		class GEN_SERVICE_API ICommChannelHolder {
 			public:
 				typedef Poco::SharedPtr <ICommChannelHolder> Ptr;
 				virtual ~ICommChannelHolder();
@@ -32,7 +34,7 @@ namespace TBS {
 		};
 
 
-		class IServer {
+		class GEN_SERVICE_API IServer {
 			public:
 				typedef Poco::SharedPtr<IServer> Ptr;
 

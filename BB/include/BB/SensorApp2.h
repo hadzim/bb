@@ -14,8 +14,7 @@
 #include "BB/Sensor/ISensor.h"
 #include <vector>
 
-#include "MQTT/MQTTClient.h"
-
+#include "TBS/MQTT/Client.h"
 
 namespace BB {
 

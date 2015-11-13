@@ -23,7 +23,7 @@
 namespace jsonrpc
 {
 
-    class SerialInterfaceServer: public AbstractServerConnector, public Poco::Runnable
+    class GEN_SERVICE_API SerialInterfaceServer: public AbstractServerConnector, public Poco::Runnable
     {
         public:
     		SerialInterfaceServer(const TBS::Services::SerialParams & p);

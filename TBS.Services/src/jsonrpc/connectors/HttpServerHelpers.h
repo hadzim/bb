@@ -21,6 +21,7 @@
 #include "TBS/Services/Json/JsonServices.h"
 
 #include "TBS/Log.h"
+#include <functional>
 namespace jsonrpc {
 
 	class HttpServerHelpers {
@@ -48,7 +49,7 @@ namespace jsonrpc {
 
 				LDEBUG("Json") << "Root handler factory deleted" << this << LE;
 
-				TBS::dumpBacktrace("Json", "Json", 6);
+				//TBS::dumpBacktrace("Json", "Json", 6);
 			}
 			Poco::Net::HTTPRequestHandler* createRequestHandler(const Poco::Net::HTTPServerRequest& request) {
 				return new RootHandler(handlerProvider, p);
@@ -59,6 +60,8 @@ namespace jsonrpc {
 	};
 
 
+
+	void handleRequest(Poco::Net::HTTPServerResponse& response, std::function<void()> fnc);
 
 
 

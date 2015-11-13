@@ -37,6 +37,8 @@
 #include<unistd.h>
 #include<sys/epoll.h>
 #include<pthread.h>
+
+#include "TBS/Log.h"
 using namespace std;
 
 namespace exploringBB {
@@ -45,6 +47,7 @@ namespace exploringBB {
  * @param number The GPIO number to be exported
  */
 GPIO::GPIO(int number) {
+	LERROR("GPIO") << "construct" << LE;
 	this->number = number;
 	this->debounceTime = 0;
 	this->togglePeriod=100;
@@ -111,10 +114,12 @@ GPIO::GPIO(int number) {
  * @return int that describes if the operation fails
  */
 int GPIO::exportGPIO(){
+	LERROR("GPIO") << "export" << LE;
    return write(GPIO_PATH, "export", this->number);
 }
 
 int GPIO::unexportGPIO(){
+	LERROR("GPIO") << "unexport" << LE;
    return write(GPIO_PATH, "unexport", this->number);
 }
 
@@ -292,6 +297,7 @@ int GPIO::waitForEdge(CallbackType callback){
 }
 
 GPIO::~GPIO() {
+	LERROR("GPIO") << "destruct" << LE;
 	this->unexportGPIO();
 }
 

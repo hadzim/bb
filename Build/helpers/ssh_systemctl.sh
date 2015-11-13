@@ -59,7 +59,7 @@ function systemctl_service {
 	echo "=============================================================================" 
 }
 
-
+systemctl_service $IP_ADDRESS bb-mosquitto.service
 systemctl_service $IP_ADDRESS bb-collector.service
 systemctl_service $IP_ADDRESS bb-httpserver.service
 systemctl_service $IP_ADDRESS bb-forecast.service
@@ -72,6 +72,14 @@ systemctl_service $IP_ADDRESS bb-network.service
 systemctl_service $IP_ADDRESS bb-actions.service
 systemctl_service $IP_ADDRESS bb-www.service
 systemctl_service $IP_ADDRESS bb-serialcollector.service
+systemctl_service $IP_ADDRESS bb-new-temperature.service
+systemctl_service $IP_ADDRESS bb-new-www.service
+systemctl_service $IP_ADDRESS bb-screen.service
+systemctl_service $IP_ADDRESS bb-time.service
+systemctl_service $IP_ADDRESS bb-hw.service
+systemctl_service $IP_ADDRESS bb-relay.service
+systemctl_service $IP_ADDRESS bb-master.service
+
 exit 0
 
 

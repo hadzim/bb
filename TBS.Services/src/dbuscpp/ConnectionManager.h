@@ -10,7 +10,9 @@
 #include "Poco/Mutex.h"
 #include <deque>
 #include <map>
-#include <unistd.h>
+#ifndef _MSC_VER
+	#include <unistd.h>
+#endif
 
 namespace DBus {
 

@@ -17,39 +17,60 @@
 #include "BB/Configuration.h"
 #include <iostream>
 
-
 namespace BB {
-
 
 Dump::Dump() {
 
 }
-
 Dump::~Dump() {
 
 }
 
 int Dump::main(const std::vector<std::string>& args) {
 
-	std::cout << "main Dump.start" << std::endl;
+	c = new TBS::MQTT::Client("mqtt-dump");
+	c->OnMessage += Poco::delegate(this, &Dump::onMessage);
+	c->subscribe("devices/#");
+	waitForTerminationRequest();
 
-	{
-		TBS::BB::Services::Data::DBus::Client::Ptr observer = new TBS::BB::Services::Data::DBus::Client();
-		observer->DataDistributor().SensorDataReceived += Poco::delegate(this, &Dump::onData);
-		this->waitForTerminationRequest();
-		observer->DataDistributor().SensorDataReceived -= Poco::delegate(this, &Dump::onData);
-	}
-
-	std::cout << "main Dump.stop" << std::endl;
-
-
-	return EXIT_OK;
+	c->OnMessage -= Poco::delegate(this, &Dump::onMessage);
+	return 0;
 }
 
-void Dump::onData(TBS::BB::Services::Data::IDataDistributor::SensorDataReceivedArg & arg){
+void Dump::onMessage(TBS::MQTT::Message & m) {
+	std::cout << m.topic.topic() << " = " << m.payload << std::endl;
+}
 
-		BB::SensorData sd = BB::SensorDataHelpers::eventArg2SensorData(arg);
-		std::cout << sd << std::endl;
-	}
+/*
+ Dump::Dump() {
 
+ }
+
+ Dump::~Dump() {
+
+ }
+
+ int Dump::main(const std::vector<std::string>& args) {
+
+ std::cout << "main Dump.start" << std::endl;
+
+ {
+ TBS::BB::Services::Data::DBus::Client::Ptr observer = new TBS::BB::Services::Data::DBus::Client();
+ observer->DataDistributor().SensorDataReceived += Poco::delegate(this, &Dump::onData);
+ this->waitForTerminationRequest();
+ observer->DataDistributor().SensorDataReceived -= Poco::delegate(this, &Dump::onData);
+ }
+
+ std::cout << "main Dump.stop" << std::endl;
+
+
+ return EXIT_OK;
+ }
+
+ void Dump::onData(TBS::BB::Services::Data::IDataDistributor::SensorDataReceivedArg & arg){
+
+ BB::SensorData sd = BB::SensorDataHelpers::eventArg2SensorData(arg);
+ std::cout << sd << std::endl;
+ }
+ */
 } /* namespace BB */

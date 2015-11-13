@@ -1,0 +1,14 @@
+[Unit]
+Description=BB broker service
+
+[Service]
+Type=notify
+NotifyAccess=all
+EnvironmentFile=/home/tbs/data/scripts/app.env
+ExecStart=/usr/bin/mosquitto # TODO
+WorkingDirectory=/home/tbs/bin
+Restart=on-failure
+StandardOutput=null
+
+[Install]
+WantedBy=multi-user.target

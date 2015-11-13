@@ -107,8 +107,8 @@ namespace TBS {
 		};
 
 
-		jsonrpc::AbstractClientConnector::Ptr createClientConnector(const std::string & name, const JsonClientParams & params);
-		jsonrpc::AbstractClientConnector::Ptr createClientConnector(const std::string & name, const SerialParams & params);
+		jsonrpc::AbstractClientConnector::Ptr GEN_SERVICE_API createClientConnector(const std::string & name, const JsonClientParams & params);
+		jsonrpc::AbstractClientConnector::Ptr GEN_SERVICE_API createClientConnector(const std::string & name, const SerialParams & params);
 
 	} /* namespace Services */
 } /* namespace TBS */

@@ -3,7 +3,7 @@
 
 
 
-#if defined(_WIN32) && defined(_TBS_DLL)
+#if defined(_WIN32) && (defined(_TBS_DLL) || defined(_MSC_VER))
 #define TBS_DLL
 #endif
 

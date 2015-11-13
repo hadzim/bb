@@ -36,6 +36,7 @@
 #include <sys/ioctl.h>
 #include <linux/types.h>
 #include <linux/spi/spidev.h>
+
 using namespace std;
 
 #define HEX(x) setw(2) << setfill('0') << hex << (int)(x)
@@ -52,6 +53,8 @@ SPIDevice::SPIDevice(unsigned int bus, unsigned int device):
 	BusDevice(bus,device) {
 	stringstream s;
 	s << SPI_PATH << bus << "." << device;
+	//std::cout << ""
+	//this->file = -1;
 	this->filename = string(s.str());
 	this->mode = SPIDevice::MODE3;
 	this->bits = 8;
@@ -65,7 +68,10 @@ SPIDevice::SPIDevice(unsigned int bus, unsigned int device):
  * @return 0 on a successful open of the file
  */
 int SPIDevice::open(){
-	//cout << "Opening the file: " << filename.c_str() << endl;
+	this->close();
+
+	cout << "Opening the file: " << filename.c_str() << endl;
+
 	if ((this->file = ::open(filename.c_str(), O_RDWR))<0){
 		perror("SPI: Can't open device.");
 		return -1;
@@ -196,8 +202,11 @@ int SPIDevice::setBitsPerWord(uint8_t bits){
 }
 
 void SPIDevice::close(){
-	::close(this->file);
-	this->file = -1;
+	if (this->file != -1){
+		cout << "closing " << this->filename << endl;
+		::close(this->file);
+		this->file = -1;
+	}
 }
 
 SPIDevice::~SPIDevice() {

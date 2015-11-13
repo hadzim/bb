@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
+
 # C++11 check
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
@@ -58,12 +59,20 @@ endif()
 
 # Subdirectories
 
+
+#add_subdirectory(libwebsockets)
+#add_subdirectory(mosquitto-1.4)
+#add_subdirectory(BB.MQTT2WS2)
+
 add_subdirectory(TBS)
 add_subdirectory(TBS.Services)
 
+add_subdirectory(BB.Mosquitto)
+
+add_subdirectory(BB.WWW)
+
 add_subdirectory(BB.Services)
 add_subdirectory(BB)
-
 
 add_subdirectory(BB.Camera)
 add_subdirectory(BB.Collector)
@@ -76,12 +85,23 @@ add_subdirectory(BB.SerialCollector)
 add_subdirectory(BB.Status)
 add_subdirectory(BB.Temperature)
 add_subdirectory(BB.Test)
+add_subdirectory(BB.History)
 
-add_subdirectory(BB.Network)
 add_subdirectory(BB.Actions)
+add_subdirectory(BB.Network)
+add_subdirectory(BB.Time)
+
 
 add_subdirectory(BB.New.Temperature)
 add_subdirectory(BB.New.Dummy)
+add_subdirectory(BB.New.Arduino)
+add_subdirectory(BB.New.Rules.Dummy)
+
+add_subdirectory(BB.Master)
+add_subdirectory(BB.HW)
+add_subdirectory(BB.Relay)
+
+add_subdirectory(BB.PWM)
 
 add_subdirectory(www)
 

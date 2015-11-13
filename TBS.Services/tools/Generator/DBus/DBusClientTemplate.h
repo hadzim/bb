@@ -51,6 +51,7 @@
 #include <memory>\n\
 #include <dbus-c++/dbus.h>\n\
 #include <dbus/dbus-protocol.h>\n\
+#include <TBS/Log.h>\n\
 ///includes\n\
 <includes>\n\
 \n\

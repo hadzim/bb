@@ -28,7 +28,7 @@ namespace jsonrpc
      * Note that this class will always send HTTP-Status 200, even though an JSON-RPC Error might have occurred. Please
      * always check for the JSON-RPC Error Header.
      */
-    class RawInterfaceServer: public AbstractServerConnector
+    class GEN_SERVICE_API RawInterfaceServer: public AbstractServerConnector
     {
         public:
 

@@ -9,6 +9,7 @@
 #define SERIALJSONSERVICES_H_
 
 #include <string>
+#include <cstdint>
 
 #include "TBS/Nullable.h"
 

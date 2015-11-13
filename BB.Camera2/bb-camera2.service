@@ -1,0 +1,16 @@
+[Unit]
+Description=BB camera 2 service
+Wants=tbs-dbus-session.service
+
+[Service]
+Type=notify
+NotifyAccess=all
+EnvironmentFile=/home/tbs/data/scripts/app.env
+EnvironmentFile=/home/tbs/data/scripts/tbs_dbus_session.env
+ExecStart=/home/tbs/bin/BB.Camera2
+WorkingDirectory=/home/tbs/bin
+Restart=on-failure
+StandardOutput=null
+
+[Install]
+WantedBy=multi-user.target

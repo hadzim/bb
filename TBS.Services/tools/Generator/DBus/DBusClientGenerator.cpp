@@ -126,7 +126,7 @@ string DBusClientGenerator::generateMethod(Method & m) {
 	}
 
 	body << tab << tab << "} catch (::DBus::Error & err){" << endl;
-
+	body << tab << tab << tab << "LNOTICE(\"DBUS\") << \"DBus call failed: msg=\" << err.message() << \" what=\" << err.what() << LE;" << endl;
 	body << tab << tab << tab << "if (strcmp(err.name(), DBUS_ERROR_FAILED) == 0){" << endl;
 	body << tab << tab << tab << tab << "throw ::TBS::Services::RuntimeServiceException(err.message());" << endl;
 	body << tab << tab << tab << "} else {" << endl;

@@ -16,12 +16,13 @@
 #include <memory>
 #include "json/value.h"
 #include "TBS/Services/DotNet/DotNetServices.h"
+#include "TBS/Services/Types.h"
 
 namespace DotNet {
 
 
 
-	class DotNetClient {
+	class GEN_SERVICE_API DotNetClient {
 		public:
 
 			DotNetClient(const TBS::Services::DotNetClientParams & params);

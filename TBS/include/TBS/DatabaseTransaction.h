@@ -24,6 +24,11 @@ namespace TBS {
 		bool opened;
 	};
 
+	template<typename D>
+	Poco::SharedPtr<DatabaseTransaction<D>> beginDatabaseTransaction(D& database) {
+		return new DatabaseTransaction<D>(database);
+	}
+
 } // namespace
 
 #endif // included

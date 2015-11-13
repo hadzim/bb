@@ -10,6 +10,7 @@
 #ifndef WSHttpInterfaceServerCONNECTOR_H_
 #define WSHttpInterfaceServerCONNECTOR_H_
 
+#include <jsonrpc/connectors/SharedHttpInterfaceServer.h>
 #include <memory>
 #include "Poco/Net/HTTPServer.h"
 #include "../ServiceHandlers.h"
@@ -39,29 +40,11 @@ namespace jsonrpc
 			WSWeakPtr ws;
 	};
 
-    /**
-     * This class provides an embedded HTTP Server, based on Mongoose, to handle incoming Requests and send HTTP 1.1
-     * valid responses.
-     * Note that this class will always send HTTP-Status 200, even though an JSON-RPC Error might have occurred. Please
-     * always check for the JSON-RPC Error Header.
-     */
-    class WsInterfaceServer: public AbstractServerConnector
+    class GEN_SERVICE_API WsInterfaceServer: public SharedHttpInterfaceServer
     {
         public:
 
-
     		WsInterfaceServer(const TBS::Services::JsonServerParams & p);
-            virtual ~WsInterfaceServer();
-
-            virtual bool StartListening();
-            virtual bool StopListening();
-
-
-        private:
-            TBS::Services::JsonServerParams p;
-            std::unique_ptr<Poco::Net::HTTPServer> srv;
-
-            std::vector <WebSocketWriter::Ptr> writers;
 
     };
 

@@ -16,11 +16,12 @@ ssh root@$1 mkdir /home/tbs/www/
 
 echo "reload daemon"
 
-ssh root@$1 systemctl daemon-reload
+ssh root@$1 systemctl daemon-reload 
 
 echo "enable services"
 
 ssh root@$1 systemctl enable tbs-dbus-session.service
+ssh root@$1 systemctl enable bb.mosquitto.service
 ssh root@$1 systemctl enable bb-collector.service
 ssh root@$1 systemctl enable bb-httpsender.service
 ssh root@$1 systemctl enable bb-forecast.service
@@ -33,6 +34,11 @@ ssh root@$1 systemctl enable bb-network.service
 ssh root@$1 systemctl enable bb-actions.service
 ssh root@$1 systemctl enable bb-www.service
 ssh root@$1 systemctl enable bb-serialcollector.service
+ssh root@$1 systemctl enable bb-screen.service
+ssh root@$1 systemctl enable bb-time.service
+ssh root@$1 systemctl enable bb-hw.service
+ssh root@$1 systemctl enable bb-relay.service
+ssh root@$1 systemctl enable bb-master.service
 
 
 #cd /etc/systemd/system/

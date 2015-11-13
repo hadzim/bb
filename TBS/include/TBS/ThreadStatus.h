@@ -8,7 +8,7 @@
 #ifndef THREADSTATUS_H_
 #define THREADSTATUS_H_
 
-#ifdef __WIN32__
+#ifdef _WIN32
 	#define THREAD_DUMP(message) {}
 	#define CLASS_DUMP(obj, message) {}
 	#define CUSTOM_DUMP(name, message) {}

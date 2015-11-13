@@ -7,7 +7,7 @@
 
 #ifndef DALLASTEMPERATURENODE_H_
 #define DALLASTEMPERATURENODE_H_
-#include "BB/Node/SensorNode.h"
+#include "BB/Node/Sensor/TemperatureNode.h"
 
 namespace BB {
 	namespace DallasTemperature {
@@ -19,9 +19,9 @@ namespace BB {
 				static std::string file(std::string uid);
 		};
 
-		class Node: public SensorNode {
+		class Node: public TemperatureNode {
 			public:
-				Node(BB::Node::Info info, int period);
+				Node(std::string uid, int period);
 				BB::Node::Data readOne(const BB::Node::Info & info, const BB::Node::Sensor & sensor);
 		};
 

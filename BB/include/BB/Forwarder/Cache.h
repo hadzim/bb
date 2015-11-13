@@ -29,7 +29,7 @@ namespace BB {
 
 
 			TypeCache(std::string path) :
-					path(path) {
+					path(path), s(0) {
 				this->fetch();
 			}
 
@@ -37,6 +37,7 @@ namespace BB {
 				Poco::Mutex::ScopedLock l(m);
 				std::ofstream fs(path.c_str(), std::ios::app);
 				fs << RW::json2OneLine(DataTypeRW::write(msg)) << std::endl;
+				s++;
 			}
 
 			Data fetch() {
@@ -58,6 +59,7 @@ namespace BB {
 						data.push_back(DataTypeRW::read(RW::string2json(msg)));
 					}
 				}
+				s = data.size();
 				return data;
 
 			}
@@ -91,10 +93,18 @@ namespace BB {
 					orig.remove();
 				}
 
+				s -= count;
+				if (s < 0) s = 0;
+
+			}
+
+			int size(){
+				return s;
 			}
 		private:
 			Poco::Mutex m;
 			std::string path;
+			int s;
 	};
 
 } /* namespace BB */

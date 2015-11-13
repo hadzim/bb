@@ -10,6 +10,10 @@
 #include "jsonrpc/errors.h"
 #include "jsonrpc/exception.h"
 
+#if defined ( _MSC_VER )
+	#include <ciso646>
+#endif
+
 namespace jsonrpc
 {
     std::map<int, std::string> Errors::possibleErrors;

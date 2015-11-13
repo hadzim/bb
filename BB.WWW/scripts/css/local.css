@@ -1,0 +1,162 @@
+
+
+div.slider {
+	margin-top: 15px;
+}
+
+.settings-box {
+}
+
+.data-box {
+	display: block;
+	min-height: 55px;
+	width: 100%;
+	box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+	border-radius: 2px;
+	margin-bottom: 5px;
+}
+
+.data-box-icon {
+	border-top-left-radius: 2px;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 2px;
+	display: block;
+	float: left;
+	height: 55px;
+	width: 55px;
+	text-align: center;
+	font-size: 30px;
+	line-height: 55px;
+	background: rgba(0,0,0,0.2);
+}
+
+.data-box-graph-not {
+	border-top-left-radius: 2px;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 2px;
+	display: block;
+	float: right;
+	height: 55px;
+	width: 55px;
+	
+	/*background: rgba(0,0,0,0.2);*/
+}
+
+.data-box-graph {
+	/*background: rgba(0,0,0,0.2);**/
+	margin: 5px 10px; 
+}
+
+
+.data-box-graph canvas {
+	/*padding: 5px;*/
+	
+}
+
+.data-box-text {
+	display: block;
+	font-size: 14px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.data-box-content {
+	padding: 5px 10px;
+	margin-left: 55px;
+	/*margin-right: 55px;*/
+}
+.data-box-text {
+	display: block;
+	font-size: 14px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.data-box-number {
+	float: right;
+	font-size: 25px;
+}
+.data-box-time {
+	font-size: 10px;
+	clear: right;
+}
+.data-box-image img {
+	max-width: 50px;
+	max-height: 30px;
+	border: 1px solid white;
+}
+.setting-box {
+	font-size: 10px;
+	padding: 2px 5px;
+	border-radius: 2px;
+	margin-bottom: 3px;
+}
+
+/**
+	NODE
+*/
+
+.node {
+                  margin: 0px;
+                  padding: 0px;
+                  
+                  border-radius: 3px;
+                  margin-bottom: 15px;
+             }
+             .nodeheader {
+                  border-bottom: 1px solid rgba(0,0,0,0.08);
+             }
+             .nodeicon {
+                float: left;
+                height: 35px;
+                line-height: 35px;
+                padding-left: 10px;
+                padding-right: 10px;
+                margin-right: 5px;
+                font-size: 1.7em;
+             }
+             .nodeheader h3 {
+                height: 35px;
+                line-height: 35px;
+                margin: 0px;
+                
+             }
+             .node .original {
+                color: rgba(255,255,255,0.6);
+                float: right;
+                padding: 8px;
+             }
+             .nodebody {
+                  padding: 5px;
+             }
+             .nodebody .center {
+                  text-align: center;
+                  position: relative;
+             }
+             .nodebody .labels {
+                  position: absolute;
+                  font-size: 14px; 
+                  display: inline;
+                     
+             }
+             .nodebody .labels .label {
+                  /*background-color: rgba(0,0,0,0.15);*/
+                  display: block;
+                  margin-bottom: 2px;
+                  margin-left: 5px;
+             }
+             .nodebody .labels .label-gray {
+                  /*background-color: rgba(120,120,120,1.0);*/
+             }
+             .nodebody h2 {
+                
+             }
+             .bg-darker {
+                background-color: rgba(0,0,0,0.15);
+             }
+             .mysmaller {
+                font-size: 0.7em;
+                padding-left: 3px;
+             }

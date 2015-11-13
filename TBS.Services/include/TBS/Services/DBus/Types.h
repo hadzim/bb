@@ -12,7 +12,7 @@
 
 #include <dbus-c++/message.h>
 #include <dbus-c++/types.h>
-#include <Poco/Data/BLOB.h>
+#include "TBS/BLOB.h"
 #include "TBS/Services/Types.h"
 
 namespace DBus {

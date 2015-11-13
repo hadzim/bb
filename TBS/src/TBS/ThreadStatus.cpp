@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifndef __WIN32__
+#ifndef _WIN32
 #include <unistd.h>
 #include <sys/syscall.h>
 
@@ -196,7 +196,7 @@ namespace TBS {
 	}
 
 	DiagnosticsMemory::DiagnosticsMemory() :
-			writer_(NULL), reader_(NULL), buffer(NULL) {
+		buffer(NULL), writer_(NULL), reader_(NULL) {
 		/*
 		 Poco::File f("/run/user/sharedmem.dat");
 		 if (!f.exists() || f.getSize() < ThreadStatusMemory::size()){
@@ -217,7 +217,7 @@ namespace TBS {
 			//std::cout << "SHARED MEMORY INIT:" << std::endl;
 
 			Poco::File shared("/tmp/SharedMemDiagnostics");
-			if (!shared.exists() || shared.getSize() < DiagnosticsStatusMemory::size()){
+			if (!shared.exists() || shared.getSize() < static_cast<Poco::UInt64>(DiagnosticsStatusMemory::size())){
 				std::ofstream ff(shared.path().c_str());
 				char buffer[DiagnosticsStatusMemory::size()];
 				ff.write(buffer, DiagnosticsStatusMemory::size());

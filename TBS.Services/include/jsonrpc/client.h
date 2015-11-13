@@ -13,12 +13,13 @@
 #include "clientconnector.h"
 #include "rpcprotocolclient.h"
 #include "json/json.h"
+#include "TBS/Services/Types.h"
 
 #include <vector>
 #include <map>
 
 namespace jsonrpc {
-	class Client {
+	class GEN_SERVICE_API Client {
 		public:
 			Client(AbstractClientConnector::Ptr connector);
 			~Client();

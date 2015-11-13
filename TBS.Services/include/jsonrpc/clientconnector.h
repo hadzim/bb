@@ -13,11 +13,11 @@
 #include <string>
 #include "exception.h"
 #include <Poco/SharedPtr.h>
-
+#include "TBS/Services/Types.h"
 
 namespace jsonrpc
 {
-    class AbstractClientConnector
+    class GEN_SERVICE_API AbstractClientConnector
     {
         public:
     		typedef Poco::SharedPtr <AbstractClientConnector> Ptr;

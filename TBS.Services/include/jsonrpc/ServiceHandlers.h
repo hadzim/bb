@@ -14,7 +14,7 @@
 
 namespace jsonrpc {
 
-	class ServiceHandlers {
+	class GEN_SERVICE_API ServiceHandlers {
 		public:
 
 			typedef std::map <std::string, RpcProtocolServer::Ptr> Handlers;

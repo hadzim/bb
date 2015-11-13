@@ -4,6 +4,12 @@ project(TBS.Services)
 file(GLOB_RECURSE ${PROJECT_NAME}.Sources "src/*.cpp")
 add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}.Sources})
 
+if (MSVC)
+	add_definitions(-DJSON_DLL -DGEN_SERVICE_EXPORT)
+else()
+	add_definitions(-DGEN_SERVICE_API_EMPTY)
+endif()
+
 target_include_directories(${PROJECT_NAME}
 	PUBLIC include
 )
@@ -11,31 +17,20 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
 	TBS
 	PocoFoundation
-  PocoNet
-  PocoCrypto
+	PocoNet
+	PocoCrypto
 	PocoNetSSL
+	mosquitto
+	mosquittopp
 )
 
-if(${TargetDevice} STREQUAL "win")
-    
-    target_link_libraries(${PROJECT_NAME}
-    
-    #### SSL libs
-    
-    ${SSL_LIBS}  
-    
-    #### serial line libs
-    setupapi 
-    advapi32
-    )
-    
-else()
     
     target_link_libraries(${PROJECT_NAME}
     	dbus-1
     )
     
-endif()
 
 
-installDefault(${PROJECT_NAME} lib)
+installDefault(${PROJECT_NAME} lib lib)
+#installSpecific(${PROJECT_NAME} . Synchronizer)
+

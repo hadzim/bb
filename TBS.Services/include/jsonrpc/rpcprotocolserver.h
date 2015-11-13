@@ -17,6 +17,7 @@
 #include "specificationparser.h"
 #include "abstractauthenticator.h"
 #include "abstractrequesthandler.h"
+#include "TBS/Services/Types.h"
 
 #define KEY_REQUEST_METHODNAME "method"
 #define KEY_REQUEST_VERSION "jsonrpc"
@@ -30,7 +31,7 @@
 
 namespace jsonrpc
 {
-    class RpcProtocolServer
+    class GEN_SERVICE_API RpcProtocolServer
     {
         public:
 

@@ -4,6 +4,9 @@ echo "\033[38;5;148m#########################################"
 echo "### COPY TO $1"
 echo "#########################################\033[39m"
 
+scp /usr/local/tbs-toolchain-gcc-4.6-i686/sysroots/armv7a-angstrom-linux-gnueabi/lib/libuuid.so* root@$1:/home/tbs/lib/
+scp /usr/local/tbs-toolchain-gcc-4.6-i686/sysroots/armv7a-angstrom-linux-gnueabi/usr/lib/libwebsockets.so* root@$1:/home/tbs/lib/
+
 scp /usr/local/tbs-toolchain-gcc-4.6-i686/sysroots/armv7a-angstrom-linux-gnueabi/usr/lib/libPoco* root@$1:/home/tbs/lib/
 scp /usr/local/tbs-toolchain-gcc-4.6-i686/sysroots/armv7a-angstrom-linux-gnueabi/usr/lib/libstdc++* root@$1:/home/tbs/lib/
 scp /usr/local/tbs-toolchain-gcc-4.6-i686/sysroots/armv7a-angstrom-linux-gnueabi/usr/lib/libpcre.so* root@$1:/home/tbs/lib/
@@ -56,4 +59,5 @@ scp /usr/local/tbs-toolchain-gcc-4.6-i686/sysroots/armv7a-angstrom-linux-gnueabi
 scp /usr/local/tbs-toolchain-gcc-4.6-i686/sysroots/armv7a-angstrom-linux-gnueabi/usr/lib/libxml2* root@$1:/home/tbs/lib/
 
 
+scp /usr/local/tbs-toolchain-gcc-4.6-i686/sysroots/armv7a-angstrom-linux-gnueabi/usr/sbin/mosquitto* root@$1:/home/tbs/bin/
 

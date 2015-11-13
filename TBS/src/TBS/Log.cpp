@@ -34,7 +34,7 @@
 #include "Poco/NumberFormatter.h"
 #include <string>
 
-#ifndef __WIN32__
+#ifndef _WIN32
 #include <unistd.h>
 #include <sys/syscall.h>
 
@@ -80,7 +80,7 @@ class ColorConsoleChannel : public Poco::Channel {
 		void log(const Poco::Message& msg){
 			Poco::LocalDateTime t;
 			std::string lctime = Poco::DateTimeFormatter::format(t, "%M:%S.%i");
-#ifndef __WIN32__
+#ifndef _WIN32
 
 
 			std::string color = "\033[38;5;146m";
@@ -118,7 +118,7 @@ namespace TBS {
 		void threadDebug() {
 			int tid = 0;
 
-			#ifndef __WIN32__
+			#ifndef _WIN32
 						 tid = (pid_t) syscall(SYS_gettid);
 			#endif
 
@@ -137,8 +137,8 @@ namespace TBS {
 
 							std::set<std::string>::iterator it = files.begin();
 							Poco::File fToDelete(*it);
-							it++;
-							for (; it != files.end(); it++) {
+							++it;
+							for (; it != files.end(); ++it) {
 
 								Poco::File tmpFile(*it);
 								if (tmpFile.exists() && tmpFile.created() < fToDelete.created()) {
@@ -254,8 +254,10 @@ namespace TBS {
 
 					Poco::Logger::root().setChannel(pSplitter);
 					Poco::Logger::get("TS").setChannel(pSplitter);
+					Poco::Logger::get("TRC").setChannel(pSplitter);
 					Poco::Logger::root().setLevel((Poco::Message::Priority)level);
 					Poco::Logger::get("TS").setLevel((Poco::Message::Priority)level);
+					Poco::Logger::get("TRC").setLevel((Poco::Message::Priority)level);
 
 
 					threadDebug();
@@ -269,7 +271,7 @@ namespace TBS {
 				}
 
 				void initSepareLogs(const std::set<std::string> & names, std::string dir, std::string prefix){
-					for (std::set<std::string>::const_iterator slog = names.begin(); slog != names.end(); slog++){
+					for (std::set<std::string>::const_iterator slog = names.begin(); slog != names.end(); ++slog){
 						std::string slogname = *slog;
 
 						//try parse for @ for distinguish log level
@@ -285,7 +287,7 @@ namespace TBS {
 				}
 
 				void dumpBacktrace(std::string name, std::string logname, int level){
-#ifndef __WIN32__
+#ifndef _WIN32
 
 				   Poco::Logger & pl = Poco::Logger::get(logname);
 

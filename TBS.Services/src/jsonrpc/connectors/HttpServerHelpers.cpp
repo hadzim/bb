@@ -45,7 +45,7 @@ namespace jsonrpc {
 			return RequestFinished;
 		}
 
-		if (params.isProtected()) {
+		if (params.isProtected(	)) {
 			//std::cout << "protected" << std::endl;
 			if (!request.hasCredentials()) {
 				std::cout << "protected - no credentials" << std::endl;
@@ -83,5 +83,26 @@ namespace jsonrpc {
 		}
 		return RequestOk;
 	}
+
+	void handleRequest(Poco::Net::HTTPServerResponse& response, std::function<void()> fnc){
+			try {
+				if (fnc){
+					fnc();
+				}
+			} catch (Poco::FileNotFoundException & e){
+				LWARNING("Json") << "Server exception: " << e.displayText() << LE;
+				response.setStatusAndReason(Poco::Net::HTTPServerResponse::HTTP_BAD_REQUEST, e.message());
+			} catch (Poco::Exception & e){
+				LWARNING("Json") << "Server exception: " << e.displayText() << LE;
+				response.setStatusAndReason(Poco::Net::HTTPServerResponse::HTTP_INTERNAL_SERVER_ERROR, e.message());
+			} catch (std::exception & e){
+				LWARNING("Json") << "Server exception: " << e.what() << LE;
+				response.setStatusAndReason(Poco::Net::HTTPServerResponse::HTTP_INTERNAL_SERVER_ERROR, e.what());
+			} catch (...){
+				LWARNING("Json") << "Server exception: " << "???" << LE;
+				response.setStatusAndReason(Poco::Net::HTTPServerResponse::HTTP_INTERNAL_SERVER_ERROR, "unknown server exception");
+			}
+		}
+
 
 } /* namespace jsonrpc */

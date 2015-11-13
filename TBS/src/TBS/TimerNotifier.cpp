@@ -123,13 +123,13 @@ namespace TBS {
 
 			{
 				Poco::Mutex::ScopedLock l(tm);
-				for (TimerHolder::List::iterator it = this->timersToStart.begin(); it != this->timersToStart.end(); it++) {
+				for (TimerHolder::List::iterator it = this->timersToStart.begin(); it != this->timersToStart.end(); ++it) {
 					this->remove(this->timers, *it);
 					this->timers.push_back(*it);
 				}
 				this->timersToStart.clear();
 
-				for (TimerHolder::List::iterator it = this->timersToStop.begin(); it != this->timersToStop.end(); it++) {
+				for (TimerHolder::List::iterator it = this->timersToStop.begin(); it != this->timersToStop.end(); ++it) {
 					this->remove(this->timers, *it);
 				}
 				this->timersToStop.clear();
@@ -137,7 +137,7 @@ namespace TBS {
 
 			//raise events
 			Poco::Timestamp::TimeVal now = monotonicTimestamp();
-			for (TimerHolder::List::iterator it = this->timers.begin(); it != this->timers.end(); it++) {
+			for (TimerHolder::List::iterator it = this->timers.begin(); it != this->timers.end(); ++it) {
 				Poco::Timestamp::TimeDiff diff = now - it->startAt;
 				if (diff > it->wakeAfter) {
 
@@ -164,7 +164,7 @@ namespace TBS {
 			//set next sleep
 			TimerHolder::List listCpy;
 			Nullable<Poco::Timestamp::TimeDiff> minSleep;
-			for (TimerHolder::List::iterator it = this->timers.begin(); it != this->timers.end(); it++) {
+			for (TimerHolder::List::iterator it = this->timers.begin(); it != this->timers.end(); ++it) {
 				if (it->invalidated) {
 					continue;
 				}

@@ -1,0 +1,12 @@
+[Unit]
+Description=BB mosquitto
+
+[Service]
+EnvironmentFile=/home/tbs/data/scripts/app.env
+ExecStart=/home/tbs/bin/mosquitto -c mosquitto.conf
+WorkingDirectory=/home/tbs/bin
+Restart=on-failure
+StandardOutput=null
+
+[Install]
+WantedBy=multi-user.target

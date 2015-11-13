@@ -21,7 +21,7 @@ namespace jsonrpc {
 
 
 
-	template<typename T> struct InternalConvertor;
+	template<typename T> class InternalConvertor;
 
 	class Convertor {
 		public:
@@ -55,7 +55,7 @@ namespace jsonrpc {
 	class InternalConvertor<int> {
 		public:
 			static int json2Cpp(const Json::Value & val) {
-				return val.asInt();
+				return static_cast<int>(val.asInt());
 			}
 			static Json::Value cpp2Json(const int & val) {
 				Json::Value v((Json::Int)val); return v;

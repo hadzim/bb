@@ -33,12 +33,18 @@ namespace BB {
 				typedef std::vector<Setting> List;
 				typedef std::map<std::string, Setting> Map;
 
+				typedef std::map<std::string, std::string> MetaInfo;
+
+				typedef Poco::DynamicAny Value;
+
 				std::string name;
 				std::string type;
-				Poco::DynamicAny defaultValue;
+				Value defaultValue;
+				MetaInfo metaInfo;
 
-				Setting(std::string n, std::string t = "text", Poco::DynamicAny defaultValue = Poco::DynamicAny()) :
-						name(n), type(t), defaultValue(defaultValue) {
+
+				Setting(std::string n, std::string t = "text", Value defaultValue = Value(), MetaInfo metaInfo = MetaInfo()) :
+						name(n), type(t), defaultValue(defaultValue), metaInfo(metaInfo) {
 
 				}
 		};
@@ -61,8 +67,12 @@ namespace BB {
 				static const std::string KeyValue;
 				static const std::string KeyDate;
 
+				typedef std::string Tag;
+				typedef std::set <Tag> Tags;
+
 				Data(const double & value, const Poco::DateTime & date);
 
+				void setValue(double val);
 				double getValue() const;
 				Poco::DateTime getDate() const;
 				std::string getDateAsString() const;
@@ -71,12 +81,16 @@ namespace BB {
 				void set(std::string key, std::string value);
 				bool has(std::string key) const;
 
+				const Tags & tags() const;
+				Tags & tags();
+
 				typedef std::map<std::string, std::string> Values;
 				const Values & additional() const;
 			private:
 				double value;
 				Poco::DateTime date;
 				Values additionalInfo;
+				Tags tagSet;
 		};
 
 
@@ -90,8 +104,7 @@ namespace BB {
 
 				Collection(const List & data = List()) {
 					for (const auto & val : data) {
-						map.insert(std::make_pair(val.name, val));
-						allKeys.insert(val.name);
+						insert(val);
 					}
 				}
 				const InnerClass & at(Key key) const {
@@ -116,6 +129,11 @@ namespace BB {
 					return map.end();
 				}
 
+				void insert(const InnerClass & val){
+					map.insert(std::make_pair(val.name, val));
+					allKeys.insert(val.name);
+				}
+
 			private:
 				Map map;
 				Keys allKeys;
@@ -129,18 +147,22 @@ namespace BB {
 				static const std::string Temperature;
 				static const std::string ForecastTemperature;
 				static const std::string Motion;
+				static const std::string Contact;
 				static const std::string Camera;
 				static const std::string Status;
+				static const std::string Screen;
+				static const std::string Switch;
 
-				Info(std::string uid, std::string type, const Sensors & sensores = Sensors(), const Settings & settings = Settings());
+				Info(std::string uid, std::string type, const Sensors & sensors = Sensors(), const Settings & settings = Settings());
 				Info(std::string uid, std::string type, const Settings & settings);
 
 				std::string getUID() const;
 
 				std::string getType() const;
-				std::string getUnit() const;
 				const Settings & getSettings() const;
 				const Sensors & getSensors() const;
+			private:
+				void mandatoryItems();
 			private:
 				std::string uid;
 				std::string type;
@@ -148,6 +170,18 @@ namespace BB {
 				Settings settings;
 		};
 
+
+		template <typename T>
+		bool isFilled(const Poco::DynamicAny & val, T & filledVal) {
+			if (val.isEmpty())
+				return false;
+			try {
+				filledVal = val.convert<T>();
+				return true;
+			} catch (...) {
+				return false;
+			}
+		}
 
 
 /*
@@ -164,6 +198,11 @@ namespace BB {
 		};*/
 	}
 }
+
+std::ostream & operator<<(std::ostream & o, const BB::Node::Data & s);
+std::ostream & operator<<(std::ostream & o, const BB::Node::Sensor & s);
+std::ostream & operator<<(std::ostream & o, const BB::Node::Info & s);
+
 /*
 std::ostream & operator<<(std::ostream & o, const BB::Sensor::Data & s);
 std::ostream & operator<<(std::ostream & o, const BB::Sensor::Info & s);

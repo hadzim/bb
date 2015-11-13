@@ -50,8 +50,8 @@ namespace jsonrpc {
 			}
 
 			void handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) {
-				std::string errorMessage = "";
-				try {
+
+				jsonrpc::handleRequest(response, [&](){
 
 					HttpServerHelpers::ReturnType ret = HttpServerHelpers::preprocess(p, request, response);
 					if (ret == HttpServerHelpers::RequestFinished){
@@ -97,7 +97,7 @@ namespace jsonrpc {
 					if (auto sHandlerProvider = handlerProvider.lock()) {
 						sHandlerProvider->getHandler(serviceName)->HandleRequest(req, rsp);
 					} else {
-						throw Poco::Exception("Request refused");
+						throw Poco::Exception("Request refused - server destroyed");
 					}
 
 					LTRACE("Json") << "response " << rsp << LE;
@@ -105,17 +105,7 @@ namespace jsonrpc {
 
 					response.setContentType("application/json");
 					response.sendBuffer(rsp.data(), rsp.length());
-				} catch (Poco::Exception & e){
-					errorMessage = e.message();
-					std::cout << "EXception: " << e.displayText() << std::endl;
-				} catch (std::exception & e){
-					std::cout << "EXception: " << e.what() << std::endl;
-					errorMessage = e.what();
-				} catch (...){
-					std::cout << "EXception: ??" << std::endl;
-					errorMessage = "Unknown error";
-				}
-
+				});
 			}
 		private:
 			ServiceHandlers::WeakPtr handlerProvider;
@@ -123,73 +113,15 @@ namespace jsonrpc {
 	};
 
 
+	static Poco::Net::HTTPRequestHandlerFactory::Ptr createHttpJsonRPC(ServiceHandlers::Ptr h, const TBS::Services::JsonServerParams & p){
+		return new RootHandlerFactory<MultiRootHandler>(h, p);
+	}
 
 	HttpInterfaceServer::HttpInterfaceServer(const TBS::Services::JsonServerParams & p) :
-			p(p)/*, tp(1)*/ {
+		SharedHttpInterfaceServer(p, createHttpJsonRPC){
 
-
-		Poco::Net::HTTPServerParams* pParams = new Poco::Net::HTTPServerParams;
-
-		if (p.MaxParallelThreads.isSet()){
-			pParams->setMaxThreads(p.MaxParallelThreads.val());
-		} else {
-			pParams->setMaxThreads(2);
-		}
-
-		if (p.MaxQueuedThreads.isSet()){
-			pParams->setMaxQueued(p.MaxQueuedThreads.val());
-		} else {
-			pParams->setMaxQueued(100);
-		}
-
-		if (p.KeepAliveTimeout.isSet()){
-			pParams->setKeepAliveTimeout(Poco::Timespan(p.KeepAliveTimeout.val(),0));
-		} else {
-			pParams->setKeepAliveTimeout(Poco::Timespan(5,0));
-		}
-
-		if (p.isHttps()) {
-			std::cout << "service via https: PK: " << p.getHttpsPrivateKey() << " CT:" << p.getHttpsCertificate() << std::endl;
-			Poco::Net::Context::Ptr context = new Poco::Net::Context(Poco::Net::Context::SERVER_USE, p.getHttpsPrivateKey(), p.getHttpsCertificate(), "");
-			// disable session cache because of Firefox (less memory consuming than session cache enabling)
-#ifndef OLDPOCO13
-			context->disableStatelessSessionResumption();
-#endif
-			Poco::Net::SecureServerSocket svs(p.port(), 64, context);
-			srv = std::unique_ptr<Poco::Net::HTTPServer>(new Poco::Net::HTTPServer(new RootHandlerFactory<MultiRootHandler>(handlers(), p), /*tp,*/ svs, pParams));
-			std::cout << "multi https server listens on " << srv->port() << std::endl;
-		} else {
-			Poco::Net::ServerSocket svs(p.port()); // set-up a server socket
-			srv = std::unique_ptr<Poco::Net::HTTPServer>(new Poco::Net::HTTPServer(new RootHandlerFactory<MultiRootHandler>(handlers(), p), /*tp,*/ svs, pParams));
-			std::cout << "multi server listens on " << srv->port() << std::endl;
-		}
-		//LERROR("Service.Jsonp") << "construct with: " << (int)&handlers_ << " this: " << this << LE;
 	}
 
-	HttpInterfaceServer::~HttpInterfaceServer() {
-		std::cout << "destruct1" << std::endl;
-		srv->stop();
-
-		std::cout << "destruct1a" << std::endl;
-		//tp.stopAll();
-
-		std::cout << "destruct2" << std::endl;
-		//tp.joinAll();
-		std::cout << "destruct3" << std::endl;
-		//LERROR("Service.Jsonp") << "destruct with: " << (int)&handlers_ << " this: " << this << LE;
-	}
-
-	bool HttpInterfaceServer::StartListening() {
-		std::cout << "multi server start listening " << std::endl;
-		srv->start();
-		return true;
-	}
-
-	bool HttpInterfaceServer::StopListening() {
-		std::cout << "multi server stop listening " << std::endl;
-		srv->stop();
-		return true;
-	}
 
 
 

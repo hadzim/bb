@@ -116,44 +116,12 @@ namespace jsonrpc {
 	};
 
 
+	static Poco::Net::HTTPRequestHandlerFactory::Ptr createWsJsonRPC(ServiceHandlers::Ptr h, const TBS::Services::JsonServerParams & p){
+		return new RootHandlerFactory<WsRootHandler>(h, p);
+	}
 
 	WsInterfaceServer::WsInterfaceServer(const TBS::Services::JsonServerParams & p) :
-			p(p) {
-
-		Poco::Net::HTTPServerParams* pParams = new Poco::Net::HTTPServerParams;
-		pParams->setMaxQueued(100);
-		pParams->setMaxThreads(2);
-		if (p.isHttps()) {
-			std::cout << "service via https: PK: " << p.getHttpsPrivateKey() << " CT:" << p.getHttpsCertificate() << std::endl;
-			Poco::Net::Context::Ptr context = new Poco::Net::Context(Poco::Net::Context::SERVER_USE, p.getHttpsPrivateKey(), p.getHttpsCertificate(), "");
-			// disable session cache because of Firefox (less memory consuming than session cache enabling)
-#ifndef OLDPOCO13
-			context->disableStatelessSessionResumption();
-#endif
-			Poco::Net::SecureServerSocket svs(p.port(), 64, context);
-			srv = std::unique_ptr < Poco::Net::HTTPServer > (new Poco::Net::HTTPServer(new RootHandlerFactory<WsRootHandler>(this->handlers(), p), svs, pParams));
-			std::cout << "multi https server listens on " << srv->port() << std::endl;
-		} else {
-			Poco::Net::ServerSocket svs(p.port()); // set-up a server socket
-			srv = std::unique_ptr < Poco::Net::HTTPServer > (new Poco::Net::HTTPServer(new RootHandlerFactory<WsRootHandler>(this->handlers(), p), svs, pParams));
-			std::cout << "multi server listens on " << srv->port() << std::endl;
-		}
-	}
-
-	WsInterfaceServer::~WsInterfaceServer() {
-		srv->stop();
-	}
-
-	bool WsInterfaceServer::StartListening() {
-		std::cout << "multi server start listening " << std::endl;
-		srv->start();
-		return true;
-	}
-
-	bool WsInterfaceServer::StopListening() {
-		std::cout << "multi server stop listening " << std::endl;
-		srv->stop();
-		return true;
+		SharedHttpInterfaceServer(p, createWsJsonRPC){
 
 	}
 

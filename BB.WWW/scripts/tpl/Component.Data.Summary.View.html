@@ -1,0 +1,33 @@
+<script id="component-data-summary-template" type="text/template">
+
+	<div class="data-box bg-aqua dataid-<%= id %>">
+                
+                
+                <span class="data-box-icon">
+                	<i class="fa <%= icon %>"></i>
+                </span>
+                
+               
+                <div class="data-box-content">
+                
+                  <span class="data-box-number pull-right"><%= value.value %> <%= unit %></span>
+                  <span class="data-box-graph pull-right"></span>
+                  <span class="data-box-image pull-right"></span>
+                  <span class="data-box-time pull-right">
+                    <%= timeSince(parseDate(value.date)) %>
+                  </span>
+                  
+                  <span class="data-box-text">
+                  	<%= name %>	
+                  </span>
+                  <% var i = 0; %>
+                  <% for (i = 0; i < tags.length; i++){ %>
+                  		<span class='label label-warning'><%= tags[i] %></span>
+                  <% } %>
+                  
+                  
+                </div><!-- /.data-box-content -->
+                
+      </div>
+
+</script>	    

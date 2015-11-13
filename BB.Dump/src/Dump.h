@@ -14,10 +14,12 @@
 
 #include "BB/Services/DataSvc_DBus.h"
 
+#include "TBS/MQTT/Client.h"
+
 namespace BB {
 
 
-
+/*
 
 	class Dump: public Poco::Util::ServerApplication {
 
@@ -37,6 +39,26 @@ namespace BB {
 		private:
 
 	};
+*/
+
+class Dump: public Poco::Util::ServerApplication {
+
+	public:
+		typedef Poco::SharedPtr<Dump> Ptr;
+		Dump();
+		virtual ~Dump();
+
+	protected:
+
+		int main(const std::vector<std::string>& args);
+	private:
+		void onMessage(TBS::MQTT::Message & m);
+	private:
+
+
+	private:
+		TBS::MQTT::Client::Ptr c;
+};
 
 } /* namespace BB */
 #endif /* HttpServer_H_ */

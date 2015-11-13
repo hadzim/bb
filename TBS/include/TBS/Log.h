@@ -21,6 +21,11 @@
 #define LOG_THREAD  "THREAD"
 #define LOG_TIME 	"TIME"
 
+#if defined ( _MSC_VER )
+	#define __func__ __FUNCTION__
+	#include <ciso646>
+#endif
+
 namespace TBS {
 	TBS_API std::string logBasename(const std::string& fullname);
 }

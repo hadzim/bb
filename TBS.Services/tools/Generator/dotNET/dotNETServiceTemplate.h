@@ -32,7 +32,7 @@
 \n\
 \n\
 <namespaceStart>\
-       class Client {\n\
+       class GEN_SERVICE_API Client {\n\
 			public:\n\
 				typedef Poco::SharedPtr <Client> Ptr;\n\
 				\n\

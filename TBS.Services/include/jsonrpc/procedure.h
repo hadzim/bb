@@ -15,6 +15,7 @@
 
 #include "json/json.h"
 #include "specification.h"
+#include "TBS/Services/Types.h"
 
 #include <Poco/SharedPtr.h>
 
@@ -25,7 +26,7 @@ namespace jsonrpc
 
     typedef enum {PARAMS_BY_NAME, PARAMS_BY_POSITION} parameterDeclaration_t;
 
-    class Procedure
+    class GEN_SERVICE_API Procedure
     {
         public:
     		typedef Poco::SharedPtr <Procedure> Ptr;

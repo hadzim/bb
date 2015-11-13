@@ -44,12 +44,6 @@ namespace BB {
 			throw Poco::Exception("cannot open stream");
 		}
 
-		//cap.set(CV_CAP_PROP_POS_MSEC, 300); //start the video at 300ms
-
-		double fps = video.get(CV_CAP_PROP_FPS); //get the frames per seconds of the video
-
-		std::cout << "Frame per seconds : " << fps << std::endl;
-
 		cv::Mat m;
 
 		std::cout << "2" << std::endl;

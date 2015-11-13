@@ -1,6 +1,11 @@
 #include "TBS/JsonValueGetter.h"
 #include <stdexcept>
 
+#if defined ( _MSC_VER )
+	#include <ciso646>
+#endif
+
+
 namespace TBS {
 
 	JsonValueGetter::JsonValueGetter():

@@ -74,25 +74,103 @@ namespace BB {
 		Json::Value v = Json::objectValue;
 		v["date"] = sensorData.getDateAsString();
 		v["value"] = sensorData.getValue();
+		v["tags"] = Json::arrayValue;
+
+		for (const auto & tag : sensorData.tags()) {
+			v["tags"].append(Json::Value(tag));
+		}
+
 		for (const auto & extraKey : sensorData.additional()) {
 			v[extraKey.first] = extraKey.second;
 		}
 		return v;
 	}
 	Node::Data NodeDataRW::read(const Json::Value & v) {
+
+
 		Node::Data val(v["value"].asDouble(), Node::string2date(v["date"].asString()));
 
 		for (const std::string & mem : v.getMemberNames()) {
+
 			if (mem == "value") {
 				continue;
 			}
 			if (mem == "date") {
 				continue;
 			}
+			if (mem == "tags") {
+				for (auto & obj : v[mem]){
+					//LTRACE("parse") << "try to parse tag as string: " << obj.type() << " isstring: " << obj.isString() << LE;
+					val.tags().insert(obj.asString());
+				}
+				continue;
+			}
 			val.set(mem, v[mem].asString());
 		}
+
+		//LTRACE("parse") << "try to parse done" << LE;
+
 		return val;
 	}
+
+	Json::Value NodeSensorRW::write(const Node::Sensor & sensorData){
+		Json::Value v = Json::objectValue;
+		v["name"] = sensorData.name;
+		v["type"] = sensorData.type;
+		v["unit"] = sensorData.unit;
+		return v;
+	}
+
+	Node::Sensor NodeSensorRW::read(const Json::Value & v){
+		return Node::Sensor(v["name"].asString(), v["type"].asString(), v["unit"].asString());
+	}
+
+	Json::Value NodeSettingsRW::write(const Node::Setting & sensorData){
+		Json::Value v = Json::objectValue;
+		v["name"] = sensorData.name;
+		v["type"] = sensorData.type;
+		v["value"] = sensorData.defaultValue.convert<std::string>();
+		return v;
+	}
+
+	Node::Setting NodeSettingsRW::read(const Json::Value & v){
+		return Node::Setting(v["name"].asString(), v["type"].asString(), v["value"].asString());
+	}
+
+
+	Json::Value NodeInfoRW::write(const Node::Info & info){
+		Json::Value v = Json::objectValue;
+		v["uid"] = info.getUID();
+		v["type"] = info.getType();
+		v["sensors"] = Json::arrayValue;
+		v["settings"] = Json::arrayValue;
+
+		for (const auto & s : info.getSensors()) {
+			v["sensors"].append(NodeSensorRW::write(s.second));
+		}
+		for (const auto & s : info.getSettings()) {
+			v["settings"].append(NodeSettingsRW::write(s.second));
+		}
+
+		return v;
+	}
+	Node::Info NodeInfoRW::read(const Json::Value & value){
+
+		Node::Sensors::List sensors;
+		for (auto & obj : value["sensors"]){
+			sensors.push_back(NodeSensorRW::read(obj));
+		}
+		Node::Sensors s(sensors);
+
+		Node::Setting::List settings;
+		for (auto & obj : value["settings"]){
+			settings.push_back(NodeSettingsRW::read(obj));
+		}
+		Node::Settings se(settings);
+
+		return Node::Info(value["uid"].asString(), value["type"].asString(), s, se);
+	}
+
 
 	Json::Value StatusDataRW::write(const RuntimeStatus & status) {
 

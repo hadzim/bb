@@ -16,13 +16,14 @@
 #include "Poco/Net/HTTPServerResponse.h"
 #include "Poco/Net/HTTPServerRequest.h"
 #include "TBS/Nullable.h"
+#include "TBS/Services/Types.h"
 
 namespace TBS {
 	namespace Services {
 
 		std::string computeMD5hash(std::string plainPassword);
 
-		class JsonClientParams {
+		class GEN_SERVICE_API JsonClientParams {
 			public:
 				enum JsonProtocol{
 					JsonHttp,
@@ -56,7 +57,7 @@ namespace TBS {
 				std::string password_;
 		};
 
-		class RequestHandler {
+		class GEN_SERVICE_API RequestHandler {
 			public:
 				typedef Poco::SharedPtr <RequestHandler> Ptr;
 				typedef std::vector <Ptr> PtrList;
@@ -67,7 +68,7 @@ namespace TBS {
 				virtual void handle(Poco::Net::HTTPServerRequest & request, Poco::Net::HTTPServerResponse & response) = 0;
 		};
 
-		class FileStreamRequestHandler : public RequestHandler {
+		class GEN_SERVICE_API FileStreamRequestHandler : public RequestHandler {
 			public:
 				FileStreamRequestHandler(std::string url, std::string filePath, std::string contentType = "text/html");
 				virtual ~FileStreamRequestHandler();
@@ -81,7 +82,20 @@ namespace TBS {
 
 		};
 
-		class JsonServerParams {
+		class GEN_SERVICE_API FolderStreamRequestHandler : public RequestHandler {
+			public:
+				FolderStreamRequestHandler(std::string urlPrefix, std::string folderPath);
+				virtual ~FolderStreamRequestHandler();
+
+				virtual bool canHandle(std::string query);
+				virtual void handle(Poco::Net::HTTPServerRequest & request, Poco::Net::HTTPServerResponse & response);
+			private:
+				std::string urlPrefix;
+				std::string folderPath;
+				std::string current;
+		};
+
+		class GEN_SERVICE_API JsonServerParams {
 			public:
 
 				enum PasswordAlgorithm {

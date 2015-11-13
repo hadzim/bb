@@ -20,6 +20,11 @@ target_link_libraries(${PROJECT_NAME}
 	${OpenCV_LIBS}
 	PUBLIC mosquitto
 	PUBLIC mosquittopp
+	PUBLIC PocoFoundation
+	PUBLIC PocoXML
+	PUBLIC PocoNet
+	rt
+	pthread
 	
 )
 

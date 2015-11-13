@@ -15,8 +15,8 @@ namespace BB {
 			return dir() + uid + "/w1_slave";
 		}
 
-		Node::Node(BB::Node::Info info, int period) :
-				SensorNode(info, period) {
+		Node::Node(std::string uid, int period) :
+				TemperatureNode(uid, period) {
 
 		}
 
@@ -34,10 +34,12 @@ namespace BB {
 			if (sscanf(last.c_str(), "t=%d", &temp) != 1) {
 				throw Poco::Exception("Cannot parse temperature");
 			}
-			double val = temp * 1.0 / 1000.0;
+			double val = temp * 1.0 / 100.0;
+			int valInt = val;
+
 
 			//Sensor::Info info(sensorID, Sensor::Info::Temperature, Sensor::Info::UnitTemperature);
-			BB::Node::Data data(val, BB::Node::localNow());
+			BB::Node::Data data(val * 1.0 / 10.0, BB::Node::localNow());
 			return data;
 		}
 
@@ -50,16 +52,13 @@ namespace BB {
 			std::set<std::string> files;
 			Poco::Glob::glob(Helpers::dir() + "28*", files);
 
-			BB::Node::Sensors sensors({ BB::Node::Sensor("Temperature", BB::Node::Info::Temperature, "C") });
-
-			BB::Node::Settings settings({ BB::Node::Setting("name"), BB::Node::Setting("place") });
 
 			for (std::set<std::string>::iterator it = files.begin(); it != files.end(); ++it) {
 				Poco::Path path(*it);
 
 				std::string nodeUID = path[path.depth() - 1];
 
-				SensorNode::Ptr sensorNode = new Node(BB::Node::Info(nodeUID, BB::Node::Info::Temperature, sensors, settings), 60);
+				INode::Ptr sensorNode = new Node(nodeUID, 60 * 1000);
 				nodes.push_back(sensorNode);
 			}
 			return nodes;

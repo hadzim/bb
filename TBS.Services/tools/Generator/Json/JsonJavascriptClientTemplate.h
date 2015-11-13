@@ -10,6 +10,7 @@
     		password: settings.password,\n\
     		method: \"<methodName>\",\n\
     		params: {<inParamsAssign>},\n\
+    		timeout: settings.timeout,\n\
 		onRequest: function (r) {\n\
 			//console.log(r);\n\
 		},\n\
@@ -38,6 +39,7 @@ function <className>(params){\n\
       url: params.url + \"<interfaceName>\",\n\
       username: params.username,\n\
       password: params.password,\n\
+      timeout: params.timeout,\n\
   };\n\
   \n\
   \n //methods \n\

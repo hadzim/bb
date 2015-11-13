@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include "Poco/File.h"
+#include "Poco/Path.h"
 #include <Poco/StreamCopier.h>
 #include <iosfwd>
 #include "Poco/Net/HTTPServerResponse.h"
@@ -36,7 +37,7 @@ namespace TBS {
 			return port_;
 		}
 
-		JsonClientParams::JsonProtocol JsonClientParams::protocol() const{
+		JsonClientParams::JsonProtocol JsonClientParams::protocol() const {
 			return protocol_;
 		}
 
@@ -66,8 +67,7 @@ namespace TBS {
 				port_(port), allowCrossDomain_(false), isHttps_(false), isProtected_(false), passwordAlgorithm(PlainPassword) {
 		}
 
-
-		RequestHandler::~RequestHandler(){
+		RequestHandler::~RequestHandler() {
 
 		}
 
@@ -110,59 +110,111 @@ namespace TBS {
 			return this->userName_;
 		}
 
-
-		bool JsonServerParams::isPasswordValid(std::string password){
-			if (this->passwordAlgorithm == PlainPassword){
+		bool JsonServerParams::isPasswordValid(std::string password) {
+			if (this->passwordAlgorithm == PlainPassword) {
 				return this->passwordHash_ == password;
 			}
-			if (this->passwordAlgorithm == MD5Password){
+			if (this->passwordAlgorithm == MD5Password) {
 				return computeMD5hash(password) == this->passwordHash_;
 			}
 			return false;
 		}
-/*
-		std::string JsonServerParams::getPasswordHash() const {
-			return this->passwordHash_;
-		}
+		/*
+		 std::string JsonServerParams::getPasswordHash() const {
+		 return this->passwordHash_;
+		 }
 
-		JsonServerParams::PasswordAlgorithm JsonServerParams::getPasswordAlgorithm() const {
-			return this->passwordAlgorithm;
-		}
-*/
+		 JsonServerParams::PasswordAlgorithm JsonServerParams::getPasswordAlgorithm() const {
+		 return this->passwordAlgorithm;
+		 }
+		 */
 
-		void JsonServerParams::addSpecialRequestHandler(RequestHandler::Ptr rh){
+		void JsonServerParams::addSpecialRequestHandler(RequestHandler::Ptr rh) {
 			this->specialHandlers.push_back(rh);
 		}
 
-		RequestHandler::PtrList & JsonServerParams::getRequestHandlers(){
+		RequestHandler::PtrList & JsonServerParams::getRequestHandlers() {
 			return this->specialHandlers;
 		}
 
-		FileStreamRequestHandler::FileStreamRequestHandler(std::string url, std::string filePath,std::string contentType)
-			: url(url), fname(filePath), contentType(contentType){
+		FileStreamRequestHandler::FileStreamRequestHandler(std::string url, std::string filePath, std::string contentType) :
+				url(url), fname(filePath), contentType(contentType) {
 
 		}
 
-		FileStreamRequestHandler::~FileStreamRequestHandler(){
+		FileStreamRequestHandler::~FileStreamRequestHandler() {
 
 		}
 
-		bool FileStreamRequestHandler::canHandle(std::string query){
+		bool FileStreamRequestHandler::canHandle(std::string query) {
 			return this->url == query;
 		}
-		void FileStreamRequestHandler::handle(Poco::Net::HTTPServerRequest & request, Poco::Net::HTTPServerResponse & response){
-			Poco::File f(fname);
-			if (!f.exists()){
-				throw Poco::Exception("File " + fname + " does not exists");
-			}
-			std::cout << "docu real " << fname << std::endl;
-			response.setContentType(this->contentType);
+
+		static void streamFile(Poco::Net::HTTPServerResponse & response, std::string file, std::string mime) {
+			response.setContentType(mime);
 			response.setChunkedTransferEncoding(true);
 			std::ostream & o = response.send();
-			std::ifstream docf(fname.c_str());
+			std::ifstream docf(file.c_str());
 			Poco::StreamCopier::copyStream(docf, o);
-			return;
 		}
 
+		void FileStreamRequestHandler::handle(Poco::Net::HTTPServerRequest & request, Poco::Net::HTTPServerResponse & response) {
+			Poco::File f(fname);
+			if (!f.exists()) {
+				throw Poco::Exception("File " + fname + " does not exists");
+			}
+			streamFile(response, fname, contentType);
+		}
+
+		std::string dynamicMime(std::string file) {
+			Poco::Path path(file);
+			std::string ext = path.getExtension();
+			if (ext == "html" || ext == "htm") {
+				return "text/html";
+			}
+			if (ext == "ico") {
+				return "image/x-icon";
+			}
+			if (ext == "css") {
+				return "text/css";
+			}
+			if (ext == "js") {
+				return "text/javascript";
+			}
+			if (ext == "png") {
+				return "image/png";
+			}
+			if (ext == "jpg") {
+				return "image/jpeg";
+			}
+			if (ext == "eot" || ext == "svg" || ext == "ttf" || ext == "woff" || ext == "woff2") {
+				return "application/octet-stream";
+			}
+			throw Poco::Exception("Unknown mime type");
+		}
+
+		FolderStreamRequestHandler::FolderStreamRequestHandler(std::string urlPrefix, std::string folderPath) :
+				urlPrefix(urlPrefix), folderPath(folderPath) {
+
+		}
+		FolderStreamRequestHandler::~FolderStreamRequestHandler() {
+
+		}
+
+		bool FolderStreamRequestHandler::canHandle(std::string query) {
+			current = folderPath + query;
+			if (!urlPrefix.empty()){
+				if (query.find(urlPrefix) != 0){
+					return false;
+				}
+				std::string plainQuery = query.substr(urlPrefix.length());
+				current = folderPath + plainQuery;
+			}
+			std::cout << "search file in: " << current << std::endl;
+			return Poco::File(current).exists();
+		}
+		void FolderStreamRequestHandler::handle(Poco::Net::HTTPServerRequest & request, Poco::Net::HTTPServerResponse & response) {
+			streamFile(response, current, dynamicMime(current));
+		}
 	}
 }

@@ -47,6 +47,23 @@ namespace BB {
 			static Node::Data read(const Json::Value & value);
 	};
 
+	class NodeInfoRW {
+		public:
+			static Json::Value write(const Node::Info & sensorData);
+			static Node::Info read(const Json::Value & value);
+	};
+
+	class NodeSensorRW {
+		public:
+			static Json::Value write(const Node::Sensor & sensorData);
+			static Node::Sensor read(const Json::Value & value);
+	};
+
+	class NodeSettingsRW {
+		public:
+			static Json::Value write(const Node::Setting & sensorData);
+			static Node::Setting read(const Json::Value & value);
+	};
 
 	class StatusDataRW {
 		public:

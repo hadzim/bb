@@ -45,7 +45,7 @@ namespace TBS {
 					/// Starts the activity by acquiring a
 					/// thread for it from the default thread pool.
 					{
-						LOG_STREAM_DEBUG << "Start activity " << this->name << LE
+						LDEBUG("NamedActivity") << "Start activity " << this->name << LE
 						Poco::FastMutex::ScopedLock lock(_mutex);
 						if (!_running) {
 							_done.reset();
@@ -60,7 +60,7 @@ namespace TBS {
 							}
 
 						}
-						LOG_STREAM_DEBUG << "Started activity " << this->name << LE
+						LDEBUG("NamedActivity") << "Started activity " << this->name << LE
 					}
 
 					void stop() {
@@ -76,12 +76,14 @@ namespace TBS {
 						}
 						try {
 							wait(5000);
-							LOG_STREAM_DEBUG << "Deleted activity " << this->name << LE
+							LDEBUG("NamedActivity") << "Deleted activity " << this->name << ", join really needed: " << joinReallyNeeded << LE;
 							if (joinReallyNeeded){
+								LDEBUG("NamedActivity") << "Joining thread of " << this->name << LE;
 								bgThread.join();
+								LDEBUG("NamedActivity") << "Thread of " << this->name << " joined." << LE;
 							}
 						} catch (Poco::Exception & e){
-							LOG_STREAM_ERROR << "ERROR NamedActivity "<< this->name << ":" << e.displayText() << LE
+							LERROR("NamedActivity") << "ERROR NamedActivity "<< this->name << ":" << e.displayText() << LE;
 							throw;
 						}
 					}
