@@ -15,6 +15,8 @@
 #include <sstream>
 #include <Poco/Exception.h>
 
+#include "Poco/Message.h"
+
 namespace BB {
 
 	class Project {
@@ -27,9 +29,15 @@ namespace BB {
 
 	class NodeChannel {
 		public:
+			static std::string projectTopic(){
+				std::stringstream s;
+				s << "devices/" << Project::projectID();
+				return s.str();
+			}
+
 			static std::string nodeTopic(const Node::Info & info){
 				std::stringstream s;
-				s << "devices/" << Project::projectID() << "/nodes/" << info.getUID() << "";
+				s << projectTopic() << "/nodes/" << info.getUID() << "";
 				return s.str();
 			}
 
@@ -42,6 +50,12 @@ namespace BB {
 			static std::string settingTopic(const Node::Info & info, const Node::Setting & s){
 				std::stringstream str;
 				str << nodeTopic(info) << "/settings/" << s.name << "";
+				return str.str();
+			}
+
+			static std::string eventLogTopic(){
+				std::stringstream str;
+				str << projectTopic() << "/eventlog";
 				return str.str();
 			}
 	};
@@ -67,22 +81,38 @@ namespace BB {
 			//node can notify, when it wants to be read
 			Poco::BasicEvent <bool> DataChanged;
 
-			//TODO NODE CAN RAISE NOTIFICATIONS / EVENTS - LATER ON
+
+			struct EventLogMessage {
+					Poco::DateTime time;
+					std::string message;
+					std::string dataType;
+					std::string data;
+					int level;
+
+					EventLogMessage(std::string message, std::string dataType = "", std::string data = "", int level = Poco::Message::PRIO_INFORMATION)
+						: message(message), dataType(dataType), data(data), level(level) {
+
+					}
+			};
+
+			Poco::BasicEvent <EventLogMessage> EventLogRaised;
+
+			struct AdditionalInfo {
+					std::string topic;
+					std::string payload;
+			};
+
+			Poco::BasicEvent <AdditionalInfo> AdditionalInfoRaised;
+
 	};
 
-	class INodeFactory {
-		public:
 
-			typedef Poco::SharedPtr <INodeFactory> Ptr;
-
-			virtual ~INodeFactory(){}
-
-			virtual int getCheckingPeriodInMs() = 0;
-			virtual INode::PtrList getNodes() = 0;
-	};
 	#define API
 
 	POCO_DECLARE_EXCEPTION(API, NoDataException, Poco::Exception)
 
 } /* namespace TBS */
+
+std::ostream & operator<<(std::ostream & o, const BB::INode::EventLogMessage & message);
+
 #endif /* ISENSOR_H_ */

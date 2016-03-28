@@ -6,6 +6,8 @@
  */
 
 #include <BB/Node/NodeHistory.h>
+#include <Poco/DateTimeFormat.h>
+#include <Poco/DateTimeFormatter.h>
 #include <TBS/Command.h>
 #include <TBS/CommandNotification.h>
 
@@ -25,11 +27,20 @@ namespace BB {
 			return NotChanged;
 		}
 
+		LNOTICE("History") << histName << " add data " << data << " now is: " << Poco::DateTimeFormatter::format(Poco::DateTime(), Poco::DateTimeFormat::SORTABLE_FORMAT) << LE;
+
 		lastTimestamp.set(Poco::Timestamp());
 		buffer.push_back(data);
 
 		while (buffer.size() > maxLength){
 			buffer.pop_front();
+		}
+		//remove wrong synced dates
+		if (!buffer.empty()){
+			auto i = buffer.front();
+			if ((i.getDate().timestamp().elapsed()) > (span * maxLength * 2)){
+				buffer.pop_front();
+			}
 		}
 
 		return Changed;
@@ -54,7 +65,7 @@ namespace BB {
 				DataHistoryBuffer("day", Poco::Timespan(0,0,30,0,0), 48)
 		);
 		this->historicalData.push_back(
-				DataHistoryBuffer("week", Poco::Timespan(0,4,00,0,0), 6*7)
+				DataHistoryBuffer("week", Poco::Timespan(0,4,0,0,0), 6*7)
 		);
 
 		client->OnMessage += Poco::delegate(this, &NodeHistory::onMessage);

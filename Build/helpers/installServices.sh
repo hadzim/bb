@@ -39,6 +39,7 @@ ssh root@$1 systemctl enable bb-time.service
 ssh root@$1 systemctl enable bb-hw.service
 ssh root@$1 systemctl enable bb-relay.service
 ssh root@$1 systemctl enable bb-master.service
+ssh root@$1 systemctl enable bb-rules.service
 
 
 #cd /etc/systemd/system/

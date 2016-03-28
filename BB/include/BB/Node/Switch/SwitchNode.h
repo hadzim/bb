@@ -15,7 +15,7 @@ namespace BB {
 
 		class SwitchNode: public BasicNode {
 			public:
-				SwitchNode(std::string uid, bool defaultValue, int period);
+				SwitchNode(std::string uid, bool defaultValue, BB::Node::Settings additinalSettings = BB::Node::Settings());
 				~SwitchNode();
 
 				AllData read();

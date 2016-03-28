@@ -18,20 +18,23 @@ namespace BB {
 		class Factory: public INodeFactory {
 			private:
 				INode::Ptr rc;
+				INode::Ptr sec;
 			public:
 				virtual int getCheckingPeriodInMs() {
 					return 60000;
 				}
 				virtual INode::PtrList getNodes() {
 					INode::PtrList nodes;
-
+					/*
 					{
 						INode::Ptr sensorNode = new StatusNode(60 * 1000);
 						nodes.push_back(sensorNode);
-					}
+					}*/
 					{
-						INode::Ptr sensorNode = new SecurityNode(60 * 1000);
-						nodes.push_back(sensorNode);
+						if (!sec){
+							sec = new SecurityNode(60 * 1000);
+						}
+						nodes.push_back(sec);
 					}
 
 					{

@@ -4,11 +4,38 @@
     
   });	
 
+  BB.Place = Backbone.Model.extend({
+	    defaults: function() {return {name: "undefined" };},
+  });
+  BB.DataType = Backbone.Model.extend({
+	    defaults: function() {return {name: "undefined" };},
+  });
+  
   BB.Data = Backbone.Model.extend({
     defaults: function() {return {name: "", topic: "unknown", value:"", type: "undefined", unit: "", icon: "", tags: [] };}, 
     
     initialize: function() {
     	this.on('change', this.updateAttributes, this);
+    },
+    
+    fgColor: function(){
+  	  var color = "white";
+  	  if ($.inArray("alarm", this.get("tags")) != -1){
+  		  color = "red";
+  	  }
+  	  if ($.inArray("extremelyLow", this.get("tags")) != -1){
+  		  color = "blue";  
+  	  }
+  	  if ($.inArray("low", this.get("tags")) != -1){
+		  color = "lightBlue";  
+	  }
+  	  if ($.inArray("high", this.get("tags")) != -1){
+		  color = "orange";  
+	  }
+  	  if ($.inArray("extremelyHigh", this.get("tags")) != -1){
+		  color = "red";  
+	  }
+  	  return color;
     },
     
     updateAttributes: function() {
@@ -68,6 +95,10 @@
 
   });
 
+  BB.EventLog = Backbone.Model.extend({
+	    defaults: function() {return {message: "undefined", "data": "", "dataType": "", "level": 6, "time": new Date() };},
+  });
+  
   BB.Device = Backbone.Model.extend({
     defaults: function() {return {name: "", room: undefined };},
     initialize: function() {this.nodes = new BB.NodeCollection;},
@@ -104,6 +135,10 @@
   BB.SettingCollection = Backbone.Collection.extend({model: BB.Setting});
   BB.DataCollection = Backbone.Collection.extend({model: BB.Data}); 
   BB.DeviceCollection = Backbone.Collection.extend({model: BB.Device});
+  BB.PlaceCollection = Backbone.Collection.extend({model: BB.Place});
+  BB.DataTypeCollection = Backbone.Collection.extend({model: BB.DataType});
+  BB.EventLogCollection = Backbone.Collection.extend({model: BB.EventLog});
+  
   
   BB.Room = Backbone.Model.extend({initialize: function() {this.devices = new BB.DeviceCollection;}});
   BB.RoomCollection = Backbone.Collection.extend({model: BB.Room});

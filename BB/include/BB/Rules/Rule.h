@@ -14,18 +14,20 @@ namespace BB {
 
 class Rule {
 public:
-	Rule(std::string name, ICondition::Ptr condition, IAction::Ptr action);
+	Rule(std::string name, ICondition::Ptr condition, IAction::Ptr action, IAction::Ptr negativeAction = IAction::Ptr());
 	virtual ~Rule();
 
 	const std::string name() const;
 
 	ICondition::Ptr condition();
 	IAction::Ptr action();
+	IAction::Ptr negativeAction();
 private:
 	std::string name_;
 
 	ICondition::Ptr condition_;
 	IAction::Ptr action_;
+	IAction::Ptr negativeAction_;
 };
 
 } /* namespace BB */

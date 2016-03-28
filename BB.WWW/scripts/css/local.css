@@ -1,4 +1,18 @@
 
+/**RULES */
+.box .box-body {
+	color: black;	
+}
+
+.dl-horizontal-left dt {
+	text-align: left;
+}
+.insideAction {
+	font-size: 11px;
+}
+.insideAction .box-header h4.box-title  {
+	font-size: 13px;
+}
 
 div.slider {
 	margin-top: 15px;
@@ -87,12 +101,16 @@ div.slider {
 	max-height: 30px;
 	border: 1px solid white;
 }
+
+
 .setting-box {
 	font-size: 10px;
 	padding: 2px 5px;
 	border-radius: 2px;
 	margin-bottom: 3px;
 }
+
+
 
 /**
 	NODE

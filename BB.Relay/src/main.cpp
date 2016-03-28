@@ -5,6 +5,7 @@
  *      Author: root
  */
 
+#include <BB/Node/NodeFactory.h>
 #include "BB/App2.h"
 #include "BB/Node/INode.h"
 #include "BB/Node/Switch/GPOutSwitchNode.h"
@@ -14,29 +15,30 @@
 
 
 namespace BB {
-	namespace Relays {
+	namespace Switch {
 
 
-		class Factory: public INodeFactory {
+		class Factory: public DynamicNodeFactory {
 			private:
-				INode::Ptr relayNode;
+				std::vector <INode::Ptr> switchNodes;
 
 			public:
 
-				Factory(){
-					//pin P8_33 -> GPIO9
-					relayNode = new GPOutSwitchNode("relay@1", 9, false, 60 * 1000);
+				Factory() : DynamicNodeFactory("Switch"){
+
+					for (int i = 0; i < this->getCount(this->getName()); i++){
+						std::stringstream s;
+						s << "switch@" << (i+1);
+						INode::Ptr n = new GPOutSwitchNode(s.str(), 0, false);
+						switchNodes.push_back(n);
+					}
 				}
 
 				virtual int getCheckingPeriodInMs() {
 					return 60000;
 				}
 				virtual INode::PtrList getNodes() {
-					INode::PtrList nodes;
-					{
-						nodes.push_back(relayNode);
-					}
-					return nodes;
+					return switchNodes;
 				}
 		};
 
@@ -44,5 +46,6 @@ namespace BB {
 
 } /* namespace BB */
 
-NODE_BB_MAIN("Relays", BB::Relays::Factory)
+NODE_BB_MAIN("Switch", BB::Switch::Factory)
+
 

@@ -8,10 +8,13 @@
 #ifndef NODETAGCONDITION_H_
 #define NODETAGCONDITION_H_
 #include <BB/Rules/ICondition.h>
+#include <BB/Rules/Serialization.h>
 
 #include "TBS/Nullable.h"
 
 namespace BB {
+
+class NodeTagConditionRW;
 
 class NodeTagCondition : public ICondition {
 public:
@@ -35,11 +38,24 @@ public:
 
 	virtual bool isValid(const Facts & facts);
 
+	NAMED_OBJECT("NodeTag")
+
 private:
 	std::string tagValue;
 	NodeMatch node;
 	SensorMatch sensor;
+
+	friend class NodeTagConditionRW;
 };
+
+class NodeTagConditionRW : public TConditionRW <NodeTagCondition> {
+public:
+	virtual Json::Value twrite(ConditionPtr & a);
+	virtual ICondition::Ptr read(const Json::Value & value);
+
+	NAMED_OBJECT(NodeTagCondition::getClassName())
+};
+
 
 } /* namespace BB */
 

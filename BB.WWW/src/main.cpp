@@ -19,8 +19,12 @@ class App : public Poco::Util::ServerApplication {
 				TBS::initLogs("www", 8, "/tmp/");
 
 				LTRACE("www") << 1 << LE;
-
+#ifdef TBS_TPRO
+				TBS::Services::JsonServerParams p(80);
+#else
 				TBS::Services::JsonServerParams p(8180);
+#endif
+
 				p.MaxParallelThreads.set(10);
 
 				LTRACE("www") << 2 << LE;
@@ -38,7 +42,13 @@ class App : public Poco::Util::ServerApplication {
 						);
 
 
+
 #endif
+
+
+				p.addSpecialRequestHandler(
+						new TBS::Services::RedirectRequestHandler("", "index.html")
+				);
 
 				LTRACE("www") << 3 << LE;
 

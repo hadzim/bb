@@ -19,6 +19,8 @@
 #include "Poco/File.h"
 #include "Poco/StreamCopier.h"
 
+#include "TBS/Log.h"
+
 namespace BB {
 
 	template<class DataType, class DataTypeRW>
@@ -30,6 +32,7 @@ namespace BB {
 
 			TypeCache(std::string path) :
 					path(path), s(0) {
+				LERROR("Cache") << "path: " << path << LE;
 				this->fetch();
 			}
 
@@ -43,7 +46,7 @@ namespace BB {
 			Data fetch() {
 				Poco::Mutex::ScopedLock l(m);
 
-				static char lineData[1024];
+				static char lineData[2048];
 
 				std::list<DataType> data;
 
@@ -53,9 +56,12 @@ namespace BB {
 
 				std::ifstream fs(path.c_str());
 				while (fs.good()) {
-					fs.getline(lineData, 1024);
+					fs.getline(lineData, 2048);
 					if (fs.good()) {
 						std::string msg(lineData);
+						if (data.empty()){
+							LERROR("Cache") << "first cached in " << path << ": " << msg << LE;
+						}
 						data.push_back(DataTypeRW::read(RW::string2json(msg)));
 					}
 				}

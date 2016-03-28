@@ -8,36 +8,65 @@
 #ifndef PUBLISHACTION_H_
 #define PUBLISHACTION_H_
 #include <BB/Rules/IAction.h>
+#include <BB/Rules/Serialization.h>
 #include <TBS/MQTT/Client.h>
 
 namespace BB {
+
+class PublishActionRW;
+class NewNodeSettingsActionRW;
 
 class PublishAction : public IAction {
 public:
 	typedef Poco::SharedPtr <PublishAction> Ptr;
 
 
-	PublishAction(TBS::MQTT::Client::Ptr client, std::string value, std::string topic, bool retain = false);
+	PublishAction(std::string value, std::string topic, bool retain = false);
 	virtual ~PublishAction();
 
 	virtual void perform();
 
-private:
-	TBS::MQTT::Client::Ptr client;
+	NAMED_OBJECT("Publish")
+
+protected:
+
 	std::string value;
 	std::string topic;
 	bool retain;
 
+	friend class PublishActionRW;
+};
+
+class PublishActionRW : public TActionRW <PublishAction> {
+public:
+	virtual Json::Value twrite(ActionPtr & a);
+	virtual IAction::Ptr read(const Json::Value & value);
+
+	NAMED_OBJECT(PublishAction::getClassName())
 };
 
 class NewNodeSettingsAction : public PublishAction {
 public:
 	typedef Poco::SharedPtr <NewNodeSettingsAction> Ptr;
 
-	NewNodeSettingsAction(TBS::MQTT::Client::Ptr client, std::string value, std::string nodeId, std::string settingValue = "valueAuto");
+	NewNodeSettingsAction(std::string value, std::string nodeId, std::string settingValue = "valueAuto");
+
+	NAMED_OBJECT("NewNodeSettings")
+
+	friend class NewNodeSettingsActionRW;
+private:
+	std::string nodeId;
+	std::string settingValue;
 
 };
 
+class NewNodeSettingsActionRW : public TActionRW <NewNodeSettingsAction> {
+public:
+	virtual Json::Value twrite(ActionPtr & a);
+	virtual IAction::Ptr read(const Json::Value & value);
+
+	NAMED_OBJECT(NewNodeSettingsAction::getClassName())
+};
 
 } /* namespace BB */
 

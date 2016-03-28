@@ -64,7 +64,7 @@ namespace BB {
 			void forward(const Node::Info & info, const Node::Sensor & sensor, const Node::Data & data);
 			void forward(const Node::Info & data);
 
-			std::string remoteQuery(std::string action, std::string data);
+			std::string remoteQuery(std::string action, std::string data, std::string requestFile = "");
 
 			void sendImage(std::string path, std::string info);
 
@@ -91,6 +91,9 @@ namespace BB {
 					try {
 						sendToRemoteServer(*i);
 						cnt++;
+						if (cnt > 50){
+							break;
+						}
 					} catch (Poco::Exception & e) {
 						LWARNING("RemoteClient")<< "RemoteClientForwarder: send cached data failed: " << e.displayText() << LE;
 							std::cerr << "send cache data: " << e.displayText() << std::endl;
@@ -111,8 +114,12 @@ namespace BB {
 					ok = true;
 				} catch (Poco::Exception & e) {
 					LWARNING("RemoteClient")<< "RemoteClientForwarder: send data failed: " << e.displayText() << LE;
-						std::cerr << "send data: " << e.displayText() << std::endl;
-						cache.store(d);
+					std::cerr << "send data: " << e.displayText() << std::endl;
+					cache.store(d);
+				} catch (std::exception & e){
+					LWARNING("RemoteClient")<< "RemoteClientForwarder: send data failed STD: " << e.what() << LE;
+					std::cerr << "send data: " << e.what() << std::endl;
+					cache.store(d);
 				}
 
 				OnlineChanged.notify(this, ok);

@@ -7,6 +7,7 @@
 
 #include "LogoPage.h"
 #include <opencv2/opencv.hpp>
+#include <iostream>
 
 namespace BB {
 
@@ -60,6 +61,7 @@ namespace BB {
 	}
 
 	void LogoPage::show(){
+		try {
 		std::cout << "show logo" << std::endl;
 		cv::Mat logo = cv::imread("logo.png");
 		//cv::imshow("logo", logo);
@@ -71,7 +73,9 @@ namespace BB {
 
 		showOnScreen(half, screen);
 		//cv::waitKey(10);
-
+		} catch (...){
+			std::cerr << "logo not shown - error" << std::endl;
+		}
 
 	}
 

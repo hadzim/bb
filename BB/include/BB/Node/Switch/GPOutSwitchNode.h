@@ -9,16 +9,22 @@
 #define GPOutSwitchNode_H_
 #include <BB/Node/Switch/SwitchNode.h>
 #include <exploreBB/gpio/GPIO.h>
+#include <Poco/SharedPtr.h>
 
 namespace BB {
 
 		class GPOutSwitchNode: public SwitchNode {
 			public:
-				GPOutSwitchNode(std::string name, int number, bool defaultValue, int period);
+				GPOutSwitchNode(std::string name, int number, bool defaultValue);
+				~GPOutSwitchNode();
 			protected:
 				virtual void performSwitch(bool on);
+				void onChanged2(SettingsValues  & s);
 			private:
-				exploringBB::GPIO gpout;
+				void check(SettingsValues  & s);
+			private:
+				Poco::SharedPtr <exploringBB::GPIO> gpout;
+
 		};
 
 } /* namespace BB */

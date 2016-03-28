@@ -1,0 +1,27 @@
+<script id="component-data-block-template" type="text/template">
+	
+	<div class="block-box bg-dark outline-dark">
+			<div class="icon">
+            	<i class="fa <%= icon %>"></i>
+            </div>
+		    <div class="inner">
+		      <h2 class='showgraph pull-right <%= fgcolor %>'><%= value.value %><span class='unit'><%= unit %></span></h2>
+			  <div class='aditional pull-right' style='clear: right; position: relative; top: -10px; text-align: right'><%= (extra ? extra : "") %></div>
+		      <h4>
+		      		<%= node.name %>
+		      </h4>
+		      <p>
+		      		<i class='fa fa-at fa-fw'></i> <%= node.place %>
+		      <p>
+		      </p>		
+		      		<i class='fa fa-cubes fa-fw'></i> <%= name %>
+		      </p>
+		      <div class='tags'>
+		      	  <% var i = 0; %>
+                  <% for (i = 0; i < tags.length; i++){ %>
+                  		<span class='tag'><%= tags[i] %></span>
+                  <% } %>
+		      </div>
+		    </div>
+  </div>
+</script>	    

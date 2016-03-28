@@ -1,59 +1,49 @@
-#include "BB/Camera/CameraService.h"
-#include "BB/App.h"
-#include "BB/Camera/CameraSnapshooter.h"
-#include "BB/Forwarder/BgForwarder.h"
+/*
+ * main.cpp
+ *
+ *  Created on: Jan 31, 2013
+ *      Author: root
+ */
 
-//BB_MAIN(BB::CameraService)
+#include <BB/Node/NodeFactory.h>
+#include "BB/App2.h"
+#include "BB/Node/INode.h"
+#include "BB/Node/Sensor/CameraNode.h"
 
+
+#include "TBS/Log.h"
 
 namespace BB {
+	namespace Cams {
 
 
-	class Factory : public IForwarderFactory {
-		virtual IForwarder::Ptr createForwarder(){
-			//create remote client
+		class Factory: public DynamicNodeFactory {
+			private:
+				std::vector <INode::Ptr> cameraNodes;
 
-			IForwarder::Ptr camera1 = new CameraWorker("kitchen",
-					new BB::FFMpegSnapshot("rtsp://192.168.0.124:554/mpeg4")
-					//new BB::StaticSnapshot("http://192.168.99.85:9989/", "admin", "admin")
-			);
+			public:
 
-			//forward on background
-			BgForwarder::Ptr bg = new BgForwarder("kitchen", camera1);
-			return bg;
-		}
-	};
+				Factory() : DynamicNodeFactory("Camera"){
 
-	class Factory2 : public IForwarderFactory {
-		virtual IForwarder::Ptr createForwarder(){
-			//create remote client
+					for (int i = 0; i < this->getCount(this->getName()); i++){
+						std::stringstream s;
+						s << "camera@" << (i+1);
+						INode::Ptr n = new CameraNode(s.str());
+						cameraNodes.push_back(n);
+					}
+				}
 
-			IForwarder::Ptr camera2 = new CameraWorker("room",
-					new BB::FFMpegSnapshot("rtsp://192.168.0.123:554/mpeg4")
-					//new BB::StaticSnapshot("http://192.168.99.85:9989/", "admin", "admin")
-			);
-			//forward on background
-			BgForwarder::Ptr bg = new BgForwarder("room", camera2);
-			return bg;
-		}
-	};
-}
+				virtual int getCheckingPeriodInMs() {
+					return 60000;
+				}
+				virtual INode::PtrList getNodes() {
+					return cameraNodes;
+				}
+		};
 
-FWD_BB_MAIN2("Camera", BB::Factory, BB::Factory2)
+	}
 
-/*
-int main(int argc, char **argv) {
-	std::cout <<" cam" << std::endl;
-	TBS::initLogs("cam", 8);
-	std::string path = "image.jpg";
-	BB::FFMpegSnapshot s("rtsp://192.168.0.123:554/mpeg4");
-	//BB::CameraSnapshooter snap("rtsp://admin:admin@192.168.99.85/cam/realmonitor?channel=1&subtype=0", path);
-	//BB::("http://192.168.99.85:9989/", "admin", "admin")
-	s.makeSnapshot("image.jpg", 640);
-	std::cout <<" cam done" << std::endl;
-	return 0;
-}
-*/
+} /* namespace BB */
 
-
+NODE_BB_MAIN("Cameras", BB::Cams::Factory)
 

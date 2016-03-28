@@ -1,0 +1,77 @@
+.block-box {
+    position: relative;
+    display: block;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+}
+.block-box .icon {
+	position: absolute;
+	right: 5px;
+	bottom: -10px;
+	margin: 0px;
+	color: #404040;
+	font-size: 7em;
+	overflow: hidden;
+	z-index: 10;
+}
+
+.block-box .icon i {
+	margin: 0px;
+	padding: 0px;
+}
+
+
+.block-box>.inner {
+    padding: 10px;
+    z-index: 11;
+    position: relative;
+    
+}
+.block-box h2 {
+    font-size: 3.5em;
+    margin-top: 0px;
+}
+
+.block-box .unit {
+    font-size: 0.6em;
+    padding-left: 3px;
+}
+.block-box .tags {
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+}
+.block-box .tags .tag {
+    padding: 3px 6px;
+    font-size: 0.8em;
+    background-color: #111;
+    border: 1px solid #777;
+    color: white;		
+}
+.block-box .datafields {
+	z-index: 15;
+	position: relative;
+}
+.block-box .datafields .datafield {
+                  text-align: center;
+                  position: relative;
+		  margin: 0px 10px 10px 10px;
+    	          padding: 5px;
+		  background-color: #222;
+		  border: 1px solid #555;
+             }
+.block-box .datafields .datafield h3 {
+    font-size: 2.5em;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+.block-box .datafields .datafield .tags {
+    position: initial; 
+}
+
+.modal .modal-content {
+	background-color: #444;
+	border: 1px solid #eee;
+}
+

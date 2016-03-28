@@ -1,3 +1,4 @@
+#include <BB/Camera/OpenCVGrabber.h>
 #include <BB/Node/NodeTypes.h>
 #include "BB/Node/Sensor/CameraNode.h"
 
@@ -6,106 +7,132 @@
 
 #include <Poco/Base64Encoder.h>
 #include <opencv2/opencv.hpp>
+#include <Poco/Delegate.h>
+
+#include "BB/RW.h"
 
 namespace BB {
 
-		static Node::Info cameraInfo(std::string uid){
+		static BB::Node::Settings cameraAdditional(){
 
-			BB::Node::Sensors sensors(
-					{
-						BB::Node::Sensor("LiveStream", BB::Node::Info::Camera, ""),
-						BB::Node::Sensor("AlarmStream", BB::Node::Info::Camera, "")
-					}
-			);
-
-			BB::Node::Settings settings({
-				BB::Node::Setting("name"),
-				BB::Node::Setting("place"),
-				BB::Node::Setting("security", "switch", BB::Node::Setting::Value(false)),
+			BB::Node::Settings s({
+				BB::Node::Setting("frequency", "text", BB::Node::Setting::Value(3)),
+				BB::Node::Setting("stream", "text"),
 			});
 
-			Node::Info info(uid, Node::Info::Camera, sensors, settings);
-			return info;
-
+			return s;
 		}
 
-		CameraNode::CameraNode(Camera::IGrabber::Ptr grabber, std::string uid, int period) :
-				BasicNode(cameraInfo(uid), period), grabber(grabber), t("Camera"), stopBg(false) {
+		CameraNode::CameraNode(std::string uid) :
+				SwitchNode(uid, false, cameraAdditional()), t("Camera"), stopBg(false), frequency(3), cfgChanged(false) {
 			t.start(*this);
+			timer.Timer += Poco::delegate(this, &CameraNode::onTimer);
+			this->SettingsChanged  += Poco::delegate(this, &CameraNode::onChanged);
 		}
 
 		CameraNode::~CameraNode(){
+			this->SettingsChanged  -= Poco::delegate(this, &CameraNode::onChanged);
+			timer.Timer -= Poco::delegate(this, &CameraNode::onTimer);
+			timer.stop();
 			stopBg = true;
 			t.join();
 		}
 
-		void CameraNode::run(){
-			while (!stopBg){
-				cv::Mat mat;
-				bool res = grabber->read(mat);
-				Poco::Mutex::ScopedLock l(m);
-				if (res){
-					this->current.set(mat);
-				} else {
-					this->current.reset();
+		void CameraNode::performSwitch(bool on){
+			if (on){
+				int f = 10;
+				{
+					Poco::Mutex::ScopedLock l(mSettings);
+					f = frequency;
 				}
-				Poco::Thread::sleep(10);
+
+				timer.start(50, f * 1000);
+			} else {
+				timer.stop();
 			}
 		}
 
-		static std::vector<unsigned char> mat2Bytes(cv::Mat & src){
-		    std::vector<unsigned char> outVet;
-		    imencode(".png", src, outVet);
-		    return outVet;
+		void CameraNode::onChanged(SettingsValues  & s){
+			updateHost();
+
 		}
 
-		static std::string streamcv(cv::Mat & m){
+		void CameraNode::updateHost(){
+			try {
+				Poco::Mutex::ScopedLock l(mSettings);
+				frequency = getSettings().at("frequency").convert<int>();
+				streamHost = getSettings().at("stream").convert<std::string>();
 
-			std::stringstream s;
-			s << "data:image/png;base64,";
-			Poco::Base64Encoder encoder(s);
-			encoder.rdbuf()->setLineLength(0);
+				LNOTICE("Camera") << "new cfg: " << frequency << " host: " << streamHost << LE;
 
-			for (auto b : mat2Bytes(m)){
-				encoder << b;
+				cfgChanged = true;
+			} catch (...){
+				LNOTICE("Camera") << "new cfg exc" << LE;
 			}
-
-			return s.str();
 		}
 
-		CameraNode::AllData CameraNode::read(){
-			//if is alarm - grab also alarm stream
-			//else only live stream
+		void CameraNode::run(){
+			Poco::Thread::sleep(2000);
+			while (!stopBg){
+				LTRACE("Camera") << "loop bg" << LE;
+				bool isOk = false;
+				try {
+					cv::Mat mat;
+					if (!grabber){
+						grabber = new BB::Camera::OpenCVGrabber();
+						Poco::Mutex::ScopedLock l(mSettings);
+						LNOTICE("Camera") << "try to open: " << streamHost << LE;
+						cfgChanged = false;
+						grabber->open(streamHost);
+					}
+					bool res = grabber->read(mat);
+					Poco::Mutex::ScopedLock l(m);
+					if (res && !mat.empty()){
+						this->current.set(mat);
+						isOk = true;
+					} else {
+						this->current.reset();
+						isOk = false;
+					}
 
-			CameraNode::AllData data;
+					Poco::Thread::sleep(100);
+				} catch (Poco::Exception & e){
+					LERROR("Camera") << "Grabber failed: " << e.displayText() << LE;
+				} catch (std::exception & e){
+					LERROR("Camera") << "Grabber failed: " << e.what() << LE;
+				}
+				if (!isOk){
+					grabber = NULL;
+					//sleep for 60s
+					for (int i = 0; i < 60*5; i++){
+						Poco::Thread::sleep(1000);
+						if (stopBg || cfgChanged){
+							break;
+						}
 
-			Poco::DateTime dt = Node::localNow();
+					}
+				}
+			}
+		}
 
-			TBS::Nullable<cv::Mat> copy;
+
+		void CameraNode::onTimer(TBS::SimpleTimer::TimerArg & a){
+			TBS::Nullable <EventLogMessage> e;
 			{
 				Poco::Mutex::ScopedLock l(m);
-				copy = current;
+				if (current.isSet()){
+					EventLogMessage msg(
+							"camera snapshot",
+							"image",
+							RW::image2string(current.cref())
+					);
+					e.set(msg);
+				}
+			}
+			if (e.isSet()){
+				this->EventLogRaised.notify(this, e.ref());
 			}
 
-			cv::Mat small, med;
-			if (copy.isSet()){
-				cv::resize(copy.ref(), small, cv::Size(32,24));
-				cv::resize(copy.ref(), med, cv::Size(48,32));
-
-				//live stream
-				Node::Data live(1, dt);
-
-				live.set("image", streamcv(small));
-				data.insert(std::make_pair("LiveStream", live));
-
-				//alarm stream
-				Node::Data alarm(0, dt);
-
-				alarm.set("image", streamcv(med));
-				data.insert(std::make_pair("AlarmStream", alarm));
-			}
-			return data;
 		}
-
 
 } /* namespace BB */

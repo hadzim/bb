@@ -39,7 +39,7 @@ namespace BB {
 
 
 			//Sensor::Info info(sensorID, Sensor::Info::Temperature, Sensor::Info::UnitTemperature);
-			BB::Node::Data data(val * 1.0 / 10.0, BB::Node::localNow());
+			BB::Node::Data data(valInt * 1.0 / 10.0, BB::Node::localNow());
 			return data;
 		}
 

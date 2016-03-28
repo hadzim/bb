@@ -11,21 +11,6 @@
 
 namespace BB {
 
-	std::string RW::json2String(const Json::Value & v) {
-		Json::FastWriter fw;
-		return fw.write(v);
-	}
-	std::string RW::json2OneLine(const Json::Value & v) {
-		std::string s = json2String(v);
-		return Poco::replace(s, "\n", "");
-	}
-	Json::Value RW::string2json(const std::string & s) {
-		Json::Reader r;
-		Json::Value v;
-		r.parse(s, v);
-		return v;
-	}
-
 	Json::Value SensorDataRW::write(const SensorData & sensorData) {
 
 		Json::Value v = Json::objectValue;
@@ -129,12 +114,21 @@ namespace BB {
 		Json::Value v = Json::objectValue;
 		v["name"] = sensorData.name;
 		v["type"] = sensorData.type;
-		v["value"] = sensorData.defaultValue.convert<std::string>();
+		if (sensorData.defaultValue.isEmpty()){
+			v["value"] = Json::nullValue;
+		} else {
+			v["value"] = sensorData.defaultValue.convert<std::string>();
+		}
+
 		return v;
 	}
 
 	Node::Setting NodeSettingsRW::read(const Json::Value & v){
-		return Node::Setting(v["name"].asString(), v["type"].asString(), v["value"].asString());
+		Node::Setting::Value val;
+		if (!v["value"].isNull()){
+			val = Node::Setting::Value(v["value"].asString());
+		}
+		return Node::Setting(v["name"].asString(), v["type"].asString(), val);
 	}
 
 
@@ -216,6 +210,26 @@ namespace BB {
 	Notification NotificationDataRW::read(const Json::Value & v) {
 		return Notification((Notification::Level) v["level"].asInt(), v["source"].asString(), v["message"].asString(),
 				SensorData::string2date(v["date"].asString()));
+	}
+
+	Json::Value EventLogMessageRW::write(const INode::EventLogMessage & msg){
+		Json::Value v(Json::objectValue);
+		v["time"] = SensorData::date2string(msg.time);
+		v["data"] = msg.data;
+		v["dataType"] = msg.dataType;
+		v["message"] = msg.message;
+		v["level"] = msg.level;
+		return v;
+	}
+	INode::EventLogMessage EventLogMessageRW::read(const Json::Value & value){
+		INode::EventLogMessage msg(
+				value["message"].asString(),
+				value["dataType"].asString(),
+				value["data"].asString(),
+				value["level"].asInt()
+		);
+		msg.time = SensorData::string2date(value["time"].asString());
+		return msg;
 	}
 
 }

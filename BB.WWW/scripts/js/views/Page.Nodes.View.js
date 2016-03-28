@@ -15,22 +15,37 @@ BB.PageNodesView = Backbone.Layout.extend({
       this.collection.on('remove', this.render, this);
       this.collection.on('sort', this.render, this);
       
+      this.filter = BB.filter;
+	  this.filter.on('change', this.render, this);
+      
+  },
+  
+  close: function(){
+	  this.collection.off('add', this.render, this);
+      this.collection.off('remove', this.render, this);
+      this.collection.off('sort', this.render, this);
+      this.filter.off('change', this.render, this);
   },
   
   beforeRender: function() {
+	  
+	  
+	    this.insertView(".places", new BB.ComponentFilterPlacesView());
+	  
 	    var sum = 0;
 	    this.collection.each(function(node) {
-	    	this.insertView(new BB.ComponentNodeView({model: node}));
-	    	
-	    	sum++;
-	    	
-	    	if (sum && !(sum % 3)){
-	    		this.insertView(new Backbone.Layout({className: "clearfix visible-lg-block"}))
+	    	if (this.filter.nodePass(node)){
+		    	this.insertView(new BB.ComponentNodeView({model: node}));
+		    	/*
+		    	sum++;
+		    	
+		    	if (sum && !(sum % 3)){
+		    		this.insertView(new Backbone.Layout({className: "clearfix visible-lg-block"}))
+		    	}
+		    	if (sum && !(sum % 2)){
+		    		this.insertView(new Backbone.Layout({className: "clearfix visible-md-block"}))
+		    	}*/
 	    	}
-	    	if (sum && !(sum % 2)){
-	    		this.insertView(new Backbone.Layout({className: "clearfix visible-md-block"}))
-	    	}
-	    	
 	    }, this);
   },
   /*

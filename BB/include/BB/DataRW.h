@@ -19,15 +19,12 @@
 #include "json/value.h"
 #include "BB/Sensor/SensorData.h"
 #include "BB/Node/NodeTypes.h"
+#include "BB/RW.h"
+
+#include "BB/Node/INode.h"
 
 namespace BB {
 
-	class RW {
-		public:
-			static std::string json2String(const Json::Value & v);
-			static std::string json2OneLine(const Json::Value & v);
-			static Json::Value string2json(const std::string & v);
-	};
 
 	class SensorDataRW {
 		public:
@@ -81,6 +78,12 @@ namespace BB {
 		public:
 			static Json::Value write(const Notification & ntf);
 			static Notification read(const Json::Value & value);
+	};
+
+	class EventLogMessageRW {
+		public:
+			static Json::Value write(const INode::EventLogMessage & ntf);
+			static INode::EventLogMessage read(const Json::Value & value);
 	};
 
 }

@@ -14,3 +14,6 @@ BoostBuild
 install/*
 BeagleBone*
 */bu/*
+libwebsockets/*
+mosquitto-1.4/*
+websocketpp/*

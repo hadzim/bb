@@ -7,6 +7,7 @@
 
 #ifndef DALLASTEMPERATURENODE_H_
 #define DALLASTEMPERATURENODE_H_
+#include <BB/Node/NodeFactory.h>
 #include "BB/Node/Sensor/TemperatureNode.h"
 
 namespace BB {

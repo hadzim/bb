@@ -8,6 +8,14 @@ BB.LayoutTopMenuView = Backbone.Layout.extend({
 	  this.model.on('change', this.render, this);
       
   },
+  
+  beforeRender: function() {
+	  
+  	this.insertView(".clockview", new BB.ComponentClockView({}));
+
+},
+  
+  
 /*
   // When you click the View contents, it will wrap them in a bold tag.
   events: {

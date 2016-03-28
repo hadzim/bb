@@ -15,15 +15,15 @@ namespace BB {
 	static Node::Info rcInfo(std::string uid) {
 
 		BB::Node::Sensors sensors({
-			BB::Node::Sensor("Online", BB::Node::Info::Status, ""),
-			BB::Node::Sensor("Pending")
+			//BB::Node::Sensor("Online", BB::Node::Info::Status, ""),
+			BB::Node::Sensor("Pending", BB::Node::Info::Status, "")
 		});
 
 		BB::Node::Settings settings({
 		 BB::Node::Setting("name"),
-		 BB::Node::Setting("url", "text", BB::Node::Setting::Value("http://localhost")),
+		 BB::Node::Setting("url", "text", BB::Node::Setting::Value("localhost")),
 		 BB::Node::Setting("port", "text", BB::Node::Setting::Value(81)),
-		 BB::Node::Setting("query", "text", BB::Node::Setting::Value("mereni/www/")),
+		 BB::Node::Setting("query", "text", BB::Node::Setting::Value("/mereni/www/")),
 		 BB::Node::Setting("projectID", "text", BB::Node::Setting::Value("1")),
 	    });
 
@@ -115,17 +115,17 @@ namespace BB {
 	void RemoteClientNode::onChanged(SettingsValues  & s){
 
 		this->rc->remoteClient().setEndpoint(retrieveSettings());
+		bool reread = true;
+		this->DataChanged.notify(this, reread);
 	}
 
 	void RemoteClientNode::onConnectionStatus(bool & isOnline){
 		LNOTICE("RemoteClient") << "new online status: " << isOnline << LE;
-
 		currentConnectionStatus = isOnline;
 	}
 
 	void RemoteClientNode::onPendingQueue(int & pq){
 		LNOTICE("RemoteClient") << "new pending queue count: " << pq << LE;
-
 		pendingQueue = pq;
 	}
 
@@ -135,8 +135,14 @@ namespace BB {
 
 		AllData data;
 		auto now = Node::localNow();
-		data.insert(std::make_pair("Online", Node::Data(currentConnectionStatus ? 1 : 0, now)));
-		data.insert(std::make_pair("Pending", Node::Data(pendingQueue, now)));
+
+		std::string tag = currentConnectionStatus ? "online" : "offline";
+
+		Node::Data pendingData(pendingQueue, now);
+		pendingData.tags().insert(tag);
+
+		data.insert(std::make_pair("Pending", pendingData));
+
 		return data;
 	}
 

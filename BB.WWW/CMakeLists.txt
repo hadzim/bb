@@ -65,7 +65,7 @@ endforeach()
 # Copy the temporary file to the final location
 configure_file(all.js.in all.js COPYONLY)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/all.js DESTINATION Default/data/minimal/js COMPONENT Default)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/all.js DESTINATION Default/data/js COMPONENT Default)
 
 
 # -----------------------
@@ -74,7 +74,12 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/all.js DESTINATION Default/data/minima
 # Prepare a temporary file to "cat" to:
 file(WRITE all.css.in "")
 
-file(GLOB_RECURSE RC.CSS.Sources "scripts/css/libs/*.css")
+file(GLOB_RECURSE RC.CSS.Sources "scripts/css/libs/1/*.css")
+foreach(PACKAGE_SQL_FILE ${RC.CSS.Sources})
+  cat(${PACKAGE_SQL_FILE} all.css.in)
+endforeach()
+
+file(GLOB_RECURSE RC.CSS.Sources "scripts/css/libs/2/*.css")
 foreach(PACKAGE_SQL_FILE ${RC.CSS.Sources})
   cat(${PACKAGE_SQL_FILE} all.css.in)
 endforeach()
@@ -87,7 +92,7 @@ endforeach()
 # Copy the temporary file to the final location
 configure_file(all.css.in all.css COPYONLY)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/all.css DESTINATION Default/data/minimal/css COMPONENT Default)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/all.css DESTINATION Default/data/css COMPONENT Default)
 
 # -----------------------
 # TEMPLATES
@@ -108,7 +113,7 @@ cat(scripts/indexEnd.html all.html.in)
 # Copy the temporary file to the final location
 configure_file(all.html.in index.html COPYONLY)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/index.html DESTINATION Default/data/minimal/ COMPONENT Default)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/index.html DESTINATION Default/data/ COMPONENT Default)
 
 
 #HTML

@@ -8,21 +8,27 @@
 #ifndef CameraNode_H_
 #define CameraNode_H_
 #include <BB/Camera/IGrabber.h>
-#include <BB/Node/BasicNode.h>
+#include <BB/Node/Switch/SwitchNode.h>
 #include <Poco/Runnable.h>
 
 #include "TBS/Nullable.h"
 
+#include "TBS/SimpleTimer.h"
+
 namespace BB {
 
-		class CameraNode: public BasicNode, private Poco::Runnable {
+		class CameraNode: public SwitchNode, private Poco::Runnable {
 			public:
-				CameraNode(Camera::IGrabber::Ptr grabber, std::string uid, int period);
+				CameraNode(std::string uid);
 				~CameraNode();
 			protected:
-				virtual AllData read();
+				void performSwitch(bool on);
 			private:
 				void run();
+				void onTimer(TBS::SimpleTimer::TimerArg & a);
+
+				void onChanged(SettingsValues  & s);
+				void updateHost();
 			private:
 				Camera::IGrabber::Ptr grabber;
 
@@ -31,6 +37,12 @@ namespace BB {
 				TBS::Nullable<cv::Mat> current;
 				bool stopBg;
 
+				TBS::SimpleTimer timer;
+
+				Poco::Mutex mSettings;
+				std::string streamHost;
+				int frequency;
+				bool cfgChanged;
 		};
 
 } /* namespace BB */

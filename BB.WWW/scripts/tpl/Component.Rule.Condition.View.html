@@ -1,0 +1,35 @@
+<script id="component-rule-condition-template" type="text/template">
+	<div class="box box-default box-solid">
+            
+            <div class="box-header with-border">
+            	<i class="fa fa-question-circle"></i>
+                <h4 class="box-title"><%= attr.name %></h4>
+            </div>
+  
+  			<div class="box-body">
+  				<dl class='dl-horizontal dl-horizontal-left'>
+              	<% $.each(attr, function( index, value ) { %>
+              		<% if(!$.isPlainObject(value) && index != "name" && index != "or" && index != "and" && index != "not") { %>
+			    	
+					      <dt><%= index %></dt>
+					      <dd><%= value %></dd>
+					    
+			     	<% } %>
+			     	
+			     	<% if($.isPlainObject(value)) { %>
+			    	
+						      <% $.each(value, function( index2, value2 ) { %>
+									      <dt><%= index %>.<%= index2 %></dt>
+									      <dd><%= value2 %></dd>
+							  <% }); %>
+					    
+			     	<% } %>
+			     	
+			  <% }); %>
+			  </dl>
+			  <div class="nested">
+              
+              </div>
+            </div>
+     </div>
+</script>		    

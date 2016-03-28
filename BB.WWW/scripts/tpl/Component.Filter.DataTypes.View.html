@@ -1,0 +1,14 @@
+<script id="component-filter-datatypes-template" type="text/template">
+    <div class="btn-group">
+        <button class="btn btn-info bg-dark border-dark" title='type'><i class="fa fa-cubes"></i> Type: </button>
+	
+	     <select class="form-control" id='typeFilter' multiple="multiple" data-placeholder="Select a Type">
+	     	<% alldatatypes.each(function(p) { %>
+		        <% var isChecked = $.inArray(p.attributes.name, dataTypes) != -1; %>
+		        <option <%= (isChecked ? "selected" : "") %>><%= p.attributes.name %></option>
+	     	<% }) %>
+	    </select>
+    </div>
+    
+    
+</script>	    

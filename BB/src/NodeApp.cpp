@@ -3,7 +3,6 @@
 #include <iostream>
 #include <Poco/Delegate.h>
 #include "Poco/Thread.h"
-#include "BB/Sensor/Net/Forecast.h"
 #include "BB/Sensor/SensorDataHelpers.h"
 #include "BB/Services/DataSvc_DBus.h"
 

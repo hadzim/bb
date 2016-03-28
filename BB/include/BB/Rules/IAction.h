@@ -8,8 +8,15 @@
 #ifndef IACTION_H_
 #define IACTION_H_
 #include <Poco/SharedPtr.h>
+#include "TBS/NamedObject.h"
+
+#include "TBS/MQTT/Client.h"
 
 namespace BB {
+
+struct ActionParams {
+	TBS::MQTT::Client::Ptr client;
+};
 
 class IAction {
 public:
@@ -20,6 +27,12 @@ public:
 	virtual ~IAction();
 
 	virtual void perform() = 0;
+	virtual void init(ActionParams params);
+
+	ABSTRACT_NAMED_OBJECT
+
+protected:
+	ActionParams params;
 };
 
 } /* namespace BB */

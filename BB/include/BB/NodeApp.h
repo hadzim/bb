@@ -8,10 +8,12 @@
 #ifndef NodeApp_H_
 #define NodeApp_H_
 
+#include <BB/Node/NodeFactory.h>
 #include "Poco/Util/ServerApplication.h"
 #include "Poco/Timer.h"
 #include "TBS/SimpleTimer.h"
 #include "BB/Node/INode.h"
+#include "BB/Node/NodeFactory.h"
 #include "BB/Node/NodeManager.h"
 #include <vector>
 

@@ -1,0 +1,26 @@
+<script id="component-eventlog-template" type="text/template">
+	
+	<td class='<%= classNames %>'>
+		<%= AmCharts.formatDate(time, "DD.MM.YYYY JJ:NN:SS") %>
+	</td>
+	<td class='<%= classNames %>'>
+		<%= message %>
+	</td>
+	<td class='<%= classNames %>'>
+	
+		<% if (dataType == "image"){ %>
+		
+			<img src='<%= data %>' />
+		
+		<% } else { %>
+		
+			 <%= data %>
+		
+		<% } %>
+		
+	</td>
+</script>	    
+
+
+
+                      

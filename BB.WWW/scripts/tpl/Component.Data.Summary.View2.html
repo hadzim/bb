@@ -1,17 +1,17 @@
 <script id="component-data-summary-template2" type="text/template">
-
-          <h2>
-			<%= value.value %>
-			<span class='mysmaller'><%= unit %></span>
-            
-            <div class='labels'>
-            
-            <% var i = 0; %>
-			<% for (i = 0; i < tags.length; i++){ %>
-				<span class='label bg-darker'><%= tags[i] %></span>
-			<% } %>
-            </div>
-          </h2>
-          <%= name %>	
+	<div class='datafield'>
+		  <%= name %>
+          <h3 class='showgraph <%= fgcolor %>'>
+			<%= value.value %><span class='unit'><%= unit %></span>
+          </h3>
+          
+         <div class='tags'>
+		      	  <% var i = 0; %>
+                  <% for (i = 0; i < tags.length; i++){ %>
+                  		<span class='tag'><%= tags[i] %></span>
+                  <% } %>
+	      </div> 
+    </div>     
+          
           
 </script>	    

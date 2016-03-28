@@ -5,35 +5,48 @@
  *      Author: root
  */
 
-#include "BB/App.h"
-#include "BB/SensorApp.h"
-#include "BB/Sensor/Board/MotionSensor.h"
+#include <BB/Node/NodeFactory.h>
+#include "BB/App2.h"
+#include "BB/Node/INode.h"
+#include "BB/Node/Board/BoardMotionNode.h"
+
+
+#include "TBS/Log.h"
 
 
 namespace BB {
+	namespace Motion {
 
-class BoardMotionFactory: public ISensorFactory {
-	virtual Sensors createSensors() {
-		Sensors s;
 
-		//P8.12
-		s.push_back(
-				new BB::MotionSensorBBB(44)
-		);
+		class Factory: public DynamicNodeFactory {
+			private:
+				std::vector <INode::Ptr> motionNodes;
 
-		//P8.14
-		s.push_back(
-				new BB::MotionSensorBBB(26)
-		);
+			public:
 
-		/*
-		s.push_back(
-				new BB::MotionSensor(2)
-		);*/
-		return s;
+				Factory() : DynamicNodeFactory("Motion"){
+
+					for (int i = 0; i < this->getCount(this->getName()); i++){
+						std::stringstream s;
+						s << "motion@" << (i+1);
+						INode::Ptr n = new BoardMotionNode(s.str());
+						motionNodes.push_back(n);
+					}
+					//pin P8_33 -> GPIO9
+					//relayNode = new GPOutSwitchNode("relay@1", 9, false);
+				}
+
+				virtual int getCheckingPeriodInMs() {
+					return 60000;
+				}
+				virtual INode::PtrList getNodes() {
+					return motionNodes;
+				}
+		};
+
 	}
-};
-}
 
-SENSOR_BB_MAIN("Motion", BB::BoardMotionFactory)
+} /* namespace BB */
+
+NODE_BB_MAIN("Motion", BB::Motion::Factory)
 

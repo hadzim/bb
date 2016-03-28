@@ -39,6 +39,8 @@ namespace BB {
 			void onTimer(TBS::SimpleTimer::TimerArg & arg);
 			void onMessage(TBS::MQTT::Message & arg);
 			void onData(bool & arg);
+			void onEventLog(BB::INode::EventLogMessage & msg);
+			void onAdditionalInfo(BB::INode::AdditionalInfo & i);
 
 			void read();
 		private:
@@ -46,6 +48,7 @@ namespace BB {
 			INode::Ptr node;
 
 			TBS::SimpleTimer timer;
+			std::set<std::string> firstSettings;
 	};
 
 } /* namespace TBS */

@@ -1,0 +1,17 @@
+[Unit]
+Description=BB new www service
+Wants=bb-mosquitto.service
+After=bb-mosquitto.service
+Requires=bb-mosquitto.service
+
+[Service]
+Type=notify
+NotifyAccess=all
+EnvironmentFile=/home/tbs/data/scripts/app.env
+ExecStart=/home/tbs/bin/BB.WWW
+WorkingDirectory=/home/tbs/bin
+Restart=on-failure
+StandardOutput=null
+
+[Install]
+WantedBy=multi-user.target

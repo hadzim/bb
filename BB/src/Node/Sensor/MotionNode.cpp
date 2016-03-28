@@ -7,19 +7,26 @@
 namespace BB {
 
 
-		static Node::Info motionInfo(std::string uid){
+		static Node::Info motionInfo(std::string uid, BB::Node::Settings additionalSettings){
 
 			BB::Node::Sensors sensors({ BB::Node::Sensor("Motion", BB::Node::Info::Motion, "%") });
 
 			BB::Node::Settings settings({
-				BB::Node::Setting("name"),
-				BB::Node::Setting("place"),
 				BB::Node::Setting("thresh", "range", BB::Node::Setting::Value(10)),
 				BB::Node::Setting("security", "switch", BB::Node::Setting::Value(false)),
 			});
 
+			for (const auto & as : additionalSettings){
+				settings.insert(as.second);
+			}
+
 			Node::Info info(uid, Node::Info::Motion, sensors, settings);
 			return info;
+		}
+
+
+		MotionNode::MotionNode(std::string uid, int period, BB::Node::Settings additionalSettings) :
+				SensorNode(motionInfo(uid, additionalSettings), period) {
 		}
 
 		void MotionNode::afterRead(Node::Data & data, const Node::Info & info, const Node::Sensor & sensor){
@@ -33,14 +40,11 @@ namespace BB {
 			data.tags().insert(tag);
 
 			bool isSecurity = false;
-			if (Node::isFilled(settings.at("security"), isSecurity) && isSecurity && data.getValue() >= thresh){
-					data.tags().insert("insecure");
+			if (Node::isFilled(settings.at("security"), isSecurity) && isSecurity){
+					data.tags().insert(tag + "[s]");
 			}
 		}
 
-		MotionNode::MotionNode(std::string uid, int period) :
-				SensorNode(motionInfo(uid), period) {
-		}
 
 
 } /* namespace BB */

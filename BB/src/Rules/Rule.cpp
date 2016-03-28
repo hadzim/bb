@@ -9,7 +9,8 @@
 
 namespace BB {
 
-Rule::Rule(std::string name, ICondition::Ptr condition, IAction::Ptr action) : name_(name), condition_(condition), action_(action) {
+Rule::Rule(std::string name, ICondition::Ptr condition, IAction::Ptr action, IAction::Ptr negativeAction)
+	: name_(name), condition_(condition), action_(action), negativeAction_(negativeAction) {
 
 }
 
@@ -27,6 +28,9 @@ ICondition::Ptr Rule::condition(){
 }
 IAction::Ptr Rule::action(){
 	return action_;
+}
+IAction::Ptr Rule::negativeAction(){
+	return negativeAction_;
 }
 
 } /* namespace BB */

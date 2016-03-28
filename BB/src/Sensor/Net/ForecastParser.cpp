@@ -12,7 +12,7 @@
 #include "Poco/NumberParser.h"
 #include <map>
 
-std::map <int, int> hourMap(){
+static std::map <int, int> hourMap(){
 	std::map <int, int> m;
 	m[0] = m[1] = m[2] = m[3] = m[4] = 2;
 	m[5] = m[6] = m[7] = m[8] = m[9] = m[10] = 8;

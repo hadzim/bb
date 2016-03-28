@@ -69,6 +69,8 @@ namespace BB {
 
 		node->SettingsChanged += Poco::delegate(this, &NodeManager::onChanged);
 		node->DataChanged += Poco::delegate(this, &NodeManager::onData);
+		node->EventLogRaised += Poco::delegate(this, &NodeManager::onEventLog);
+		node->AdditionalInfoRaised += Poco::delegate(this, &NodeManager::onAdditionalInfo);
 
 		//settings channels
 		for (const auto & setting : info.getSettings()) {
@@ -103,6 +105,8 @@ namespace BB {
 
 		node->SettingsChanged -= Poco::delegate(this, &NodeManager::onChanged);
 		node->DataChanged -= Poco::delegate(this, &NodeManager::onData);
+		node->EventLogRaised -= Poco::delegate(this, &NodeManager::onEventLog);
+		node->AdditionalInfoRaised -= Poco::delegate(this, &NodeManager::onAdditionalInfo);
 
 		timer.stop();
 		timer.Timer -= Poco::delegate(this, &NodeManager::onTimer);
@@ -176,6 +180,14 @@ namespace BB {
 		this->save();
 	}
 
+	void NodeManager::onEventLog(BB::INode::EventLogMessage & msg){
+		const Node::Info & info = node->getInfo();
+		client->publish(NodeChannel::eventLogTopic(), RW::json2OneLine(EventLogMessageRW::write(msg)));
+	}
+
+	void NodeManager::onAdditionalInfo(BB::INode::AdditionalInfo & i){
+		client->publish(i.topic, i.payload);
+	}
 
 	void NodeManager::onTimer(TBS::SimpleTimer::TimerArg & arg) {
 		std::cout << "timer" << std::endl;
@@ -196,6 +208,16 @@ namespace BB {
 				INode::SettingsValues values = { { setting.first, val } };
 				if (node->updateSetting(values)) {
 					client->publish(topic, arg.payload);
+
+					if (firstSettings.find(topic) != firstSettings.end()){
+						//send event log
+						std::stringstream s;
+						s << "New settings [" << node->getInfo().getUID() << "]: " << setting.first << " = " << arg.payload;
+						INode::EventLogMessage msg(s.str());
+						this->onEventLog(msg);
+					} else {
+						firstSettings.insert(topic);
+					}
 				}
 			}
 		}

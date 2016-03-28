@@ -53,7 +53,7 @@
 	    },
 	    
 	    connect: function() {
-	      
+	    	
 	    	 console.log("connect");
 	    	
 		      BB.connection.set("connectivity", "connecting");
@@ -99,10 +99,15 @@
 		      BB.mqtt.mqttClient.subscribe('devices/+/nodes/+/settings/+/meta/+', 0);
 		      BB.mqtt.mqttClient.subscribe('devices/+/nodes/+/settings/+', 0);
 		      
+		      BB.mqtt.mqttClient.subscribe('devices/+/eventlog/history', 0);
+		      
 		      BB.mqtt.mqttClient.subscribe('devices/+/nodes/+/data/+/meta/+', 0);
 		      BB.mqtt.mqttClient.subscribe('devices/+/nodes/+/data/+', 0);
 		      
 		      BB.mqtt.mqttClient.subscribe('devices/+/nodes/+/data/+/history/+', 0);
+		      BB.mqtt.mqttClient.subscribe('devices/+/nodes/+/data/+/future', 0);
+		      
+		      
 		      
 		      
 		      console.log("connected2");
@@ -156,7 +161,7 @@
 	    },
 	    
 	    messageArrived: function(message){
-	    	console.log("message");
+	    	
 	      try {
 		      // Topic array parsing:
 		      // Received string:     devices/$deviceId/nodes/$nodeId/settings/$settingsId/meta/type
@@ -164,20 +169,34 @@
 	
 		      var payload = message.payloadString;
 		      var topic = message.destinationName.split("/");
-		      console.log("-----------RECEIVED-----------");
-		      console.log("topic", topic , "payload: ", payload);
+		      console.log("topic", message.destinationName, "parsed", topic , "payload: ", payload);
 	      
 		      var device = BB.devices.get(topic[1]);
 		      if (device == null) {
-			    	console.log("create device");
+			    	//console.log("create device");
 			        device = new BB.Device({id: topic[1]});
-			        console.log("device created");
+			        //console.log("device created");
 			        BB.devices.add(device);
 			        //device.moveToRoom(undefined);
 		      }
 	      
-		      console.log("device ready");
+		      //console.log("device ready");
 	      
+		      if (topic[2] == "eventlog"){
+		        	var msgs = $.parseJSON(payload);
+		        	
+		        	for (var i = 0, l = BB.eventlog.length; i < l; i++){
+		        		BB.eventlog.pop();        
+				    }
+		        	
+		        	for (var i = 0, l = msgs.length; i < l; i++){
+		        		var msg = msgs[i];
+		        		msg.time = new Date(msg.time);
+		                ev = new BB.EventLog(msg);
+			        	BB.eventlog.push(ev);        
+				    }
+		        }
+		      
 		      if(topic[2] == "nodes") {
 	    	    
 		        var node = BB.nodes.get(topic[3]);
@@ -187,37 +206,37 @@
 		        	BB.nodes.add(node);
 		          //control.set("topic", "/devices/"+ topic[2] + "/controls/" + topic[4]);
 		        } 
-		        console.log("node ready", BB.nodes);
+		        //console.log("node ready", BB.nodes);
 	        
 		        if (topic[4] == "settings"){
-		        	console.log("set 1");
-			        var settingName = topic[5];
+		        	var settingName = topic[5];
 		        	var setting = node.settings.get(settingName);
 		            if (setting == null) {
 		              setting = new BB.Setting({id: settingName});
 		              node.settings.add(setting);
 		              setting.set("topic", "devices/"+ topic[1] + "/nodes/" + topic[3] + "/settings/" + settingName); 
 		            } 
-		            console.log("settings ready");
-		           
+		            
 		            if(topic[6] == null){
 		            	 //value
-		            	console.log("settings value");
 		            	setting.set("value", payload);
 		            	
 		            	if (settingName == "name"){
 		            		node.set("name", payload);
-		            		console.log("update name", node);
 		            	}
 		            	if (settingName == "place"){
-		            		node.set("place", payload);
-		            		console.log("update place", node);
+		            		var place = payload
+		            		node.set("place", place);
+		            		
+		            		var placeItem = BB.places.get(place);
+				            if (placeItem == null) {
+				              placeItem = new BB.Place({id: place, name: place});
+				              BB.places.add(placeItem);
+				            }
+		            		
 		            	}
-		            	 
-		                 
 		            } 
 		            if (topic[6] == "meta" && topic[7] != null) {
-		            	console.log("settings meta", setting, topic[7], payload);
 		            	try {
 		            		setting.set(topic[7], payload);
 		            	} catch (error){
@@ -226,7 +245,7 @@
 		            }
 		        }
 		        
-		        console.log("settings done");
+		        
 		        
 		        if (topic[4] == "data"){
 		        	var dataid = topic[3] + "@@" + topic[5]
@@ -243,21 +262,15 @@
 			        	BB.data.add(data);
 			        } 
 		            
-		            console.log("data ready");
-		            
 		            if(topic[6] == null){
 		           	 //value
-		            	console.log("data value");
-		            	console.log("parse data", payload);
 		            	var val = $.parseJSON(payload);
-		            	console.log("parse data",val);
 		            	data.set("value", val);
 		            	data.set("tags", val.tags);
 		            	
 		            } 
 		            if (topic[6] == "meta" && topic[7] != null) {
 		            	//meta info
-		            	console.log("data meta");
 		            	if (topic[7] == 'unit' && payload == 'C'){
 		            		payload = "&deg;C";
 		            	}
@@ -265,24 +278,30 @@
 		            		payload = "";
 		            	}
 		            	data.set(topic[7], payload);
+		            	
+		            	if (topic[7] == 'type'){
+		            		var type = payload;
+		            		
+		            		var typeItem = BB.dataTypes.get(type);
+				            if (typeItem == null) {
+				              typeItem = new BB.DataType({id: type, name: type});
+				              BB.dataTypes.add(typeItem);
+				            }
+		            		
+		            	}
+		            	
 		           }
 		           if (topic[6] == "history" && topic[7] != null) {
-		               //meta info
 		               data.set("history-" + topic[7] , $.parseJSON(payload));
-		          }
+		           }
+		           if (topic[6] == "future") {
+		               data.set("future" , $.parseJSON(payload));
+		           }
 		            
 		        }
 		        
-		        console.log("data done");
-		        
-		      } /*else if(topic[3] == "meta" ) {                             // TODO: Could be moved to the setter to facilitate parsing
-		        if (topic[4] == "room")                                    // Device Room
-		          device.moveToRoom(payload);
-		        else if(topic[4] == "name")                                // Device name
-		          device.set('name', payload);
-		      }*/
-		     console.log("-----------/ RECEIVED-----------");
-	      
+		      } 
+		  
 	      } catch (error){
 	    	  console.log("Processing MQTT error: ", error);
 	      }
@@ -296,11 +315,7 @@
 			  message.destinationName = topic;
 			  message.retained = true;
 			  this.mqttClient.send(message);
-		      /*
-		      var message = new Messaging.Message(value);
-		      message.destinationName = topic;
-		      message.retained = true;
-		      this.mqttClient.send(message);*/ 
+		      
 	    },
 	    
 	    publishForDevice: function(deviceId, subtopic, value) {

@@ -137,6 +137,27 @@ namespace TBS {
 			return this->specialHandlers;
 		}
 
+
+
+		RedirectRequestHandler::RedirectRequestHandler(std::string from, std::string to) : from(from), to(to){
+
+		}
+		RedirectRequestHandler::~RedirectRequestHandler(){
+
+		}
+
+		bool RedirectRequestHandler::canHandle(std::string query){
+			return query == from;
+		}
+		void RedirectRequestHandler::handle(Poco::Net::HTTPServerRequest & request, Poco::Net::HTTPServerResponse & response){
+			response.set("Location", to);
+			response.setStatusAndReason(Poco::Net::HTTPServerResponse::HTTP_SEE_OTHER);
+			response.setContentLength(0);
+			response.send();
+		}
+
+
+
 		FileStreamRequestHandler::FileStreamRequestHandler(std::string url, std::string filePath, std::string contentType) :
 				url(url), fname(filePath), contentType(contentType) {
 
@@ -181,14 +202,20 @@ namespace TBS {
 			if (ext == "js") {
 				return "text/javascript";
 			}
+			if (ext == "json") {
+				return "application/json";
+			}
 			if (ext == "png") {
 				return "image/png";
 			}
 			if (ext == "jpg") {
 				return "image/jpeg";
 			}
-			if (ext == "eot" || ext == "svg" || ext == "ttf" || ext == "woff" || ext == "woff2") {
+			if (ext == "eot" || ext == "ttf" || ext == "woff" || ext == "woff2") {
 				return "application/octet-stream";
+			}
+			if (ext == "svg"){
+				return "image/svg+xml";
 			}
 			throw Poco::Exception("Unknown mime type");
 		}
@@ -202,6 +229,9 @@ namespace TBS {
 		}
 
 		bool FolderStreamRequestHandler::canHandle(std::string query) {
+			if (query.empty()){
+				return false;
+			}
 			current = folderPath + query;
 			if (!urlPrefix.empty()){
 				if (query.find(urlPrefix) != 0){

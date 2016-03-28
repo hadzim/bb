@@ -8,7 +8,7 @@
 namespace BB {
 
 
-		static Node::Info switchInfo(std::string uid, bool defaultValue){
+		static Node::Info switchInfo(std::string uid, bool defaultValue, BB::Node::Settings additionalSettings){
 
 			BB::Node::Sensors sensors({
 					BB::Node::Sensor("Switch", BB::Node::Info::Switch, "")/*,
@@ -22,12 +22,16 @@ namespace BB {
 				BB::Node::Setting("manualControl", "switch", BB::Node::Setting::Value(false)),
 			});
 
+			for (const auto & as : additionalSettings){
+				settings.insert(as.second);
+			}
+
 			Node::Info info(uid, Node::Info::Switch, sensors, settings);
 			return info;
 		}
 
-		SwitchNode::SwitchNode(std::string uid, bool defaultValue, int period) :
-				BasicNode(switchInfo(uid, defaultValue), period) {
+		SwitchNode::SwitchNode(std::string uid, bool defaultValue, BB::Node::Settings additinalSettings) :
+				BasicNode(switchInfo(uid, defaultValue, additinalSettings), 60*1000) {
 			this->SettingsChanged += Poco::delegate(this, &SwitchNode::onChanged);
 		}
 

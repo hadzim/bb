@@ -25,4 +25,23 @@ bool OrCondition::isValid(const Facts & facts){
 	return false;
 }
 
+Json::Value OrConditionRW::twrite(ConditionPtr & a){
+	Json::Value v(Json::objectValue);
+	v["or"] = Json::arrayValue;
+	for (auto c : a->conditions){
+		v["or"].append(ConditionRW::write(c));
+	}
+	return v;
+}
+ICondition::Ptr OrConditionRW::read(const Json::Value & value){
+	std::vector <ICondition::Ptr> list;
+	for (auto jv : value["or"]){
+		list.push_back(ConditionRW::read(jv));
+	}
+	return new OrCondition(list);
+}
+
+REGISTER_CONDITIONRW(OrConditionRW::getClassName(), OrConditionRW, OrConditionRW_)
+
+
 } /* namespace BB */

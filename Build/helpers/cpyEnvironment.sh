@@ -61,3 +61,10 @@ scp /usr/local/tbs-toolchain-gcc-4.6-i686/sysroots/armv7a-angstrom-linux-gnueabi
 
 scp /usr/local/tbs-toolchain-gcc-4.6-i686/sysroots/armv7a-angstrom-linux-gnueabi/usr/sbin/mosquitto* root@$1:/home/tbs/bin/
 
+#NEW MOSQUITTO - in strange subfolder but working!!!
+scp /home/dron/git/bb-build/tproa/install/Default/mosquitto*  root@$1:/home/tbs/bin/
+scp /home/dron/usr/local/tbs-toolchain-gcc-4.6-i686/sysroots/armv7a-angstrom-linux-gnueabi/usr/lib/libwebsocket*  root@$1:/home/tbs/lib/
+scp /home/dron/usr/local/tbs-toolchain-gcc-4.6-i686/sysroots/armv7a-angstrom-linux-gnueabi/usr/lib/libssl*  root@$1:/home/tbs/lib/
+scp /home/dron/usr/local/tbs-toolchain-gcc-4.6-i686/sysroots/armv7a-angstrom-linux-gnueabi/usr/lib/libcrypto*  root@$1:/home/tbs/lib/
+scp /home/dron/usr/local/tbs-toolchain-gcc-4.6-i686/sysroots/armv7a-angstrom-linux-gnueabi/usr/lib/libmosquitto*  root@$1:/home/tbs/lib/
+

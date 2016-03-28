@@ -6,42 +6,49 @@
  */
 
 
+#include <BB/Node/NodeFactory.h>
+#include "BB/App2.h"
+#include "BB/Node/INode.h"
+#include "BB/Node/Net/ForecastNode.h"
 
-#include "BB/App.h"
-#include "BB/SensorApp.h"
-#include "BB/Sensor/Net/Forecast.h"
+#include "TBS/Log.h"
+
 
 namespace BB {
-	class ForecastFactory : public ISensorFactory {
-		virtual Sensors createSensors(){
-			Sensors s;
-			s.push_back(
-					new Forecast(
-							"JosefuvDul",
-							"http://www.yr.no/place/Czech_Republic/Liberec/Josef%C5%AFv_D%C5%AFl/"
-					)
-			);
-
-			s.push_back(
-					new Forecast(
-							"Smedava",
-							"http://www.yr.no/place/Czech_Republic/Liberec/Sm%C4%9Bdavsk%C3%A1_hora/"
-					)
-			);
-
-			s.push_back(
-					new Forecast(
-							"Jizerka",
-							"http://www.yr.no/place/Czech_Republic/Liberec/Jizerka/"
-					)
-			);
+	namespace Forecast {
 
 
-			return s;
-		}
-	};
-}
+		class Factory: public DynamicNodeFactory {
+			private:
+				std::vector <INode::Ptr> forecastNodes;
+
+			public:
+
+				Factory() : DynamicNodeFactory("Forecast"){
+
+					for (int i = 0; i < this->getCount(this->getName()); i++){
+						std::stringstream s;
+						s << "forecast@" << (i+1);
+						INode::Ptr n = new ForecastNode(s.str());
+						forecastNodes.push_back(n);
+					}
+					//pin P8_33 -> GPIO9
+					//relayNode = new GPOutSwitchNode("relay@1", 9, false);
+				}
+
+				virtual int getCheckingPeriodInMs() {
+					return 60000;
+				}
+				virtual INode::PtrList getNodes() {
+					return forecastNodes;
+				}
+		};
+
+	}
+
+} /* namespace BB */
+
+NODE_BB_MAIN("Forecast", BB::Forecast::Factory)
 
 
-SENSOR_BB_MAIN("Forecast", BB::ForecastFactory)
 

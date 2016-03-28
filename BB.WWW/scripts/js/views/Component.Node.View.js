@@ -1,6 +1,6 @@
 // Create a View to be used with the Layout below.
 BB.ComponentNodeView = Backbone.Layout.extend({
-  template: "#component-node-template2",
+  template: "#component-node-template",
   className: "col-xs-12 col-md-6 col-lg-4",
   
   initialize: function(){
@@ -18,7 +18,7 @@ BB.ComponentNodeView = Backbone.Layout.extend({
   beforeRender: function() {
 	  
 	    this.model.data.each(function(d) {
-	    	this.insertView(".data", new BB.ComponentDataSummaryView2({model: d}));
+	    	this.insertView(".data", new BB.ComponentDataSummaryView2({model: d, node: this.model}));
 	    }, this);
 	    
 	    this.model.settings.each(function(s) {
@@ -31,7 +31,6 @@ BB.ComponentNodeView = Backbone.Layout.extend({
   
 
   events: {
-    "click button.edit": "edit",
 	"click .edit": "edit"
   },
   
@@ -41,7 +40,7 @@ BB.ComponentNodeView = Backbone.Layout.extend({
 	  modalView.show();
 	  */
 	  
-	  modalView = new BB.ComponentNodeEditView({model: this.model});
+	  var modalView = new BB.ComponentNodeEditView({model: this.model});
 	  modalView.show();
 	  
     }

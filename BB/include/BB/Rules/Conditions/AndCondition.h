@@ -8,9 +8,12 @@
 #ifndef ANDCONDITION_H_
 #define ANDCONDITION_H_
 #include <BB/Rules/ICondition.h>
+#include <BB/Rules/Serialization.h>
 #include <vector>
 
 namespace BB {
+
+class AndConditionRW;
 
 class AndCondition : public ICondition {
 public:
@@ -20,8 +23,19 @@ public:
 	AndCondition(std::vector <ICondition::Ptr> conditions);
 
 	virtual bool isValid(const Facts & facts);
+
+	NAMED_OBJECT("And")
 private:
 	std::vector <ICondition::Ptr> conditions;
+	friend class AndConditionRW;
+};
+
+class AndConditionRW : public TConditionRW <AndCondition> {
+public:
+	virtual Json::Value twrite(ConditionPtr & a);
+	virtual ICondition::Ptr read(const Json::Value & value);
+
+	NAMED_OBJECT(AndCondition::getClassName())
 };
 
 } /* namespace BB */

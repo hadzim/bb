@@ -10,33 +10,25 @@ namespace BB {
 		static Node::Info securityInfo(std::string uid){
 
 			BB::Node::Sensors sensors({
-				BB::Node::Sensor("Armed", BB::Node::Info::Status, ""),
-				BB::Node::Sensor("Armable", BB::Node::Info::Status, ""),
+				//BB::Node::Sensor("Armed", BB::Node::Info::Status, ""),
+				//BB::Node::Sensor("Armable", BB::Node::Info::Status, ""),
 				BB::Node::Sensor("Alarm", BB::Node::Info::Status, ""),
 			});
 
 			BB::Node::Settings settings({
-				BB::Node::Setting("name"),
-				BB::Node::Setting("place"),
+
 				BB::Node::Setting("armed", "switch", BB::Node::Setting::Value(0)),
 				BB::Node::Setting("pin", "text", BB::Node::Setting::Value("2468")),
+
+				BB::Node::Setting("alarmManual", "switch", BB::Node::Setting::Value(false)),
+				BB::Node::Setting("alarmAuto", "switch", BB::Node::Setting::Value(false), {{"readonly", "readonly"}}),
+				BB::Node::Setting("manualAlarmControl", "switch", BB::Node::Setting::Value(false)),
 			});
 
 			Node::Info info(uid, Node::Info::Status, sensors, settings);
 			return info;
 		}
-/*
-		void SecurityNode::afterRead(Node::Data & data, const Node::Info & info, const Node::Sensor & sensor){
-			auto settings = getSettings();
-			std::string tag = "calm";
 
-			double thresh = 0.0;
-			if (Node::isFilled(settings.at("thresh"), thresh) && data.getValue() >= thresh){
-				tag = "motion";
-			}
-			data.set("tag", tag);
-		}
-*/
 		SecurityNode::SecurityNode(int period) :
 				BasicNode(securityInfo("security"), period) {
 			this->SettingsChanged += Poco::delegate(this, &SecurityNode::onChanged);
@@ -47,21 +39,44 @@ namespace BB {
 		}
 
 		SecurityNode::AllData SecurityNode::read(){
-			std::cout << "security read" << std::endl;
+			std::cout << "switch read" << std::endl;
 
 			SecurityNode::AllData data;
 			auto settings = this->getSettings();
 
-			double val = 0.0;
-			if (Node::isFilled(settings.at("armed"), val)){
-				data.insert(std::make_pair("Armed", Node::Data(val, Node::localNow())));
+			int autoVal = 0;
+			if (Node::isFilled(settings.at("alarmAuto"), autoVal)){
+
 			}
 
-			//TODO - from TAGs
-			data.insert(std::make_pair("Alarm", Node::Data(0, Node::localNow())));
-			data.insert(std::make_pair("Armable", Node::Data(1, Node::localNow())));
+			int manualVal = 0;
+			if (Node::isFilled(settings.at("alarmManual"), manualVal)){
+
+			}
+
+			int armedVal = 0;
+			if (Node::isFilled(settings.at("armed"), armedVal)){
+
+			}
+
+			int isManual = 0;
+			if (Node::isFilled(settings.at("manualAlarmControl"), isManual)){
+				Node::Data d(isManual ? manualVal : autoVal, Node::localNow());
+				d.tags().insert(isManual ? "manual" : "auto");
+
+				if (d.getValue() > 0){
+					d.tags().insert("alarm");
+				}
+
+				if (armedVal > 0){
+					d.tags().insert("armed");
+				}
+
+				data.insert(std::make_pair("Alarm", d));
+			}
 
 			return data;
+
 		}
 
 		void SecurityNode::onChanged(SettingsValues  & s){

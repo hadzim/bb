@@ -95,6 +95,18 @@ namespace TBS {
 				std::string current;
 		};
 
+		class GEN_SERVICE_API RedirectRequestHandler : public RequestHandler {
+			public:
+				RedirectRequestHandler(std::string from, std::string to);
+				virtual ~RedirectRequestHandler();
+
+				virtual bool canHandle(std::string query);
+				virtual void handle(Poco::Net::HTTPServerRequest & request, Poco::Net::HTTPServerResponse & response);
+			private:
+				std::string from;
+				std::string to;
+		};
+
 		class GEN_SERVICE_API JsonServerParams {
 			public:
 

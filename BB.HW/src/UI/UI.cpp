@@ -24,7 +24,8 @@ namespace BB {
 
 #ifdef TBS_DEVICE
 		std::cout << "CREATE NOKIA DEVICE" << std::endl;
-	screen = new NokiaScreen(50,60, 1, 0, "pwm_test_P9_42.10");
+	screen = new NokiaScreen(50,60, 1, 0, "pwm_test_P9_42.11");
+	screen->setRotation(2);
 #else
 	screen = new OpenCvScreen("bb");
 #endif

@@ -44,6 +44,9 @@ namespace TBS {
 					);
 					try {
 						msg.notify(this, newmessage);
+					} catch (Poco::Exception & e) {
+						LERROR("MQTT") << "Error on message: " << e.displayText() << LE;
+						throw;
 					} catch (std::exception & e) {
 						LERROR("MQTT") << "Error on message: " << e.what() << LE;
 						throw;

@@ -1,0 +1,12 @@
+<script id="component-filter-places-template" type="text/template">
+	<div class="btn-group">
+        <button class="btn btn-info bg-dark border-dark" title='place'><i class="fa fa-at"></i> Place: </button>
+	     <select class="form-control" id='placeFilter' multiple="multiple" data-placeholder="Select a Place">
+	     	<% allplaces.each(function(p) { %>
+		        <% var isChecked = $.inArray(p.attributes.name, places) != -1; %>
+		        <option <%= (isChecked ? "selected" : "") %>><%= p.attributes.name %></option>
+	     	<% }) %>
+	    </select>
+	    
+	 </div>
+</script>	    

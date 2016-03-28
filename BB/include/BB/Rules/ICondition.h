@@ -9,6 +9,7 @@
 #define ICONDITION_H_
 #include <BB/Rules/Facts.h>
 #include <Poco/SharedPtr.h>
+#include "TBS/NamedObject.h"
 
 namespace BB {
 
@@ -19,6 +20,8 @@ public:
 	virtual ~ICondition();
 
 	virtual bool isValid(const Facts & facts) = 0;
+
+	ABSTRACT_NAMED_OBJECT
 };
 
 } /* namespace BB */

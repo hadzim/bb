@@ -12,8 +12,6 @@ namespace BB {
 			BB::Node::Sensors sensors({ BB::Node::Sensor("Contact", BB::Node::Info::Contact, "") });
 
 			BB::Node::Settings settings({
-				BB::Node::Setting("name"),
-				BB::Node::Setting("place"),
 				BB::Node::Setting("security", "switch", BB::Node::Setting::Value(false)),
 			});
 
@@ -32,8 +30,8 @@ namespace BB {
 			data.tags().insert(tag);
 
 			bool isSecurity = false;
-			if (Node::isFilled(settings.at("security"), isSecurity) && isSecurity && data.getValue() == 0.0){
-				data.tags().insert("insecure");
+			if (Node::isFilled(settings.at("security"), isSecurity) && isSecurity){
+				data.tags().insert(tag + "[s]");
 			}
 		}
 

@@ -1,34 +1,24 @@
 <script id="component-node-template" type="text/template">
   
-  <div class="box box-primary">
-
-	 <div class="box-header">
-	      <h3 class="box-title"><%= name %> <span class='small'>@<%= place %></span></h3>
-	      <div class="box-tools pull-right">
-	      		<span class='small'><%= id %></span>
-	 	        <button class="btn btn-primary btn-sm graph"><i class="fa fa-line-chart"></i></button>
-	    	    <button class="btn btn-primary btn-sm edit"><i class="fa fa-cog"></i></button>
-	      </div>
-	 </div>	
-	
-	
-	<div class="formodal">      
-	</div>
-	 
-	<div class="box-body row">
-	
-	      <div class="col-xs-12 data">
-	      </div>
-	      
-	      <div class="col-sm-12 hidden-xs">
-	      	<div class='row settings settings-box'>
-	      	</div>
-	      </div>
-      
-    </div>
-    
-	
-</div>
+	<div class="block-box bg-dark outline-dark">
+			<div class="icon">
+            	<i class="fa <%= icon %>"></i>
+            </div>
+		    <div class="inner">
+		      <button class='pull-right btn btn-info bg-dark border-dark edit'><i class="fa fa-cog"></i></button>
+		      <h4>
+		      		<%= name %>
+		      </h4>
+		      <p>
+		      		<i class='fa fa-at'></i> <%= place %><br />
+		      </p>
+		      
+		    </div>
+		    
+		    <div class="row data datafields">
+	        </div>
+		    
+  </div>
   
 
   

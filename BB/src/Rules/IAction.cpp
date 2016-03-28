@@ -10,12 +10,14 @@
 namespace BB {
 
 IAction::IAction() {
-	// TODO Auto-generated constructor stub
 
 }
 
 IAction::~IAction() {
-	// TODO Auto-generated destructor stub
+
+}
+void IAction::init(ActionParams params){
+	this->params = params;
 }
 
 } /* namespace BB */

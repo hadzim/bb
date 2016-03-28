@@ -1,0 +1,24 @@
+<script id="page-graph-template" type="text/template">
+	<div class='col-xs-12'>
+     	<div class='row'>
+		     	<div class='col-xs-4 places'></div>
+		     	<div class='col-xs-4 types'></div>
+		     	<div class='col-xs-4 periods'>
+		     		<div class='form-group'>
+			     		<div class="btn-group">
+			        		 <button class="btn btn-info bg-dark border-dark" title='Period'><i class="fa fa-clock-o"></i> Period: </button>
+						     <select class="form-control" id='periodFilter' data-placeholder="Select a Period">
+						     	<option value='hour' <%= (period == 'hour' ? "selected" : "") %> >Hour</option>
+								<option value='day'  <%= (period == 'day'  ? "selected" : "") %> >Day</option>
+								<option value='week' <%= (period == 'week' ? "selected" : "") %> >Week</option>
+						    </select>
+				 		</div>
+			 		</div>
+		     	</div>
+	    </div>
+    </div>
+    
+	<div class='graph'>
+	</div>
+ 	
+</script>	    

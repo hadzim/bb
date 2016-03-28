@@ -6,10 +6,11 @@
  */
 
 #include <BB/Rules/RuleEngine.h>
+#include <BB/Rules/Serialization.h>
 
 namespace BB {
 
-RuleEngine::RuleEngine() {
+RuleEngine::RuleEngine(ActionParams params) : params(params) {
 
 }
 
@@ -30,7 +31,19 @@ void RuleEngine::removeFact(IFact::Ptr fact){
 	evaluate();
 }
 
+void RuleEngine::initRule(Rule & r){
+	if (r.action()){
+		r.action()->init(params);
+	}
+	if (r.negativeAction()){
+		r.negativeAction()->init(params);
+	}
+}
+
 void RuleEngine::insertRule(Rule rule){
+
+	initRule(rule);
+
 	rules.erase(rule.name());
 	rules.insert(std::make_pair(rule.name(), rule));
 	evaluate();
@@ -43,10 +56,29 @@ void RuleEngine::removeRuleByName(std::string ruleName){
 void RuleEngine::evaluate(){
 	for (auto r : rules){
 		if (r.second.condition()->isValid(facts)){
-			r.second.action()->perform();
+			if (r.second.action()){
+				r.second.action()->perform();
+			}
+		} else {
+			if (r.second.negativeAction()){
+				r.second.negativeAction()->perform();
+			}
 		}
 	}
 }
 
+void RuleEngine::save(std::string fileName){
+	auto json = RulesRW::write(rules);
+	RW::json2file(fileName, json);
+}
+
+void RuleEngine::load(std::string fileName){
+	auto json = RW::file2json(fileName);
+	rules = RulesRW::read(json);
+	for (auto & r : rules){
+		initRule(r.second);
+	}
+	evaluate();
+}
 
 } /* namespace BB */

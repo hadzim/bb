@@ -5,23 +5,11 @@
  *      Author: root
  */
 
-#include "BB/App.h"
-#include "BB/SensorApp.h"
-#include "BB/Sensor/Board/DallasTemperatureSensor.h"
+#include "BB/App2.h"
+#include "BB/Node/Board/DallasTemperature.h"
 
 
-namespace BB {
 
-class BoardTemperatureFactory: public ISensorFactory {
-	virtual Sensors createSensors() {
-		Sensors s;
-		s.push_back(
-				new BB::DallasTemperatureSensor()
-		);
-		return s;
-	}
-};
-}
 
-SENSOR_BB_MAIN("Temperature", BB::BoardTemperatureFactory)
+NODE_BB_MAIN("Temperature", BB::DallasTemperature::Factory)
 

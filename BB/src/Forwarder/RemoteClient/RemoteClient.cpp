@@ -118,7 +118,7 @@ namespace BB {
 		LDEBUG("BIN") << "sent and received: " << of.str() << LE;
 	}
 
-	std::string RemoteClient::remoteQuery(std::string action, std::string data) {
+	std::string RemoteClient::remoteQuery(std::string action, std::string data, std::string requestFile) {
 		LNOTICE("RemoteClient")<< "Sending: " << data << LE;
 
 		TBS::Nullable<RemoteClientSettings> s;
@@ -131,7 +131,7 @@ namespace BB {
 
 
 		Poco::Net::HTTPClientSession session(s.ref().url, s.ref().port);
-		Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_GET, settings.query);
+		Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_GET, settings.query, "HTTP/1.1");
 		Poco::Net::HTMLForm form;
 		form.add("presenter", "Data:Insert");
 		form.add("action", action);
@@ -141,6 +141,26 @@ namespace BB {
 		form.add("data", data);
 		form.add("project", s.ref().projectID);
 		form.prepareSubmit(request);
+
+		if (!requestFile.empty()){
+			std::ofstream f(requestFile);
+			f << s.ref().url << ":" << s.ref().port << std::endl;
+			f << settings.query << std::endl;
+			f << "project: " <<  s.ref().projectID << std::endl;
+			f << "action: " <<  action << std::endl;
+			f << "presenter: " <<  "Data:Insert" << std::endl;
+			f << "data: " << data << std::endl;
+			f << std::endl;
+			f << std::endl;
+			f << "http://" << s.ref().url << ":" << s.ref().port << "/" << settings.query
+					 << "?project=" <<  s.ref().projectID
+					 << "&action=" <<  action
+					 << "&presenter=" <<  "Data:Insert"
+					 << "&data=" << data << std::endl;
+			f << std::endl;
+			f << std::endl;
+			request.write(f);
+		}
 
 		std::cout << "request before: " << settings.query << std::endl;
 
@@ -159,29 +179,31 @@ namespace BB {
 	}
 
 	void RemoteClient::sendToRemoteServer(const RuntimeStatus & st) {
-		std::string res = this->remoteQuery("status", RW::json2String(StatusDataRW::write(st)));
-		std::ofstream f("/tmp/lastStatus.txt");
+		std::string res = this->remoteQuery("status", RW::json2String(StatusDataRW::write(st)), "/tmp/lastStatusRequest.txt");
+		std::ofstream f("/tmp/lastStatusResponse.txt");
 		f << res;
 	}
 
 	void RemoteClient::sendToRemoteServer(const SensorData & m) {
-		std::string res = this->remoteQuery("sensor", RW::json2String(SensorDataRW::write(m)));
-		std::ofstream f("/tmp/lastSensor.txt");
+		std::string res = this->remoteQuery("sensor", RW::json2String(SensorDataRW::write(m)), "/tmp/lastSensorRequest.txt");
+		std::ofstream f("/tmp/lastSensorResponse.txt");
 		f << res;
 	}
 	void RemoteClient::sendToRemoteServer(const Notification & s){
-		std::string res = this->remoteQuery("notification", RW::json2String(NotificationDataRW::write(s)));
-		std::ofstream f("/tmp/lastNotification.txt");
+		std::string res = this->remoteQuery("notification", RW::json2String(NotificationDataRW::write(s)), "/tmp/lastNotificationRequest.txt");
+		std::ofstream f("/tmp/lastNotificationResponse.txt");
 		f << res;
 	}
 	void RemoteClient::sendToRemoteServer(const FullNodeData & s){
-		std::string res = this->remoteQuery("nodeSensor", RW::json2String(FullNodeDataRW::write(s)));
-		std::ofstream f("/tmp/lastNodeSensor.txt");
+		LNOTICE("RC") << "going to send full data: " << s.data << LE;
+		std::string res = this->remoteQuery("nodeSensor", RW::json2String(FullNodeDataRW::write(s)), "/tmp/lastNodeSensorRequest.txt");
+		std::ofstream f("/tmp/lastNodeSensorResponse.txt");
 		f << res;
 	}
 	void RemoteClient::sendToRemoteServer(const Node::Info & s){
-		std::string res = this->remoteQuery("nodeInfo", RW::json2String(NodeInfoRW::write(s)));
-		std::ofstream f("/tmp/lastNodeInfo.txt");
+		LNOTICE("RC") << "going to send: " << s << LE;
+		std::string res = this->remoteQuery("nodeInfo", RW::json2String(NodeInfoRW::write(s)), "/tmp/lastNodeInfoRequest.txt");
+		std::ofstream f("/tmp/lastNodeInfoResponse.txt");
 		f << res;
 	}
 
@@ -189,6 +211,13 @@ namespace BB {
 		sendCacheImpl<NotificationCache>(notificationCache);
 		sendCacheImpl<SensorCache>(sensorCache);
 		sendCacheImpl<StatusCache>(statusCache);
+
+
+		sendCacheImpl<NodeInfoCache>(nodeInfoCache);
+		sendCacheImpl<NodeDataCache>(nodeDataCache);
+
+		int size = nodeDataCache.size();
+		this->CacheChanged.notify(this, size);
 	}
 
 	void RemoteClient::forward(const SensorData & m) {

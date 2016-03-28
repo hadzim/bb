@@ -17,6 +17,12 @@ BB.PageDataView = Backbone.Layout.extend({
       
   },
   
+  close: function(){
+	  this.collection.off('add', this.render, this);
+      this.collection.off('remove', this.render, this);
+      this.collection.off('sort', this.render, this);
+  },
+  
   beforeRender: function() {
 	    var sum = 0;
 	    this.collection.each(function(d) {

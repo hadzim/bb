@@ -80,6 +80,9 @@ BB.NewRouter = Backbone.Router.extend({
     routes: {
         "nodes" : "nodes",
         "data" : "data",
+        "rules" : "rules",
+        "graph" : "graph",
+        "events" : "pevents",
         "": "home",
         "/": "home",
       },
@@ -89,21 +92,36 @@ BB.NewRouter = Backbone.Router.extend({
           Backbone.history.on('route', function() { this.routesHit++; }, this);
       },
       home: function() {
-    	  console.log("HOME");
         var homeView = new BB.PageHomeView();
         BB.layout.showView(homeView);   
       },
 
       nodes: function() {
-    	  console.log("NODEs");
           var nodesView = new BB.PageNodesView();
           BB.layout.showView(nodesView);   
       },
 
       data: function() {
-    	  console.log("Data");
           var dataView = new BB.PageDataView();
           BB.layout.showView(dataView);   
+      },
+
+      graph: function() {
+          var graphView = new BB.PageGraphView();
+          BB.layout.showView(graphView);   
+      },
+
+      rules: function() {
+    	  console.log("Rules");
+          var rulesView = new BB.PageRulesView();
+          BB.layout.showView(rulesView);
+          BB.rules.download();
+      },
+      
+      pevents: function() {
+    	  console.log("Event Log");
+          var eView = new BB.PageEventLogView();
+          BB.layout.showView(eView);
       },
       
      back: function() {
@@ -119,6 +137,8 @@ BB.NewRouter = Backbone.Router.extend({
 
     });
 
+
+var clockModel;
 
 $(document).on("ready", function () {
 	/*
@@ -137,25 +157,34 @@ $(document).on("ready", function () {
     BB.dummy = new BB.DummyView();
     BB.dummy.render();*/
 	
+	clockModel = new Backbone.Model({ time: new Date() })
+
+	setInterval(function () {
+		  clockModel.set('time', new Date())
+	}, 1000);
+
+	
 	BB.connection = new BB.Connection();
 	BB.mqtt = new BB.MQTT(); 
 	
 	BB.nodes = new BB.NodeCollection;
 	BB.data = new BB.DataCollection;
+	BB.rules = new BB.RuleCollection;
 	
 	BB.devices = new BB.DeviceCollection;
     
 	BB.rooms = new BB.RoomCollection;
-	
-	//BB.app = new BB.ApplicationView;
-	//BB.app.connect();
-	/*
-	BB.menu = new BB.MenuView;
-    BB.header = new BB.HeaderView;
-    */
+	BB.places = new BB.PlaceCollection;
+	BB.dataTypes = new BB.DataTypeCollection;
+	BB.filter = new BB.Filter;
+	BB.eventlog = new BB.EventLogCollection;
 	
 	BB.layout = new BB.LayoutView();
     BB.router = new BB.NewRouter();
 	
 	BB.layout.render();
+	
+	if ($('body').hasClass('sidebar-collapse')) {
+      $("[data-layout='sidebar-collapse']").attr('checked', 'checked');
+    }
 });

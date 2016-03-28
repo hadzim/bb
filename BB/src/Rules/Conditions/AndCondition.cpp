@@ -24,4 +24,22 @@ bool AndCondition::isValid(const Facts & facts){
 	return true;
 }
 
+Json::Value AndConditionRW::twrite(ConditionPtr & a){
+	Json::Value v(Json::objectValue);
+	v["and"] = Json::arrayValue;
+	for (auto c : a->conditions){
+		v["and"].append(ConditionRW::write(c));
+	}
+	return v;
+}
+ICondition::Ptr AndConditionRW::read(const Json::Value & value){
+	std::vector <ICondition::Ptr> list;
+	for (auto jv : value["and"]){
+		list.push_back(ConditionRW::read(jv));
+	}
+	return new AndCondition(list);
+}
+
+REGISTER_CONDITIONRW(AndConditionRW::getClassName(), AndConditionRW, AndConditionRW_)
+
 } /* namespace BB */

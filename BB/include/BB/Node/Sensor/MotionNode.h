@@ -13,7 +13,7 @@ namespace BB {
 
 		class MotionNode: public SensorNode {
 			public:
-				MotionNode(std::string uid, int period);
+				MotionNode(std::string uid, int period, BB::Node::Settings additionalSettings = BB::Node::Settings());
 			protected:
 				virtual void afterRead(Node::Data & data, const Node::Info & info, const Node::Sensor & sensor);
 		};
