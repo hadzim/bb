@@ -43,6 +43,7 @@ namespace BB {
 				std::string streamHost;
 				int frequency;
 				bool cfgChanged;
+				bool isffmpeg;
 		};
 
 } /* namespace BB */

@@ -79,8 +79,8 @@ namespace BB {
 
 		class ConsoleSwitchNode: public SwitchNode {
 			public:
-			ConsoleSwitchNode(std::string uid, bool defaultVal, int period) :
-				SwitchNode(uid, defaultVal, period) {
+			ConsoleSwitchNode(std::string uid, bool defaultVal) :
+				SwitchNode(uid, defaultVal) {
 
 			}
 
@@ -92,7 +92,7 @@ namespace BB {
 
 		class Factory: public INodeFactory {
 			private:
-				INode::Ptr rc;
+
 			public:
 				virtual int getCheckingPeriodInMs() {
 					return 60000;
@@ -132,20 +132,11 @@ namespace BB {
 					}
 
 					{
-						INode::Ptr sensorNode = new StatusNode(60 * 1000);
+						INode::Ptr sensorNode = new ConsoleSwitchNode("switch1", false);
 						nodes.push_back(sensorNode);
 					}
 					{
-						INode::Ptr sensorNode = new SecurityNode(60 * 1000);
-						nodes.push_back(sensorNode);
-					}
-
-					{
-						INode::Ptr sensorNode = new ConsoleSwitchNode("switch1", false, 60 * 1000);
-						nodes.push_back(sensorNode);
-					}
-					{
-						INode::Ptr sensorNode = new ConsoleSwitchNode("switch2", false, 60 * 1000);
+						INode::Ptr sensorNode = new ConsoleSwitchNode("switch2", false);
 						nodes.push_back(sensorNode);
 					}
 
@@ -158,12 +149,7 @@ namespace BB {
 						nodes.push_back(sensorNode);
 					}*/
 
-					{
-						if (!rc){
-							rc = new RemoteClientNode("remote-local");
-						}
-						nodes.push_back(rc);
-					}
+
 
 					return nodes;
 				}

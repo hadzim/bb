@@ -83,6 +83,7 @@ BB.NewRouter = Backbone.Router.extend({
         "rules" : "rules",
         "graph" : "graph",
         "events" : "pevents",
+        "full" : "full",
         "": "home",
         "/": "home",
       },
@@ -122,6 +123,12 @@ BB.NewRouter = Backbone.Router.extend({
     	  console.log("Event Log");
           var eView = new BB.PageEventLogView();
           BB.layout.showView(eView);
+      },
+      
+      full: function() {
+    	  console.log("Show full");
+          var v = new BB.PageFullView();
+          BB.layout.showFull(v);
       },
       
      back: function() {

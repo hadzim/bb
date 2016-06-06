@@ -1,5 +1,5 @@
 // Create a View to be used with the Layout below.
-BB.ComponentClockView = Backbone.Layout.extend({
+BB.ComponentTimeView = Backbone.Layout.extend({
 
   template: "#component-clock-template",
   tagName: "span",
@@ -15,11 +15,9 @@ BB.ComponentClockView = Backbone.Layout.extend({
 	    var m = today.getMinutes();
 	    var s = today.getSeconds();
 	    m = this.checkTime(m);
-	    s = this.checkTime(s);
-	    return "" + h + ":" + m + ":" + s;
+	    return "" + h + ":" + m;
     },
     
-   
     checkTime: function(i) {
 	    if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
 	    return i;

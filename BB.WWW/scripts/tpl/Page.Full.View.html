@@ -1,0 +1,29 @@
+<script id="page-full-template" type="text/template">
+	<div id='full-menu'>
+  			<div class="full-nav <%= (page == 'Home' ? 'selected' : '') %> ">
+  				<i class="demo-icon icon-home" id='full-go-home'></i>
+  			</div>
+  			<div class="full-nav <%= (page == 'Temperature' ? 'selected' : '') %>">
+  				<i class="demo-icon icon-temperatire"  id='full-go-temperature'></i>
+  			</div>
+  			<div class="full-nav <%= (page == 'Forecast' ? 'selected' : '') %>">
+  				<i class="demo-icon icon-cloud-sun"  id='full-go-forecast'></i>
+  			</div>
+  			<div class="full-nav <%= (page == 'Others' ? 'selected' : '') %>">
+  				<i class="demo-icon icon-flow-split"  id='full-go-others'></i>
+  			</div>
+  			<a class="full-nav"  href='#'>
+  				<i class="fa fa-arrow-circle-o-left"></i>
+  			</a>
+	</div>
+	<div id='full-body'>
+		<div id='full-header'>
+		    <div class='date'></div>
+			<div class='time'></div>
+			
+		</div>
+		<div id='full-content'>
+			<div class='full-time'></div>
+		</div>
+	</div>
+</script>	    

@@ -25,8 +25,6 @@ BB.LayoutView = Backbone.Layout.extend({
    
    showView: function(view) {
 	    
-	   	
-	   	
 	   	console.log("SHOW", view);
 	    if (this.lastPageView){
 	    	console.log("remove old", view);
@@ -35,6 +33,8 @@ BB.LayoutView = Backbone.Layout.extend({
 	    	this.lastPageView = null;
 	    
 	    } 
+	    
+	    $("body").removeClass("full");
 	   	
 	   	this.getView("#headline").headline(view.title, view.subtitle);
      	this.insertView("#content", view).render();
@@ -42,5 +42,24 @@ BB.LayoutView = Backbone.Layout.extend({
      	
      	console.log("SHOW DONE", view);
    },
+   
+   showFull: function(view) {
+	    
+	   	console.log("SHOW full", view);
+	    if (this.lastPageView){
+	    	console.log("remove old", view);
+	    	this.removeView("#content");
+	    	this.lastPageView.close();
+	    	this.lastPageView = null;
+	    } 
+	   	
+	    $("body").addClass("full");
+	    
+	   	//this.getView("#headline").headline(view.title, view.subtitle);
+    	this.insertView("#content", view).render();
+    	this.lastPageView = view;
+    	
+    	console.log("SHOW full DONE", view);
+  },
    
 });

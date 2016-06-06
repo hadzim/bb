@@ -40,19 +40,19 @@
     
     updateAttributes: function() {
     	if (this.get("type") != "undefined" && this.get("icon") == ""){
-    		var icon  = "fa-asterisk";
+    		var icon  = "fa fa-asterisk";
     		var type = this.get("type");
     		if (type == "Temperature"){
-    			icon = "fa-cloud";
+    			icon = "demo-icon icon-temperatire";
     		}
     		if (type == "Motion"){
-    			icon = "fa-street-view";
+    			icon = "fa fa-street-view";
     		}
     		if (type == "Contact"){
-    			icon = "fa-sign-in";
+    			icon = "fa fa-sign-in";
     		}
     		if (type == "Camera"){
-    			icon = "fa-camera";
+    			icon = "fa fa-camera";
     		}
     		this.set("icon", icon);
     	}
